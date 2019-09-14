@@ -13,8 +13,6 @@ class QPainter;
 
 namespace TextureLogic
 {
-    class Texture;
-
     namespace TextureBorder
     {
         /*
