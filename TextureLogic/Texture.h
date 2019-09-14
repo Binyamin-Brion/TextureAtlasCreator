@@ -17,6 +17,7 @@ namespace TextureLogic
 
         public:
             explicit Texture(const QString &texturePath);
+            bool checkIntersection(const Texture &otherTexture, Zoom zoom);
             TextureImages& textureImages();
             const QString& textureLocation() const;
             const QString& textureName() const;

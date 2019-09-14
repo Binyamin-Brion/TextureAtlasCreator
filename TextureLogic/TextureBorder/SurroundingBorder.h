@@ -27,9 +27,10 @@ namespace TextureLogic
         class SurroundingBorder
         {
             public:
-                SurroundingBorder(int textureWidth, int textureHeight);
+
                 bool checkIntersection(const SurroundingBorder &otherBorder);
                 void draw(QPainter &painter);
+                void initialize(int textureWidth, int textureHeight);
                 void setSelectedBorderVisible(bool value);
                 void translate(int differenceX, int differenceY);
 

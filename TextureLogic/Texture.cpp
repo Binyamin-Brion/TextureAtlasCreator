@@ -18,6 +18,11 @@ namespace TextureLogic
         _textureName = _textureLocation.right(_textureLocation.size() - _textureLocation.lastIndexOf('/'));
     }
 
+    bool Texture::checkIntersection(const TextureLogic::Texture &otherTexture, TextureLogic::Zoom zoom)
+    {
+        return _texture[GetZoomIndex(zoom)].checkIntersection(_texture[GetZoomIndex(zoom)]);
+    }
+
     Texture::TextureImages &Texture::textureImages()
     {
         return _texture;

@@ -7,6 +7,11 @@
 
 namespace TextureLogic
 {
+    bool ScaledTexture::checkIntersection(const TextureLogic::ScaledTexture &scaledTexture)
+    {
+        return border.checkIntersection(scaledTexture.border);
+    }
+
     void ScaledTexture::initialize(const QString &textureLocation, TextureLogic::Zoom zoom)
     {
         if(!image.load(textureLocation))
@@ -19,7 +24,7 @@ namespace TextureLogic
             throw std::runtime_error{"Image dimensions are negative!"};
         }
 
-        auto zoomFactorValue = static_cast<unsigned int>(zoom) & 0xFFFu;
+        auto zoomFactorValue = GetZoomValue(zoom);
 
         auto imageWidthUnsigned = static_cast<unsigned int>(image.width());
 
@@ -36,5 +41,7 @@ namespace TextureLogic
         }
 
         image = image.scaled(image.width() * zoomFactorValue, image.height() * zoomFactorValue, Qt::KeepAspectRatio);
+
+        border.initialize(image.width(), image.height());
     }
 }
