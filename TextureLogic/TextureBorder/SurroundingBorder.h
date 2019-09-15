@@ -11,6 +11,14 @@
 
 class QPainter;
 
+namespace Tests
+{
+    namespace SurroundingBorder
+    {
+        class TestSurroundingBorder;
+    }
+}
+
 namespace TextureLogic
 {
     namespace TextureBorder
@@ -26,6 +34,8 @@ namespace TextureLogic
 
         class SurroundingBorder
         {
+                friend class Tests::SurroundingBorder::TestSurroundingBorder;
+
             public:
 
                 bool checkIntersection(const SurroundingBorder &otherBorder);

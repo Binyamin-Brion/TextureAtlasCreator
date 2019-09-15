@@ -151,6 +151,8 @@ namespace TextureLogic
             {
                 rect.translate(differenceX, differenceY);
             }
+
+            entireTextureArea.translate(differenceX, differenceY);
         }
     }
 }

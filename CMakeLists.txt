@@ -20,6 +20,6 @@ include_directories(C:\\glm\\glm)
 add_executable(TextureAtlasCreator main.cpp TextureLogic/ScaledTexture.cpp TextureLogic/ScaledTexture.h TextureLogic/Zoom.h
         TextureLogic/TextureBank.cpp TextureLogic/TextureBank.h TextureLogic/Texture.cpp TextureLogic/Texture.h
         TextureLogic/TextureBorder/Border.h TextureLogic/TextureBorder/SurroundingBorder.cpp TextureLogic/TextureBorder/SurroundingBorder.h
-        AccessRestriction/PassKey.h)
+        AccessRestriction/PassKey.h Tests/TestSuite.cpp Tests/TestSuite.h Tests/SurroundingBorder/TestSurroundingBorder.cpp Tests/SurroundingBorder/TestSurroundingBorder.h Tests/EnableTests.h)
 
 target_link_libraries(TextureAtlasCreator ${Qt5Widgets_LIBRARIES} ${Qt5Test_LIBRARIES})

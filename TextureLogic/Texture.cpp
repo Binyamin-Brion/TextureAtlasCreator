@@ -20,7 +20,7 @@ namespace TextureLogic
 
     bool Texture::checkIntersection(const TextureLogic::Texture &otherTexture, TextureLogic::Zoom zoom)
     {
-        return _texture[GetZoomIndex(zoom)].checkIntersection(_texture[GetZoomIndex(zoom)]);
+        return _texture[GetZoomIndex(zoom)].checkIntersection(otherTexture._texture[GetZoomIndex(zoom)]);
     }
 
     Texture::TextureImages &Texture::textureImages()

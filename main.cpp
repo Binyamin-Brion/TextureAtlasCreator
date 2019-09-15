@@ -1,7 +1,16 @@
 #include "TextureLogic/Zoom.h"
 #include <iostream>
-int main() {
+#include <QtTest/qtestcase.h>
+#include <Tests/TestSuite.h>
 
+int main(int argc, char *argv[]) {
+
+    auto suite = Tests::TestSuite::suite();
+
+    for(const auto i : suite)
+    {
+        QTest::qExec(i, argc, argv);
+    }
 
 //for(auto &a : TextureLogic::All)
 //{
