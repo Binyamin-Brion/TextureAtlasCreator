@@ -23,6 +23,11 @@ namespace TextureLogic
         return _texture[GetZoomIndex(zoom)].checkIntersection(otherTexture._texture[GetZoomIndex(zoom)]);
     }
 
+    const QImage& Texture::getImage(TextureLogic::Zoom zoom) const
+    {
+       return  _texture[GetZoomIndex(zoom)].getImage();
+    }
+
     Texture::TextureImages &Texture::textureImages()
     {
         return _texture;

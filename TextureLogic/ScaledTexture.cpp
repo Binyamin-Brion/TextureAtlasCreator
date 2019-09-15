@@ -5,11 +5,18 @@
 #include "ScaledTexture.h"
 #include <limits>
 
+#include <QPainter>
+
 namespace TextureLogic
 {
     bool ScaledTexture::checkIntersection(const TextureLogic::ScaledTexture &scaledTexture)
     {
         return border.checkIntersection(scaledTexture.border);
+    }
+
+    const QImage& ScaledTexture::getImage() const
+    {
+        return image;
     }
 
     void ScaledTexture::initialize(const QString &textureLocation, TextureLogic::Zoom zoom)

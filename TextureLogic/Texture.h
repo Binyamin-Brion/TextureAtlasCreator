@@ -9,6 +9,8 @@
 #include "TextureLogic/Zoom.h"
 #include <array>
 
+class QPainter;
+
 namespace TextureLogic
 {
     class Texture
@@ -18,6 +20,7 @@ namespace TextureLogic
         public:
             explicit Texture(const QString &texturePath);
             bool checkIntersection(const Texture &otherTexture, Zoom zoom);
+            const QImage& getImage(TextureLogic::Zoom zoom) const;
             TextureImages& textureImages();
             const QString& textureLocation() const;
             const QString& textureName() const;
