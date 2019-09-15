@@ -7,7 +7,7 @@
 
 namespace TextureLogic
 {
-    void TextureBank::addImage(const QString &textureLocation, AccessRestriction::PassKey<Atlas::TextureAtlas>)
+    void TextureBank::addImage(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
     {
         textures.emplace_back(textureLocation);
 

@@ -15,12 +15,20 @@ namespace Atlas
     class TextureAtlas;
 }
 
+namespace GUI
+{
+    namespace LoadResults
+    {
+        class TextureButtonArea;
+    }
+}
+
 namespace TextureLogic
 {
     class TextureBank
     {
         public:
-            void addImage(const QString &textureLocation, AccessRestriction::PassKey<Atlas::TextureAtlas>);
+            void addImage(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
             const std::vector<Texture>& WARN_UNUSED deleteImage(std::vector<Texture>::iterator texture, AccessRestriction::PassKey<Atlas::TextureAtlas>);
             const std::vector<Texture>& WARN_UNUSED getTextures(AccessRestriction::PassKey<Atlas::TextureAtlas>) const;
             void setTextureAtlasInstance(Atlas::TextureAtlas *textureAtlas, AccessRestriction::PassKey<Atlas::TextureAtlas>);
