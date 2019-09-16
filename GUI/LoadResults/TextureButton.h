@@ -16,6 +16,7 @@ namespace GUI
 {
     namespace LoadResults
     {
+
         class TextureButton : public QPushButton
         {
             Q_OBJECT
