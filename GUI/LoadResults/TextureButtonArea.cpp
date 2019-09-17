@@ -54,6 +54,11 @@ namespace GUI
 
         void TextureButtonArea::addTextureButton(const QString &textureLocation)
         {
+            // Try loading the image first; if that operation fails, then there is no point continuing to create
+            // a texture pushbutton for that image
+
+            textureBank->storeNewTexture(textureLocation, {});
+
             // Swap the place holder widget with the newly created plcae holder; see the description at the top of
             // this file for more information.
 
@@ -74,7 +79,7 @@ namespace GUI
             /*
              *  Whenever a button is added, two cases needed to be considered:
              *
-             *  1. The max amount of plcae holders have been used- it is time to add more place holders and update
+             *  1. The max amount of place holders have been used- it is time to add more place holders and update
              *  the current row and column variable so that the next button is added at the next (newly added) place holder
              *
              *  2. The end of the row is reached. Update the current row and column variables so that the next button
@@ -112,7 +117,7 @@ namespace GUI
 
         void TextureButtonArea::textureButtonClicked(const QString &textureLocation)
         {
-            textureBank->addImage(textureLocation, {});
+            textureBank->textureButtonPressed(textureLocation, {});
         }
 
         void TextureButtonArea::addTextureButtonPlaceHolders(int addRows)

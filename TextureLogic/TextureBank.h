@@ -10,13 +10,14 @@
 #include "Attributes/AttributeMacros.h"
 #include "AccessRestriction/PassKey.h"
 
-namespace Atlas
-{
-    class TextureAtlas;
-}
 
 namespace GUI
 {
+    namespace Atlas
+    {
+        class AtlasTabWidget;
+    }
+
     namespace LoadResults
     {
         class TextureButtonArea;
@@ -28,12 +29,15 @@ namespace TextureLogic
     class TextureBank
     {
         public:
-            void addImage(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
-            const std::vector<Texture>& WARN_UNUSED deleteImage(std::vector<Texture>::iterator texture, AccessRestriction::PassKey<Atlas::TextureAtlas>);
-            const std::vector<Texture>& WARN_UNUSED getTextures(AccessRestriction::PassKey<Atlas::TextureAtlas>) const;
-            void setTextureAtlasInstance(Atlas::TextureAtlas *textureAtlas, AccessRestriction::PassKey<Atlas::TextureAtlas>);
+
+            const std::vector<Texture>& WARN_UNUSED deleteImage(std::vector<Texture>::iterator texture, AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>);
+            const std::vector<Texture>& WARN_UNUSED getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const;
+            void setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget);
+            void storeNewTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
+            void textureButtonPressed(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
+
         private:
-            Atlas::TextureAtlas *textureAtlas = nullptr;
+            GUI::Atlas::AtlasTabWidget *atlasTabWidget = nullptr;
             std::vector<Texture> textures;
 
     };

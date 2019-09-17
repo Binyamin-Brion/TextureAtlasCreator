@@ -85,7 +85,7 @@ namespace Atlas
     {
         this->textureBank = textureBank;
 
-        this->textureBank->setTextureAtlasInstance(this, {});
+//        this->textureBank->addTextureAtlasInstance(this, {});
     }
 
     void TextureAtlas::textureLoaded(AccessRestriction::PassKey<TextureLogic::TextureBank>)
