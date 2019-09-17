@@ -5,6 +5,8 @@
 #include "SelectedTexture.h"
 #include <QPainter>
 
+#include "TextureLogic/Texture.h"
+
 namespace Atlas
 {
     QPoint SelectedTexture::getDrawingCoordinates() const
@@ -17,6 +19,11 @@ namespace Atlas
         _isOpen = false;
         
         return *selectedTexture;
+    }
+
+    const QString &SelectedTexture::getTextureLocation() const
+    {
+        return selectedTexture->textureLocation();
     }
 
     bool SelectedTexture::isOpen() const

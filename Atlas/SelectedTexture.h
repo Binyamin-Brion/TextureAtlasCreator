@@ -23,6 +23,7 @@ namespace Atlas
 
             QPoint getDrawingCoordinates() const;
             const TextureLogic::Texture& getImage();
+            const QString& getTextureLocation() const;
             bool isOpen() const;
             void move(int mouseX, int mouseY);
             void setTexture(const TextureLogic::Texture &selectedTexture);

@@ -17,6 +17,7 @@ namespace Atlas
     struct TextureDrawingPosition
     {
         const TextureLogic::Texture *texture = nullptr;
+        int index = -1;
         QPoint drawingPosition;
     };
 }

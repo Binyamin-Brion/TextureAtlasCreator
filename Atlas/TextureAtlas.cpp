@@ -89,9 +89,9 @@ namespace Atlas
 
         this->textures = &textures;
 
-        for(int i = 0; i < this->textures->size() - 1; ++i)
+        for(auto &i : textureDrawingPositions)
         {
-            textureDrawingPositions[i].texture = &((*this->textures)[i]);
+            i.texture = &((*this->textures)[i.index]);
         }
     }
 
@@ -104,6 +104,21 @@ namespace Atlas
             textureDrawingPositions.back().drawingPosition = selectedTexture->getDrawingCoordinates();
 
             textureDrawingPositions.back().texture = &selectedTexture->getImage();
+
+            for(int i = 0; i < textures->size(); ++i)
+            {
+                if((*textures)[i].textureLocation() == selectedTexture->getTextureLocation())
+                {
+                    textureDrawingPositions.back().index = i;
+
+                    break;
+                }
+            }
+
+            if(textureDrawingPositions.back().index == -1)
+            {
+                Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Selected texture has a location not found in texture bank!");
+            }
         }
 
 //        auto textureInBank = std::find_if(textureBank->getTextures({}).begin(), textureBank->getTextures({}).end(),
