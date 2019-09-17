@@ -16,10 +16,10 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTabWidget" name="tabWidget"/>
+     <widget class="GUI::Atlas::AtlasTabWidget" name="atlasWidget"/>
     </item>
     <item>
-     <widget class="GUI::LoadResults::LoadedTextures" name="tabWidget_2"/>
+     <widget class="GUI::LoadResults::LoadedTextures" name="loadedTextures"/>
     </item>
    </layout>
   </widget>
@@ -40,6 +40,12 @@
    <class>GUI::LoadResults::LoadedTextures</class>
    <extends>QTabWidget</extends>
    <header>GUI/LoadResults/LoadedTextures.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GUI::Atlas::AtlasTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>GUI/Atlas/AtlasTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

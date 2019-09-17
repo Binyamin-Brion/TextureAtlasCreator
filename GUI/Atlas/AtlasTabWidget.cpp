@@ -3,11 +3,38 @@
 //
 
 #include "AtlasTabWidget.h"
+#include "TextureLogic/TextureBank.h"
+#include "ScrollArea.h"
 
 namespace GUI
 {
     namespace Atlas
     {
+        AtlasTabWidget::AtlasTabWidget(QWidget *parent) : QTabWidget{parent}
+        {
+            QString defaultTabName{"Default"};
 
+            auto *defaultTabScrollArea = new ScrollArea{QSize{1920, 1080}, this};
+
+            currentTabs.emplace_back(defaultTabScrollArea, defaultTabName);
+
+            addTab(currentTabs.back().first, currentTabs.back().second);
+        }
+
+        void AtlasTabWidget::setTextureBankReference(TextureLogic::TextureBank *textureBank)
+        {
+            if(textureBank != nullptr)
+            {
+                this->textureBank = textureBank;
+            }
+        }
+
+        void AtlasTabWidget::updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>)
+        {
+            for(auto &i : currentTabs)
+            {
+                i.first->updateTextureReferences(textureBank->getTextures({}));
+            }
+        }
     }
 }

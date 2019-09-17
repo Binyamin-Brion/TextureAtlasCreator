@@ -5,7 +5,9 @@
 #ifndef TEXTUREATLASCREATOR_ATLASTABWIDGET_H
 #define TEXTUREATLASCREATOR_ATLASTABWIDGET_H
 
+#include <QtWidgets/QTabWidget>
 #include "AccessRestriction/PassKey.h"
+#include "Atlas/TextureAtlas.h"
 
 namespace TextureLogic
 {
@@ -16,12 +18,18 @@ namespace GUI
 {
     namespace Atlas
     {
-        class AtlasTabWidget
+        class ScrollArea;
+
+        class AtlasTabWidget : public QTabWidget
         {
             public:
+                explicit AtlasTabWidget(QWidget *parent = nullptr);
+                void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>);
 
             private:
+                std::vector<std::pair<ScrollArea*, QString>> currentTabs;
+                TextureLogic::TextureBank *textureBank = nullptr;
         };
     }
 }

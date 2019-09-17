@@ -11,11 +11,6 @@
 
 class QPainter;
 
-namespace TextureLogic
-{
-    class TextureBank;
-}
-
 namespace Atlas
 {
     class SelectedTexture;
@@ -26,15 +21,13 @@ namespace Atlas
             TextureAtlas();
             bool checkIntersection();
             void draw(QPainter &painter);
-            void setSelectedTexture(const TextureLogic::Texture &texture, AccessRestriction::PassKey<TextureLogic::TextureBank>);
+            void setSelectedTexture(const TextureLogic::Texture &texture);
             void mouseClicked();
             void mouseMoved(int mouseX, int mouseY);
-            void setTextureBankReference(TextureLogic::TextureBank *textureBank);
-            void textureLoaded(AccessRestriction::PassKey<TextureLogic::TextureBank>);
+            void textureLoaded(const std::vector<TextureLogic::Texture> &textures);
 
         private:
             void addTexture();
-            TextureLogic::TextureBank *textureBank = nullptr;
             std::vector<QString> texturesInAtlas;
             std::vector<TextureDrawingPosition> textureDrawingPositions;
             const std::vector<TextureLogic::Texture> *textures = nullptr;

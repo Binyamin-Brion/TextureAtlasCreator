@@ -57,7 +57,7 @@ namespace GUI
             // Try loading the image first; if that operation fails, then there is no point continuing to create
             // a texture pushbutton for that image
 
-            textureBank->storeNewTexture(textureLocation, {});
+           // textureBank->storeNewTexture(textureLocation, {}); //TODO: set reference to textrue bank
 
             // Swap the place holder widget with the newly created plcae holder; see the description at the top of
             // this file for more information.

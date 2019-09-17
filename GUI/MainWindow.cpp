@@ -11,7 +11,7 @@ namespace GUI
     {
         ui->setupUi(this);
 
-        new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->tabWidget_2, SLOT(showLoadTextureDialog()));
+        new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
     }
 
 }

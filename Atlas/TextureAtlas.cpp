@@ -56,7 +56,7 @@ namespace Atlas
         }
     }
 
-    void TextureAtlas::setSelectedTexture(const TextureLogic::Texture &texture, AccessRestriction::PassKey<TextureLogic::TextureBank>)
+    void TextureAtlas::setSelectedTexture(const TextureLogic::Texture &texture)
     {
         // In a texture atlas, there is only one of each atlas. If that texture is already put in the atlas, then it is an error
         // to place it again and the user must be notified
@@ -81,25 +81,17 @@ namespace Atlas
         selectedTexture->setTexture(texture);
     }
 
-    void TextureAtlas::setTextureBankReference(TextureLogic::TextureBank *textureBank)
-    {
-        this->textureBank = textureBank;
 
-//        this->textureBank->addTextureAtlasInstance(this, {});
-    }
-
-    void TextureAtlas::textureLoaded(AccessRestriction::PassKey<TextureLogic::TextureBank>)
+    void TextureAtlas::textureLoaded(const std::vector<TextureLogic::Texture> &textures)
     {
         // Texture has been added to the texture bank. Note that when adding a texture to the image, the old vector of textures
         // might be moved in memory due to reallocation of the vector. Therefore references to that vector have to be reset just in case.
 
-        textures = &textureBank->getTextures({});
+        this->textures = &textures;
 
-        for(int i = 0; i < textures->size() - 1; ++i)
+        for(int i = 0; i < this->textures->size() - 1; ++i)
         {
-            // Operator[] does not work for pointer to vector
-
-            textureDrawingPositions[i].texture = &(textures->at(i));
+            textureDrawingPositions[i].texture = &((*this->textures)[i]);
         }
     }
 
