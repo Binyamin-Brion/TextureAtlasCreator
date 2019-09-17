@@ -25,10 +25,14 @@ namespace GUI
             setWidget(textureButtonArea);
         }
 
+        void ScrollArea::addTextureButton(const QString &textureLocation)
+        {
+            textureButtonArea->addTextureButton(textureLocation);
+        }
+
         void ScrollArea::setTextureBankReference(const TextureLogic::TextureBank *textureBank)
         {
             textureButtonArea->setTextureBankReference(const_cast<TextureLogic::TextureBank*>(textureBank));
         }
-
     }
 }

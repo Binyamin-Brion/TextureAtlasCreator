@@ -24,6 +24,8 @@ namespace GUI
             public:
                 TextureButton(const QString &textureLocation, QWidget *parent = nullptr);
 
+                static const int buttonSizeLength = 150;
+
             signals:
                 void buttonClicked(const QString &textureLocation);
 

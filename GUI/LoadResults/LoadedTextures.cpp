@@ -41,6 +41,8 @@ namespace GUI
         void LoadedTextures::openTexture(QString textureLocation)
         {
             printf("%s \n", textureLocation.toStdString().c_str());
+
+            currentTabs[currentIndex()].first->addTextureButton(textureLocation);
         }
     }
 }

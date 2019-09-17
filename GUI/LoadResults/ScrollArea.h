@@ -23,6 +23,7 @@ namespace GUI
         {
             public:
                 explicit ScrollArea(QWidget *parent = nullptr);
+                void addTextureButton(const QString &textureLocation);
                 void setTextureBankReference(const TextureLogic::TextureBank *textureBank);
 
             private:
