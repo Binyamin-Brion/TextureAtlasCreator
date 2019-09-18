@@ -32,7 +32,7 @@ namespace Atlas
 
         if(selectedTexture->isOpen())
         {
-            painter.drawImage(selectedTexture->getDrawingCoordinates(), selectedTexture->getImage().getImage(currentZoom));
+            painter.drawImage(selectedTexture->getDrawingCoordinates(), selectedTexture->getImageForDrawing().getImage(currentZoom));
         }
     }
 
@@ -52,8 +52,13 @@ namespace Atlas
     {
         if(selectedTexture->isOpen())
         {
-            selectedTexture->move(mouseX, mouseY);
+            selectedTexture->move(mouseX, mouseY, atlasSize);
         }
+    }
+
+    void TextureAtlas::setAtlasSize(QSize size)
+    {
+        atlasSize = size;
     }
 
     void TextureAtlas::setSelectedTexture(const TextureLogic::Texture &texture)

@@ -21,6 +21,11 @@ namespace Atlas
         return *selectedTexture;
     }
 
+    const TextureLogic::Texture& SelectedTexture::getImageForDrawing() const
+    {
+        return *selectedTexture;
+    }
+
     const QString &SelectedTexture::getTextureLocation() const
     {
         return selectedTexture->textureLocation();
@@ -31,7 +36,7 @@ namespace Atlas
         return _isOpen;
     }
 
-    void SelectedTexture::move(int mouseX, int mouseY)
+    void SelectedTexture::move(int mouseX, int mouseY, QSize boundaries)
     {
         if(firstMouse)
         {
@@ -42,13 +47,33 @@ namespace Atlas
             firstMouse = true;
         }
 
-        int differenceX = mouseX - previousMouseX;
+        auto currentZoomImage = selectedTexture->getImage(currentZoom);
 
-        int differenceY = mouseY - previousMouseY;
+        if(mouseX - currentZoomImage.width() / 2 < 0)
+        {
+            drawingCoordinates.setX(0);
+        }
+        else if(mouseX + currentZoomImage.width() / 2 > boundaries.width())
+        {
+            drawingCoordinates.setX(boundaries.width() - currentZoomImage.width());
+        }
+        else
+        {
+            drawingCoordinates.setX(mouseX - currentZoomImage.width() / 2);
+        }
 
-        drawingCoordinates.setX(drawingCoordinates.x() + differenceX);
-
-        drawingCoordinates.setY(drawingCoordinates.y() + differenceY);
+        if(mouseY - currentZoomImage.height() / 2 < 0)
+        {
+            drawingCoordinates.setY(0);
+        }
+        else if(mouseY + currentZoomImage.height() / 2 > boundaries.height())
+        {
+            drawingCoordinates.setY(boundaries.height() - currentZoomImage.height());
+        }
+        else
+        {
+            drawingCoordinates.setY(mouseY - currentZoomImage.height() / 2);
+        }
     }
 
     void SelectedTexture::setTexture(const TextureLogic::Texture &selectedTexture)
@@ -61,6 +86,13 @@ namespace Atlas
         previousMouseX = 0;
 
         previousMouseY = 0;
+
+        _isOpen = true;
+    }
+
+    void SelectedTexture::setZoom(TextureLogic::Zoom zoom)
+    {
+        currentZoom = zoom;
     }
 
 }

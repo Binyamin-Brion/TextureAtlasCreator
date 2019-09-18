@@ -21,9 +21,10 @@ namespace Atlas
             TextureAtlas();
             bool checkIntersection();
             void draw(QPainter &painter);
-            void setSelectedTexture(const TextureLogic::Texture &texture);
             void mouseClicked();
             void mouseMoved(int mouseX, int mouseY);
+            void setAtlasSize(QSize size);
+            void setSelectedTexture(const TextureLogic::Texture &texture);
             void textureLoaded(const std::vector<TextureLogic::Texture> &textures);
 
         private:
@@ -35,6 +36,8 @@ namespace Atlas
             SelectedTexture *selectedTexture = nullptr;
 
             TextureLogic::Zoom currentZoom;
+
+            QSize atlasSize;
     };
 }
 
