@@ -19,7 +19,14 @@
      <widget class="GUI::Atlas::AtlasTabWidget" name="atlasWidget"/>
     </item>
     <item>
-     <widget class="GUI::LoadResults::LoadedTextures" name="loadedTextures"/>
+     <widget class="GUI::LoadResults::LoadedTextures" name="loadedTextures">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>300</height>
+       </size>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -29,7 +36,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

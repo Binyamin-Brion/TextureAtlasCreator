@@ -24,13 +24,8 @@ namespace GUI
 
             public:
                 ScrollArea(QSize atlasSize, QWidget *parent = nullptr);
+                void addTexture(const TextureLogic::Texture &texture);
                 void updateTextureReferences(const std::vector<TextureLogic::Texture> &textures);
-
-            public slots:
-                void textureButtonPressed(const TextureLogic::Texture &texture);
-
-            signals:
-                void passTextureButtonInfo(const TextureLogic::Texture &texture);
 
             private:
                 AtlasWidget *atlasWidget = nullptr;

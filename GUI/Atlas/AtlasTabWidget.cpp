@@ -21,6 +21,11 @@ namespace GUI
             addTab(currentTabs.back().first, currentTabs.back().second);
         }
 
+        void AtlasTabWidget::addTextureToCurrentAtlas(const TextureLogic::Texture &texture)
+        {
+            currentTabs[currentIndex()].first->addTexture(texture);
+        }
+
         void AtlasTabWidget::setTextureBankReference(TextureLogic::TextureBank *textureBank)
         {
             if(textureBank != nullptr)

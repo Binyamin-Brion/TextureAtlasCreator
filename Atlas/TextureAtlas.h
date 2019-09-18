@@ -23,6 +23,7 @@ namespace Atlas
             void draw(QPainter &painter);
             void mouseClicked();
             void mouseMoved(int mouseX, int mouseY);
+            std::pair<bool, QPoint> resetCursorPosition() const;
             void setAtlasSize(QSize size);
             void setSelectedTexture(const TextureLogic::Texture &texture);
             void textureLoaded(const std::vector<TextureLogic::Texture> &textures);

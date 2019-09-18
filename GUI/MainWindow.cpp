@@ -17,6 +17,8 @@ namespace GUI
         textureBank->setAtlasTabWidgetReference(ui->atlasWidget);
 
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
+
+        setMinimumSize(1600, 900);
     }
 
     MainWindow::~MainWindow()

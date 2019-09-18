@@ -56,6 +56,20 @@ namespace Atlas
         }
     }
 
+    std::pair<bool, QPoint> TextureAtlas::resetCursorPosition() const
+    {
+        if(!selectedTexture->isOpen())
+        {
+            return {false, QPoint{-1, -1}};
+        }
+
+        int newMouseX = selectedTexture->getDrawingCoordinates().x() + selectedTexture->getImageForDrawing().getImage(currentZoom).width() / 2;
+
+        int newMouseY = selectedTexture->getDrawingCoordinates().y() + selectedTexture->getImageForDrawing().getImage(currentZoom).height() / 2;
+
+        return {true, QPoint{newMouseX, newMouseY}};
+    }
+
     void TextureAtlas::setAtlasSize(QSize size)
     {
         atlasSize = size;

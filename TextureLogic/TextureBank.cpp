@@ -49,6 +49,8 @@ namespace TextureLogic
             {
                 foundTexture = true;
 
+                atlasTabWidget->addTextureToCurrentAtlas(i);
+
                 break;
             }
         }

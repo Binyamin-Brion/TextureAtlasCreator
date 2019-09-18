@@ -6,6 +6,8 @@
 #include "Atlas/TextureAtlas.h"
 
 #include <QPainter>
+#include <QMouseEvent>
+#include <QResizeEvent>
 
 namespace GUI
 {
@@ -16,6 +18,30 @@ namespace GUI
         {
             setMinimumSize(size);
             setMaximumSize(size);
+
+            setFocusPolicy(Qt::StrongFocus);
+            setMouseTracking(true);
+        }
+
+        void AtlasWidget::leaveEvent(QEvent *event)
+        {
+            QCursor c = cursor();
+
+            auto newCursorInformation = textureAtlas->resetCursorPosition();
+
+            if(newCursorInformation.first)
+            {
+                c.setPos(mapToGlobal(newCursorInformation.second));
+
+                setCursor(c);
+            }
+        }
+
+        void AtlasWidget::mouseMoveEvent(QMouseEvent *event)
+        {
+            textureAtlas->mouseMoved(event->x(), event->y());
+
+            QWidget::repaint();
         }
 
         void AtlasWidget::paintEvent(QPaintEvent *event)
@@ -40,6 +66,13 @@ namespace GUI
         AtlasWidget::~AtlasWidget()
         {
 
+        }
+
+        void AtlasWidget::resizeEvent(QResizeEvent *event)
+        {
+            QWidget::resizeEvent(event);
+
+            textureAtlas->setAtlasSize(event->size());
         }
     }
 }

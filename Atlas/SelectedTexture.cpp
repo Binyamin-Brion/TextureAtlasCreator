@@ -54,7 +54,7 @@ namespace Atlas
             drawingCoordinates.setX(0);
         }
         else if(mouseX + currentZoomImage.width() / 2 > boundaries.width())
-        {
+        { printf("%d, %d \n", boundaries.width(), currentZoomImage.width());
             drawingCoordinates.setX(boundaries.width() - currentZoomImage.width());
         }
         else
@@ -74,6 +74,7 @@ namespace Atlas
         {
             drawingCoordinates.setY(mouseY - currentZoomImage.height() / 2);
         }
+
     }
 
     void SelectedTexture::setTexture(const TextureLogic::Texture &selectedTexture)
@@ -88,6 +89,8 @@ namespace Atlas
         previousMouseY = 0;
 
         _isOpen = true;
+
+        firstMouse = false;
     }
 
     void SelectedTexture::setZoom(TextureLogic::Zoom zoom)
