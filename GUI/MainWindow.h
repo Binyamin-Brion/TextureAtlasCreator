@@ -7,6 +7,12 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_mainwindow.h"
+#include <memory>
+
+namespace TextureLogic
+{
+    class TextureBank;
+}
 
 namespace GUI
 {
@@ -16,9 +22,10 @@ namespace GUI
 
         public:
             explicit MainWindow(QWidget *parent = nullptr);
-
+            ~MainWindow();
         private:
             Ui::MainWindow *ui = nullptr;
+            std::unique_ptr<::TextureLogic::TextureBank> textureBank;
     };
 }
 

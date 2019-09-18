@@ -30,6 +30,7 @@ namespace GUI
                 explicit AtlasWidget(QSize atlasSize, QWidget *parent = nullptr);
                 void paintEvent(QPaintEvent *event) override;
                 void updateTextureReferences(const std::vector<TextureLogic::Texture> &textures);
+                ~AtlasWidget();
 
             public slots:
                 void textureButtonPressed(const TextureLogic::Texture &texture);

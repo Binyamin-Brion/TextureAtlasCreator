@@ -30,7 +30,12 @@ namespace GUI
 
         void LoadedTextures::setTextureBankReference(const TextureLogic::TextureBank *textureBank)
         {
-            this->textureBank = textureBank;
+            if(this->textureBank == nullptr)
+            {
+                this->textureBank = textureBank;
+
+                currentTabs.front().first->setTextureBankReference(this->textureBank);
+            }
         }
 
         void LoadedTextures::showLoadTextureDialog()

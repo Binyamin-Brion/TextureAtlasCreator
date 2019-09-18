@@ -23,12 +23,10 @@ namespace TextureLogic
 
     void TextureBank::setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget)
     {
-        if(this->atlasTabWidget != nullptr)
+        if(this->atlasTabWidget == nullptr)
         {
-            return;
+            this->atlasTabWidget = atlasTabWidget;
         }
-
-        this->atlasTabWidget = atlasTabWidget;
     }
 
     void TextureBank::storeNewTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)

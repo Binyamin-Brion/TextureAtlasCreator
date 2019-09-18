@@ -57,7 +57,7 @@ namespace GUI
             // Try loading the image first; if that operation fails, then there is no point continuing to create
             // a texture pushbutton for that image
 
-           // textureBank->storeNewTexture(textureLocation, {}); //TODO: set reference to textrue bank
+            textureBank->storeNewTexture(textureLocation, {}); //TODO: set reference to textrue bank
 
             // Swap the place holder widget with the newly created plcae holder; see the description at the top of
             // this file for more information.
@@ -107,12 +107,10 @@ namespace GUI
 
         void TextureButtonArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
         {
-            if(textureBank != nullptr)
+            if(this->textureBank == nullptr)
             {
-                return;
+                this->textureBank = textureBank;
             }
-
-            this->textureBank = textureBank;
         }
 
         void TextureButtonArea::textureButtonClicked(const QString &textureLocation)

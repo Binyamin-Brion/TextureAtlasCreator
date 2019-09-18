@@ -36,5 +36,10 @@ namespace GUI
         {
             textureAtlas->textureLoaded(textures);
         }
+
+        AtlasWidget::~AtlasWidget()
+        {
+
+        }
     }
 }
