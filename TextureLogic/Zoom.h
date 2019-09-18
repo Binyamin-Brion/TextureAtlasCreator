@@ -54,9 +54,9 @@ namespace TextureLogic
 
     // Clear everything but the lower 12 bits that hold the zoom value
 
-    constexpr unsigned int GetZoomValue(Zoom zoom)
+    constexpr float GetZoomValue(Zoom zoom)
     {
-        return static_cast<unsigned int>(zoom) & 0xFFFu;
+        return static_cast<float>((static_cast<unsigned int>(zoom) & 0xFFFu) / 100.0f);
     }
 }
 

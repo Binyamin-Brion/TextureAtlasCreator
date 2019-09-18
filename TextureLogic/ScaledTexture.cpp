@@ -26,29 +26,14 @@ namespace TextureLogic
             throw std::runtime_error{"Unable to load texture: " + textureLocation.toStdString()};
         }
 
-        if(image.width() < 0 || image.height() < 0)
-        {
-            throw std::runtime_error{"Image dimensions are negative!"};
-        }
-
         auto zoomFactorValue = GetZoomValue(zoom);
 
-        auto imageWidthUnsigned = static_cast<unsigned int>(image.width());
+        int newImageWidth = image.width() * zoomFactorValue;
 
-        auto imageHeightUnsigned = static_cast<unsigned int>(image.height());
+        auto newImageHeight = image.height() * zoomFactorValue;
 
-        if( (imageWidthUnsigned * zoomFactorValue) > std::numeric_limits<int>::max())
-        {
-            throw std::runtime_error{"After zoom, width is too large."};
-        }
+        image = image.scaled(newImageWidth, newImageHeight, Qt::KeepAspectRatio);
 
-        if( (imageHeightUnsigned * zoomFactorValue) > std::numeric_limits<int>::max())
-        {
-            throw std::runtime_error{"After zoom, height is too large."};
-        }
-
-        image = image.scaled(image.width() * zoomFactorValue, image.height() * zoomFactorValue, Qt::KeepAspectRatio);
-
-        border.initialize(image.width(), image.height());
+        border.initialize(newImageWidth, newImageHeight);
     }
 }
