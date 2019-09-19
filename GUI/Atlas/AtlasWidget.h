@@ -29,7 +29,9 @@ namespace GUI
             public:
                 explicit AtlasWidget(QSize atlasSize, QWidget *parent = nullptr);
                 void leaveEvent(QEvent *event) override;
+                void keyPressEvent(QKeyEvent *event) override;
                 void mouseMoveEvent(QMouseEvent *event) override;
+                void mousePressEvent(QMouseEvent *event) override;
                 void paintEvent(QPaintEvent *event) override;
                 void resizeEvent(QResizeEvent *event) override;
                 void updateTextureReferences(const std::vector<TextureLogic::Texture> &textures);

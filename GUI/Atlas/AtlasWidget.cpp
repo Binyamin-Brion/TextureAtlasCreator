@@ -5,6 +5,7 @@
 #include "AtlasWidget.h"
 #include "Atlas/TextureAtlas.h"
 
+#include <QCoreApplication>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QResizeEvent>
@@ -25,23 +26,85 @@ namespace GUI
 
         void AtlasWidget::leaveEvent(QEvent *event)
         {
-            QCursor c = cursor();
+//            QCursor c = cursor();
+//
+//            auto newCursorInformation = textureAtlas->resetCursorPosition();
+//
+//            if(newCursorInformation.first)
+//            {
+//                c.setPos(mapToGlobal(newCursorInformation.second));
+//
+//                setCursor(c);
+//            }
+        }
 
-            auto newCursorInformation = textureAtlas->resetCursorPosition();
-
-            if(newCursorInformation.first)
+        void AtlasWidget::keyPressEvent(QKeyEvent *event)
+        {
+            if(event->key() == Qt::Key_Escape)
             {
-                c.setPos(mapToGlobal(newCursorInformation.second));
-
-                setCursor(c);
+                QCoreApplication::quit();
             }
         }
 
         void AtlasWidget::mouseMoveEvent(QMouseEvent *event)
         {
+            auto testPosAgainstAtlasBoundaries = textureAtlas->getAtlasSize();
+
+            int mouseX = event->x();
+
+            int mouseY = event->y();
+
+            if(testPosAgainstAtlasBoundaries.first) // A texture is selected
+            {
+                bool resetCursorPosition = false;
+
+                if(event->x() < textureAtlas->getSelectedTextureSize().second.width() / 2)
+                {
+                    mouseX = textureAtlas->resetCursorPosition().second.x();
+
+                    resetCursorPosition = true;
+                }
+                else if(event->x() > testPosAgainstAtlasBoundaries.second.width() - textureAtlas->getSelectedTextureSize().second.width() / 2)
+                {
+                    mouseX = textureAtlas->resetCursorPosition().second.x();
+
+                    resetCursorPosition = true;
+                }
+
+                if(event->y() < textureAtlas->getSelectedTextureSize().second.height() / 2)
+                {
+                    mouseY = textureAtlas->resetCursorPosition().second.x();
+
+                    resetCursorPosition = true;
+                }
+                else if(event->y() > testPosAgainstAtlasBoundaries.second.height() - textureAtlas->getSelectedTextureSize().second.height() / 2)
+                {
+                    mouseY = textureAtlas->resetCursorPosition().second.x();
+
+                    resetCursorPosition = true;
+                }
+
+                if(resetCursorPosition)
+                {
+                    QCursor c = cursor();
+
+                    c.setPos(mapToGlobal(textureAtlas->resetCursorPosition().second));
+
+                    setCursor(c);
+                }
+            }
+
             textureAtlas->mouseMoved(event->x(), event->y());
 
             QWidget::repaint();
+        }
+
+        void AtlasWidget::mousePressEvent(QMouseEvent *event)
+        {
+            if(event->button())
+            {
+                textureAtlas->mouseClicked();
+            }
         }
 
         void AtlasWidget::paintEvent(QPaintEvent *event)

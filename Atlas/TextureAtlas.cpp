@@ -36,6 +36,27 @@ namespace Atlas
         }
     }
 
+    std::pair<bool, QSize> TextureAtlas::getAtlasSize() const
+    {
+        if(selectedTexture->isOpen())
+        {
+            return {true, atlasSize};
+        }
+
+        return {false, QSize{-1, -1}};
+    }
+
+    std::pair<bool, QSize> TextureAtlas::getSelectedTextureSize() const
+    {
+        if(selectedTexture->isOpen())
+        {
+            return {true,
+                    QSize{selectedTexture->getImageForDrawing().getImage(currentZoom).width(), selectedTexture->getImageForDrawing().getImage(currentZoom).height()}};
+        }
+
+        return{false, QSize{-1, -1}};
+    }
+
     void TextureAtlas::mouseClicked()
     {
         if(selectedTexture->isOpen())

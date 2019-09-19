@@ -21,6 +21,8 @@ namespace Atlas
             TextureAtlas();
             bool checkIntersection();
             void draw(QPainter &painter);
+            std::pair<bool, QSize> getAtlasSize() const;
+            std::pair<bool, QSize> getSelectedTextureSize() const;
             void mouseClicked();
             void mouseMoved(int mouseX, int mouseY);
             std::pair<bool, QPoint> resetCursorPosition() const;
