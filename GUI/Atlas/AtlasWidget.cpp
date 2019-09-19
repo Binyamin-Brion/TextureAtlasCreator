@@ -66,14 +66,14 @@ namespace GUI
                 }
                 else if(event->x() > testPosAgainstAtlasBoundaries.second.width() - textureAtlas->getSelectedTextureSize().second.width() / 2)
                 {
-                    mouseX = textureAtlas->resetCursorPosition().second.x();
+                    mouseX = textureAtlas->resetCursorPosition().second.y();
 
                     resetCursorPosition = true;
                 }
 
                 if(event->y() < textureAtlas->getSelectedTextureSize().second.height() / 2)
                 {
-                    mouseY = textureAtlas->resetCursorPosition().second.x();
+                    mouseY = textureAtlas->resetCursorPosition().second.y();
 
                     resetCursorPosition = true;
                 }

@@ -24,6 +24,7 @@ namespace TextureLogic
             TextureImages& textureImages();
             const QString& textureLocation() const;
             const QString& textureName() const;
+            void translate(int differenceX, int differenceY);
 
         private:
 

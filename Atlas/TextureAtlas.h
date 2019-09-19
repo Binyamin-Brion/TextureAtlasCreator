@@ -41,6 +41,10 @@ namespace Atlas
             TextureLogic::Zoom currentZoom;
 
             QSize atlasSize;
+
+            bool firstMouse = true;
+            int previousMouseX;
+            int previousMouseY;
     };
 }
 

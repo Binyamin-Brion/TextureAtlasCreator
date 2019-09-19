@@ -19,6 +19,7 @@ namespace TextureLogic
             bool checkIntersection(const ScaledTexture &scaledTexture);
             const QImage& getImage() const;
             void initialize(const QString &textureLocation, Zoom zoom);
+            void translate(int differenceX, int differenceY);
 
         private:
             QImage image;

@@ -18,6 +18,8 @@ namespace TextureLogic
                 {
                     drawIntersectionBorder = true;
 
+                    printf("Intersecting \n");
+
                     return true;
                 }
             }

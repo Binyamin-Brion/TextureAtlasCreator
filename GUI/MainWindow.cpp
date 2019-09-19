@@ -20,7 +20,7 @@ namespace GUI
 
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
 
-        setMinimumSize(1600, 900);
+        setMinimumSize(1280, 720);
     }
 
     MainWindow::~MainWindow()

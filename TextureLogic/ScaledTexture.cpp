@@ -36,4 +36,9 @@ namespace TextureLogic
 
         border.initialize(newImageWidth, newImageHeight);
     }
+
+    void ScaledTexture::translate(int differenceX, int differenceY)
+    {
+        border.translate(differenceX, differenceY);
+    }
 }

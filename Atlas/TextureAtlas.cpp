@@ -20,7 +20,19 @@ namespace Atlas
 
     bool TextureAtlas::checkIntersection()
     {
+        if(!selectedTexture->isOpen())
+        {
+            return false;
+        }
 
+        auto& selectedTextureNotConst = const_cast<TextureLogic::Texture&>(selectedTexture->getImageForDrawing());
+
+        auto& texturesNotConst = const_cast<std::vector<TextureLogic::Texture>&>(*textures);
+
+        for(auto &i : texturesNotConst)
+        {
+            i.checkIntersection(selectedTextureNotConst, currentZoom);
+        }
     }
 
     void TextureAtlas::draw(QPainter &painter)
@@ -73,7 +85,34 @@ namespace Atlas
     {
         if(selectedTexture->isOpen())
         {
+            auto& selectedTextureNotConst = const_cast<TextureLogic::Texture&>(selectedTexture->getImageForDrawing());
+
+            int newMouseX = mouseX - selectedTexture->getImageForDrawing().getImage(currentZoom).width() / 2;
+
+            int newMouseY = mouseY - selectedTexture->getImageForDrawing().getImage(currentZoom).height() / 2;
+
+            if(firstMouse)
+            {
+                selectedTextureNotConst.translate(newMouseX, newMouseY);
+
+                firstMouse = false;
+            }
+            else
+            {
+                int differenceX = newMouseX - previousMouseX;
+
+                int differenceY = newMouseY - previousMouseY;
+
+                selectedTextureNotConst.translate(differenceX, differenceY);
+            }
+
+            previousMouseX = newMouseX;
+
+            previousMouseY = newMouseY;
+
             selectedTexture->move(mouseX, mouseY, atlasSize);
+
+            checkIntersection();
         }
     }
 
