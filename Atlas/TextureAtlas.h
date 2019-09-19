@@ -28,6 +28,7 @@ namespace Atlas
             std::pair<bool, QPoint> resetCursorPosition() const;
             void setAtlasSize(QSize size);
             void setSelectedTexture(const TextureLogic::Texture &texture);
+            void resetFirstMouse();
             void textureLoaded(const std::vector<TextureLogic::Texture> &textures);
 
         private:

@@ -20,6 +20,7 @@ namespace TextureLogic
         public:
             explicit Texture(const QString &texturePath);
             bool checkIntersection(const Texture &otherTexture, Zoom zoom);
+            void drawBorder(QPainter &painter, Zoom zoom) const;
             const QImage& getImage(TextureLogic::Zoom zoom) const;
             TextureImages& textureImages();
             const QString& textureLocation() const;

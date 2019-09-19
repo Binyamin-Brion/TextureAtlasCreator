@@ -40,6 +40,8 @@ namespace Atlas
         for(const auto &i : textureDrawingPositions)
         {
             painter.drawImage(i.drawingPosition, i.texture->getImage(currentZoom));
+
+            i.texture->drawBorder(painter, currentZoom);
         }
 
         if(selectedTexture->isOpen())
@@ -160,6 +162,10 @@ namespace Atlas
         selectedTexture->setTexture(texture);
     }
 
+    void TextureAtlas::resetFirstMouse()
+    {
+        firstMouse = !selectedTexture->isOpen();
+    }
 
     void TextureAtlas::textureLoaded(const std::vector<TextureLogic::Texture> &textures)
     {

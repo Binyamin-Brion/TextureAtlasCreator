@@ -28,6 +28,11 @@ namespace TextureLogic
         return _texture[GetZoomIndex(zoom)].checkIntersection(otherTexture._texture[GetZoomIndex(zoom)]);
     }
 
+    void Texture::drawBorder(QPainter &painter, Zoom zoom) const
+    {
+        _texture[GetZoomIndex(zoom)].drawBorder(painter);
+    }
+
     const QImage& Texture::getImage(TextureLogic::Zoom zoom) const
     {
        return  _texture[GetZoomIndex(zoom)].getImage();

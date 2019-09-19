@@ -17,6 +17,7 @@ namespace TextureLogic
     {
         public:
             bool checkIntersection(const ScaledTexture &scaledTexture);
+            void drawBorder(QPainter &painter) const;
             const QImage& getImage() const;
             void initialize(const QString &textureLocation, Zoom zoom);
             void translate(int differenceX, int differenceY);

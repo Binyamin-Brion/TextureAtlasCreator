@@ -12,22 +12,32 @@ namespace TextureLogic
     {
         bool SurroundingBorder::checkIntersection(const SurroundingBorder &otherBorder)
         {
-            for(QRect &rect : intersectionBorder)
+//            for(QRect &rect : intersectionBorder)
+//            {
+//                if(otherBorder.entireTextureArea.intersects(rect))
+//                {
+//                    drawIntersectionBorder = true;
+//
+//                    printf("Intersecting \n");
+//
+//                    return true;
+//                }
+//            }
+
+            if(entireTextureArea.intersects(otherBorder.entireTextureArea) ||
+               otherBorder.entireTextureArea.intersects(entireTextureArea))
             {
-                if(otherBorder.entireTextureArea.intersects(rect))
-                {
-                    drawIntersectionBorder = true;
+                drawIntersectionBorder = true;
 
-                    printf("Intersecting \n");
-
-                    return true;
-                }
+                return true;
             }
+
+            drawIntersectionBorder = false;
 
             return false;
         }
 
-        void SurroundingBorder::draw(QPainter &painter)
+        void SurroundingBorder::draw(QPainter &painter) const
         {
             // Make sure to restore the painter to its original state once the drawing of the border is done
             // A copy is done as it is not sure if when setting new pen if the old one is deleted- keeping a reference
@@ -132,7 +142,7 @@ namespace TextureLogic
 
             entireTextureArea = QRect{-intersectionBorderWidth, -intersectionBorderWidth, textureWidth + 2 * intersectionBorderWidth, textureHeight + 2 * intersectionBorderWidth};
 
-            intersectionColour = QColor{128, 0, 0};
+            intersectionColour = QColor{210, 0, 0};
 
             selectionColour = QColor{205, 98, 5};
         }
@@ -148,6 +158,8 @@ namespace TextureLogic
             {
                 rect.translate(differenceX, differenceY);
             }
+
+           printf("%d \n", intersectionBorder[BorderValue(Border::Top)].x());
 
             for(QRect &rect : selectedBorder)
             {

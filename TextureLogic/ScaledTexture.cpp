@@ -14,6 +14,11 @@ namespace TextureLogic
         return border.checkIntersection(scaledTexture.border);
     }
 
+    void ScaledTexture::drawBorder(QPainter &painter) const
+    {
+        border.draw(painter);
+    }
+
     const QImage& ScaledTexture::getImage() const
     {
         return image;

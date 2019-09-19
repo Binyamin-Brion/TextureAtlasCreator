@@ -26,6 +26,8 @@ namespace GUI
 
         void AtlasWidget::leaveEvent(QEvent *event)
         {
+            textureAtlas->resetFirstMouse();
+
 //            QCursor c = cursor();
 //
 //            auto newCursorInformation = textureAtlas->resetCursorPosition();
@@ -56,39 +58,50 @@ namespace GUI
 
             if(testPosAgainstAtlasBoundaries.first) // A texture is selected
             {
-                bool resetCursorPosition = false;
+                bool resetCursorPositionX = false;
+
+                bool resetCursorPositionY = false;
 
                 if(event->x() < textureAtlas->getSelectedTextureSize().second.width() / 2)
                 {
                     mouseX = textureAtlas->resetCursorPosition().second.x();
 
-                    resetCursorPosition = true;
+                    resetCursorPositionX = true;
                 }
                 else if(event->x() > testPosAgainstAtlasBoundaries.second.width() - textureAtlas->getSelectedTextureSize().second.width() / 2)
                 {
-                    mouseX = textureAtlas->resetCursorPosition().second.y();
+                    mouseX = textureAtlas->resetCursorPosition().second.x();
 
-                    resetCursorPosition = true;
+                    resetCursorPositionX = true;
                 }
 
                 if(event->y() < textureAtlas->getSelectedTextureSize().second.height() / 2)
                 {
                     mouseY = textureAtlas->resetCursorPosition().second.y();
 
-                    resetCursorPosition = true;
+                    resetCursorPositionY = true;
                 }
                 else if(event->y() > testPosAgainstAtlasBoundaries.second.height() - textureAtlas->getSelectedTextureSize().second.height() / 2)
                 {
-                    mouseY = textureAtlas->resetCursorPosition().second.x();
+                    mouseY = textureAtlas->resetCursorPosition().second.y();
 
-                    resetCursorPosition = true;
+                    resetCursorPositionY = true;
                 }
 
-                if(resetCursorPosition)
+                if(resetCursorPositionX)
                 {
                     QCursor c = cursor();
 
-                    c.setPos(mapToGlobal(textureAtlas->resetCursorPosition().second));
+                    c.setPos(mapToGlobal(QPoint{textureAtlas->resetCursorPosition().second.x(), mouseY}));
+
+                    setCursor(c);
+                }
+
+                if(resetCursorPositionY)
+                {
+                    QCursor c = cursor();
+
+                    c.setPos(mapToGlobal(QPoint{mouseX, textureAtlas->resetCursorPosition().second.y()}));
 
                     setCursor(c);
                 }
