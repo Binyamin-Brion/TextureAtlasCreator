@@ -20,23 +20,34 @@ namespace Atlas
 
     bool TextureAtlas::checkIntersection()
     {
+        // A texture can only intersect with other textures if it's moving, in which case a texture must have
+        // been selected (does not matter which one, as long as there is one selected)
+
         if(!selectedTexture->isOpen())
         {
             return false;
         }
 
-        auto& selectedTextureNotConst = const_cast<TextureLogic::Texture&>(selectedTexture->getImageForDrawing());
+        // Checking for an intersection may change the state of a texture (it may give a mark to itself internally to
+        // draw its border). Therefore the references used when checking for intersections cannot be const
 
         auto& texturesNotConst = const_cast<std::vector<TextureLogic::Texture>&>(*textures);
 
+        // Note: The selected texture must be passed as a parameter, as the texture passed in to the check intersection
+        // border will not have its border drawn, even if there's an intersection (visually that would look off)
+        // TLDR: Do not cast away constness on selectedTexture->getImageForDrawing and write selectedTexture.checkIntersection(other Texture)
+
         for(auto &i : texturesNotConst)
         {
-            i.checkIntersection(selectedTextureNotConst, currentZoom);
+            i.checkIntersection(selectedTexture->getImageForDrawing(), currentZoom);
         }
     }
 
     void TextureAtlas::draw(QPainter &painter)
     {
+        // Note the order of drawing: the selected texture should be drawn last so that it is always drawn,
+        // even when over another texture
+
         for(const auto &i : textureDrawingPositions)
         {
             painter.drawImage(i.drawingPosition, i.texture->getImage(currentZoom));
@@ -52,6 +63,9 @@ namespace Atlas
 
     std::pair<bool, QSize> TextureAtlas::getAtlasSize() const
     {
+        // The result of this function is intended to be used if a texture is selected, as the result is used to determine
+        // if a texture can further moved in a direction and when to reset cursor (hence true or false as first parameter of pair)
+
         if(selectedTexture->isOpen())
         {
             return {true, atlasSize};
@@ -62,6 +76,8 @@ namespace Atlas
 
     std::pair<bool, QSize> TextureAtlas::getSelectedTextureSize() const
     {
+        // Same idea for using pair and checking if a texture is selected as fn getAtlasSize
+
         if(selectedTexture->isOpen())
         {
             return {true,
@@ -87,7 +103,13 @@ namespace Atlas
     {
         if(selectedTexture->isOpen())
         {
+            // When the selected texture is being moved, not only do its drawing coordinates have to be updated, but
+            // also its border. This border is contained within the Texture class and a mutable reference is needed to update it,
+            // and so a reference to it must not be const in order for that surrounding border to updated
+
             auto& selectedTextureNotConst = const_cast<TextureLogic::Texture&>(selectedTexture->getImageForDrawing());
+
+            // Translate the new cursor position so that it is relative to the 
 
             int newMouseX = mouseX - selectedTexture->getImageForDrawing().getImage(currentZoom).width() / 2;
 
