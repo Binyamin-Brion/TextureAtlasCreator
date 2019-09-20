@@ -159,7 +159,7 @@ namespace TextureLogic
                 rect.translate(differenceX, differenceY);
             }
 
-           printf("%d \n", intersectionBorder[BorderValue(Border::Top)].x());
+      //     printf("%d \n", intersectionBorder[BorderValue(Border::Top)].x());
 
             for(QRect &rect : selectedBorder)
             {

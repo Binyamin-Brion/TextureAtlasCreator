@@ -29,18 +29,20 @@ namespace Atlas
             return false;
         }
 
-        // Checking for an intersection may change the state of a texture (it may give a mark to itself internally to
-        // draw its border). Therefore the references used when checking for intersections cannot be const
-
-        auto& texturesNotConst = const_cast<std::vector<TextureLogic::Texture>&>(*textures);
-
         // Note: The selected texture must be passed as a parameter, as the texture passed in to the check intersection
         // border will not have its border drawn, even if there's an intersection (visually that would look off)
         // TLDR: Do not cast away constness on selectedTexture->getImageForDrawing and write selectedTexture.checkIntersection(other Texture)
 
-        for(auto &i : texturesNotConst)
+        intersectionOccured = false;
+
+        for(auto &i : textureDrawingPositions)
         {
-            i.checkIntersection(selectedTexture->getImageForDrawing(), currentZoom);
+            // Checking for an intersection may change the state of a texture (it may give a mark to itself internally to
+            // draw its border). Therefore the references used when checking for intersections cannot be const
+
+            auto& textureNotConst = const_cast<TextureLogic::Texture&>(*i.texture);
+
+            intersectionOccured |= textureNotConst.checkIntersection(selectedTexture->getImageForDrawing(), currentZoom);
         }
     }
 
@@ -224,6 +226,11 @@ namespace Atlas
 
     void TextureAtlas::addTexture()
     {
+        if(intersectionOccured)
+        {
+            return;
+        }
+
         if(selectedTexture->isOpen())
         {
             textureDrawingPositions.emplace_back();

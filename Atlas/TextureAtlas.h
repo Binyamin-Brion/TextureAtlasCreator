@@ -43,6 +43,7 @@ namespace Atlas
 
             QSize atlasSize;
 
+            bool intersectionOccured = false;
             bool firstMouse = true;
             int previousMouseX;
             int previousMouseY;
