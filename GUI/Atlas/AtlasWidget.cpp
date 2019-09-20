@@ -4,11 +4,13 @@
 
 #include "AtlasWidget.h"
 #include "Atlas/TextureAtlas.h"
+#include "Exceptions/Atlas/TextureAlreadyLoaded.h"
 
 #include <QCoreApplication>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QResizeEvent>
+#include <QtWidgets/QMessageBox>
 
 namespace GUI
 {
@@ -143,7 +145,14 @@ namespace GUI
 
         void AtlasWidget::textureButtonPressed(const TextureLogic::Texture &texture)
         {
-            textureAtlas->setSelectedTexture(texture);
+            try
+            {
+                textureAtlas->setSelectedTexture(texture);
+            }
+            catch(::Exceptions::Atlas::TextureAlreadyLoaded &e)
+            {
+                QMessageBox::warning(this, tr("Error: Texture Already Loaded"), e.what(), QMessageBox::Ok);
+            }
         }
 
         void AtlasWidget::updateTextureReferences(const std::vector<TextureLogic::Texture> &textures)

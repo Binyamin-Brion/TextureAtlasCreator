@@ -31,6 +31,14 @@ namespace TextureLogic
 
     void TextureBank::storeNewTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
     {
+        for(const auto &i : textures)
+        {
+            if(i.textureLocation() == textureLocation)
+            {
+                return;
+            }
+        }
+
         textures.emplace_back(textureLocation);
 
         // Tell the texture atlas to reset its texture references as its references may now be invalid if the

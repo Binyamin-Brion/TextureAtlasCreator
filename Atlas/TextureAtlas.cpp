@@ -6,6 +6,7 @@
 
 #include "TextureLogic/TextureBank.h"
 #include "Atlas/SelectedTexture.h"
+#include "Exceptions/Atlas/TextureAlreadyLoaded.h"
 
 #include <QPainter>
 
@@ -193,10 +194,19 @@ namespace Atlas
 
         if(textureLoadedAlready)
         {
-            // Throw appropriate texture
+            std::string errorMessage;
+
+            errorMessage += "The texture: ";
+            errorMessage += texture.textureLocation().toStdString() + " has already been loaded.\n\n";
+            errorMessage += "A texture cannot be added to an atlas twice.\n";
+            errorMessage += "The requested operation will be aborted.";
+
+            throw ::Exceptions::Atlas::TextureAlreadyLoaded{errorMessage};
         }
 
         selectedTexture->setTexture(texture);
+
+        texturesInAtlas.push_back(texture.textureLocation());
     }
 
     void TextureAtlas::textureLoaded(const std::vector<TextureLogic::Texture> &textures)

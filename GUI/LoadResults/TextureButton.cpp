@@ -33,5 +33,10 @@ namespace GUI
                 emit buttonClicked(this->textureLocation);
             });
         }
+
+        const QString &TextureButton::getTextureLocation() const
+        {
+            return textureLocation;
+        }
     }
 }

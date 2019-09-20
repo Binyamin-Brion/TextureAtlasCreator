@@ -8,6 +8,7 @@
 #include "TextureLogic/TextureBank.h"
 
 #include <QGridLayout>
+#include <QtWidgets/QMessageBox>
 
 namespace GUI
 {
@@ -54,10 +55,26 @@ namespace GUI
 
         void TextureButtonArea::addTextureButton(const QString &textureLocation)
         {
+            for(const auto &i : textureButtons)
+            {
+                if(i->getTextureLocation() == textureLocation)
+                {
+                    std::string errorMessage;
+
+                    errorMessage += "The texture " + textureLocation.toStdString() + " has already been loaded into the current tab.\n\n";
+                    errorMessage += "Duplicate textures button cannot exist in the same tab.\n";
+                    errorMessage += "The requested operation will be aborted.";
+
+                    QMessageBox::warning(this, tr("Error: Texture Already Loaded"), errorMessage.c_str(), QMessageBox::Ok);
+
+                    return;
+                }
+            }
+
             // Try loading the image first; if that operation fails, then there is no point continuing to create
             // a texture pushbutton for that image
 
-            textureBank->storeNewTexture(textureLocation, {}); //TODO: set reference to textrue bank
+            textureBank->storeNewTexture(textureLocation, {});
 
             // Swap the place holder widget with the newly created plcae holder; see the description at the top of
             // this file for more information.

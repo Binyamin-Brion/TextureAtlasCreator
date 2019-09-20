@@ -23,7 +23,7 @@ namespace GUI
 
             public:
                 TextureButton(const QString &textureLocation, QWidget *parent = nullptr);
-
+                const QString& getTextureLocation() const;
                 static const int buttonSizeLength = 150;
 
             signals:
