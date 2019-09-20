@@ -109,11 +109,14 @@ namespace Atlas
 
             auto& selectedTextureNotConst = const_cast<TextureLogic::Texture&>(selectedTexture->getImageForDrawing());
 
-            // Translate the new cursor position so that it is relative to the 
+            // Translate the new cursor position so that it is relative to the centre of the texture; the result
+            // is that the newMouse positions describe the topleft of the texture, or in other words the drawing coordinates
 
             int newMouseX = mouseX - selectedTexture->getImageForDrawing().getImage(currentZoom).width() / 2;
 
             int newMouseY = mouseY - selectedTexture->getImageForDrawing().getImage(currentZoom).height() / 2;
+
+            // The first time the texture is moved is a special case, as there is no initial cursor position
 
             if(firstMouse)
             {
@@ -140,6 +143,10 @@ namespace Atlas
         }
     }
 
+    // If the texture is opened, then there is chance it is being attempted to be moved to an invalid location.
+    // Before that is done, the cursor has to be moved back to a valid location, which this function provides.
+    // For example: cursor moving texture outside of defined atlas size. AtlasWidget has to check if such a condition occurs
+
     std::pair<bool, QPoint> TextureAtlas::resetCursorPosition() const
     {
         if(!selectedTexture->isOpen())
@@ -152,6 +159,14 @@ namespace Atlas
         int newMouseY = selectedTexture->getDrawingCoordinates().y() + selectedTexture->getImageForDrawing().getImage(currentZoom).height() / 2;
 
         return {true, QPoint{newMouseX, newMouseY}};
+    }
+
+    void TextureAtlas::resetFirstMouse()
+    {
+        // Only reset the status indicating it is the first time the cursor is entering the atlas widget if a texture is not
+        // opened; otherwise there is a valid initial cursor position to use for a translation
+
+        firstMouse = !selectedTexture->isOpen();
     }
 
     void TextureAtlas::setAtlasSize(QSize size)
@@ -182,11 +197,6 @@ namespace Atlas
         }
 
         selectedTexture->setTexture(texture);
-    }
-
-    void TextureAtlas::resetFirstMouse()
-    {
-        firstMouse = !selectedTexture->isOpen();
     }
 
     void TextureAtlas::textureLoaded(const std::vector<TextureLogic::Texture> &textures)

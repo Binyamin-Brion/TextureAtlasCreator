@@ -26,18 +26,10 @@ namespace GUI
 
         void AtlasWidget::leaveEvent(QEvent *event)
         {
-            textureAtlas->resetFirstMouse();
+            // Note that just because this function is called that the texture atlas may not reset its first mouse
+            // status; it depends on whether a texture is selected
 
-//            QCursor c = cursor();
-//
-//            auto newCursorInformation = textureAtlas->resetCursorPosition();
-//
-//            if(newCursorInformation.first)
-//            {
-//                c.setPos(mapToGlobal(newCursorInformation.second));
-//
-//                setCursor(c);
-//            }
+            textureAtlas->resetFirstMouse();
         }
 
         void AtlasWidget::keyPressEvent(QKeyEvent *event)
@@ -56,37 +48,57 @@ namespace GUI
 
             int mouseY = event->y();
 
+            /*
+             *  Note that the cursor must stay in a certain area for the entire texture to be rendered onscreen:
+             *    ___________________________
+             *   |   _____________________   |
+             *   |  |                     |  |
+             *   |  |                     |  |
+             *   |  |        (1)          |  |
+             *   |  |                     |  |
+             *   |  |                     |  |
+             *   |  |_____________________|  |
+             *   |_____________(2)___________|
+             *
+             *    The width of (2) is half the texture width to the left and right, and half the texture height to the top and bottom.
+             *
+             *    In order for the cursor to push the texture offscreen, it must remain in area (1).
+             */
+
             if(testPosAgainstAtlasBoundaries.first) // A texture is selected
             {
                 bool resetCursorPositionX = false;
 
                 bool resetCursorPositionY = false;
 
-                if(event->x() < textureAtlas->getSelectedTextureSize().second.width() / 2)
+                if(event->x() < textureAtlas->getSelectedTextureSize().second.width() / 2) // Cursor trying to move texture offscreen to the left
                 {
                     mouseX = textureAtlas->resetCursorPosition().second.x();
 
                     resetCursorPositionX = true;
                 }
-                else if(event->x() > testPosAgainstAtlasBoundaries.second.width() - textureAtlas->getSelectedTextureSize().second.width() / 2)
+                else if(event->x() > testPosAgainstAtlasBoundaries.second.width() - textureAtlas->getSelectedTextureSize().second.width() / 2) // Cursor trying to move texture offscreen to the right
                 {
                     mouseX = textureAtlas->resetCursorPosition().second.x();
 
                     resetCursorPositionX = true;
                 }
 
-                if(event->y() < textureAtlas->getSelectedTextureSize().second.height() / 2)
+                if(event->y() < textureAtlas->getSelectedTextureSize().second.height() / 2) // Cursor trying to move texture offscreen to the top
                 {
                     mouseY = textureAtlas->resetCursorPosition().second.y();
 
                     resetCursorPositionY = true;
                 }
-                else if(event->y() > testPosAgainstAtlasBoundaries.second.height() - textureAtlas->getSelectedTextureSize().second.height() / 2)
+                else if(event->y() > testPosAgainstAtlasBoundaries.second.height() - textureAtlas->getSelectedTextureSize().second.height() / 2) // Cursor trying to move texture offscreen to the bottom
                 {
                     mouseY = textureAtlas->resetCursorPosition().second.y();
 
                     resetCursorPositionY = true;
                 }
+
+                // X and Y dimensions are handled separately as, for example, if the cursor is pushing the texture offscreen to the left,
+                // it does not mean that the y position of the cursor is pushing the texture offscreen
 
                 if(resetCursorPositionX)
                 {
@@ -114,7 +126,7 @@ namespace GUI
 
         void AtlasWidget::mousePressEvent(QMouseEvent *event)
         {
-            if(event->button())
+            if(event->button() == Qt::LeftButton)
             {
                 textureAtlas->mouseClicked();
             }
