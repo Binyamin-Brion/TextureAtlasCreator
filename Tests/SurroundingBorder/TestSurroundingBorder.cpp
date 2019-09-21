@@ -4,14 +4,14 @@
 
 #include "TestSurroundingBorder.h"
 
-#include "TextureLogic/TextureBorder/SurroundingBorder.h"
+#include "Atlas/TextureBorder/SurroundingBorder.h"
 #include "Tests/EnableTests.h"
 
 #ifdef ENABLE_SURROUNDING_BORDER_TESTS
     static Tests::SurroundingBorder::TestSurroundingBorder testSurroundingBorder;
 #endif
 
-using namespace TextureLogic::TextureBorder;
+using namespace Atlas::TextureBorder;
 
 namespace Tests
 {
@@ -21,7 +21,7 @@ namespace Tests
 
         void TestSurroundingBorder::testInitializeIntersectionBorder()
         {
-            ::TextureLogic::TextureBorder::SurroundingBorder surroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
             surroundingBorder.initialize(10, 10);
 
@@ -57,7 +57,7 @@ namespace Tests
 
         void TestSurroundingBorder::testInitializeSelectionBorder()
         {
-            ::TextureLogic::TextureBorder::SurroundingBorder surroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
             surroundingBorder.initialize(10, 10);
 
@@ -88,7 +88,7 @@ namespace Tests
 
         void TestSurroundingBorder::testTranslateInitializationBorder()
         {
-            ::TextureLogic::TextureBorder::SurroundingBorder surroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
             surroundingBorder.initialize(10, 10);
 
@@ -128,7 +128,7 @@ namespace Tests
 
         void TestSurroundingBorder::testTranslateSelectionBorder()
         {
-            ::TextureLogic::TextureBorder::SurroundingBorder surroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
             surroundingBorder.initialize(10, 10);
 
@@ -166,9 +166,9 @@ namespace Tests
 
         void TestSurroundingBorder::testNoIntersection()
         {
-            ::TextureLogic::TextureBorder::SurroundingBorder surroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
-            ::TextureLogic::TextureBorder::SurroundingBorder otherSurroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder otherSurroundingBorder;
 
             surroundingBorder.initialize(10, 10);
 
@@ -182,9 +182,9 @@ namespace Tests
 
         void TestSurroundingBorder::testPartialIntersection()
         {
-            ::TextureLogic::TextureBorder::SurroundingBorder surroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
-            ::TextureLogic::TextureBorder::SurroundingBorder otherSurroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder otherSurroundingBorder;
 
             surroundingBorder.initialize(10, 10);
 
@@ -198,9 +198,9 @@ namespace Tests
 
         void TestSurroundingBorder::testPartialIntersection2()
         {
-            ::TextureLogic::TextureBorder::SurroundingBorder surroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
-            ::TextureLogic::TextureBorder::SurroundingBorder otherSurroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder otherSurroundingBorder;
 
             surroundingBorder.initialize(10, 10);
 
@@ -214,9 +214,9 @@ namespace Tests
 
         void TestSurroundingBorder::testEntireIntersection()
         {
-            ::TextureLogic::TextureBorder::SurroundingBorder surroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
-            ::TextureLogic::TextureBorder::SurroundingBorder otherSurroundingBorder;
+            ::Atlas::TextureBorder::SurroundingBorder otherSurroundingBorder;
 
             surroundingBorder.initialize(10, 10);
 
