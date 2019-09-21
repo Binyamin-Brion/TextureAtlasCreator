@@ -7,6 +7,9 @@
 
 #include <QPoint>
 
+#include "Atlas/TextureBorder/SurroundingBorder.h"
+#include "TextureLogic/Zoom.h"
+
 namespace TextureLogic
 {
     class Texture;
@@ -19,6 +22,8 @@ namespace Atlas
         const TextureLogic::Texture *texture = nullptr;
         int index = -1;
         QPoint drawingPosition;
+        std::array<TextureBorder::SurroundingBorder, ::TextureLogic::NumberZoomElements()> surroundingBorder;
+
     };
 }
 

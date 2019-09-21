@@ -6,7 +6,7 @@
 
 #include <QPainter>
 
-namespace TextureLogic
+namespace Atlas
 {
     namespace TextureBorder
     {

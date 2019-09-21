@@ -40,6 +40,7 @@ namespace Atlas
             SelectedTexture *selectedTexture = nullptr;
 
             TextureLogic::Zoom currentZoom;
+            unsigned int currentZoomIndex;
 
             QSize atlasSize;
 

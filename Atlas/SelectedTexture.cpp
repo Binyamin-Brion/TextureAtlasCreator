@@ -26,6 +26,20 @@ namespace Atlas
         return *selectedTexture;
     }
 
+#define SurroundingBorder std::array<TextureBorder::SurroundingBorder, ::TextureLogic::NumberZoomElements()>
+
+    const SurroundingBorder& SelectedTexture::getSurroundingBorderForDrawing() const
+    {
+        return surroundingBorder;
+    }
+
+    SurroundingBorder SelectedTexture::getSurroundingBorder() const
+    {
+        return surroundingBorder;
+    }
+
+#undef SurroundingBorder
+
     const QString &SelectedTexture::getTextureLocation() const
     {
         return selectedTexture->textureLocation();
@@ -54,7 +68,7 @@ namespace Atlas
             drawingCoordinates.setX(0);
         }
         else if(mouseX + currentZoomImage.width() / 2 > boundaries.width())
-        { printf("%d, %d \n", boundaries.width(), currentZoomImage.width());
+        {
             drawingCoordinates.setX(boundaries.width() - currentZoomImage.width());
         }
         else
@@ -91,11 +105,28 @@ namespace Atlas
         _isOpen = true;
 
         firstMouse = false;
+
+        int loopCounter = 0;
+
+        for(auto &i : ::TextureLogic::AllZoomValues)
+        {
+            surroundingBorder[loopCounter].initialize(selectedTexture.getImage(i).width(), selectedTexture.getImage(i).height());
+
+            loopCounter += 1;
+        }
     }
 
     void SelectedTexture::setZoom(TextureLogic::Zoom zoom)
     {
         currentZoom = zoom;
+    }
+
+    void SelectedTexture::translateSurroundingBorder(int x, int y)
+    {
+        for(auto &i : surroundingBorder)
+        {
+            i.translate(x, y);
+        }
     }
 
 }

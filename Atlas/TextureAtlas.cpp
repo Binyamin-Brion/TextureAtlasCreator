@@ -17,6 +17,8 @@ namespace Atlas
         selectedTexture = new SelectedTexture;
 
         currentZoom = TextureLogic::Zoom::Normal;
+
+        currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
     }
 
     bool TextureAtlas::checkIntersection()
@@ -40,9 +42,7 @@ namespace Atlas
             // Checking for an intersection may change the state of a texture (it may give a mark to itself internally to
             // draw its border). Therefore the references used when checking for intersections cannot be const
 
-            auto& textureNotConst = const_cast<TextureLogic::Texture&>(*i.texture);
-
-            intersectionOccured |= textureNotConst.checkIntersection(selectedTexture->getImageForDrawing(), currentZoom);
+            intersectionOccured |= i.surroundingBorder[currentZoomIndex].checkIntersection(selectedTexture->getSurroundingBorderForDrawing()[currentZoomIndex]);
         }
     }
 
@@ -55,7 +55,9 @@ namespace Atlas
         {
             painter.drawImage(i.drawingPosition, i.texture->getImage(currentZoom));
 
-            i.texture->drawBorder(painter, currentZoom);
+            i.surroundingBorder[currentZoomIndex].draw(painter);
+
+           // i.texture->drawBorder(painter, currentZoom);
         }
 
         if(selectedTexture->isOpen())
@@ -123,7 +125,9 @@ namespace Atlas
 
             if(firstMouse)
             {
-                selectedTextureNotConst.translate(newMouseX, newMouseY);
+                selectedTexture->translateSurroundingBorder(newMouseX, newMouseY);
+
+                //selectedTextureNotConst.translate(newMouseX, newMouseY);
 
                 firstMouse = false;
             }
@@ -133,7 +137,9 @@ namespace Atlas
 
                 int differenceY = newMouseY - previousMouseY;
 
-                selectedTextureNotConst.translate(differenceX, differenceY);
+                selectedTexture->translateSurroundingBorder(differenceX, differenceY);
+
+                //selectedTextureNotConst.translate(differenceX, differenceY);
             }
 
             previousMouseX = newMouseX;
@@ -238,6 +244,8 @@ namespace Atlas
             textureDrawingPositions.back().drawingPosition = selectedTexture->getDrawingCoordinates();
 
             textureDrawingPositions.back().texture = &selectedTexture->getImage();
+
+            textureDrawingPositions.back().surroundingBorder = selectedTexture->getSurroundingBorder();
 
             for(int i = 0; i < textures->size(); ++i)
             {

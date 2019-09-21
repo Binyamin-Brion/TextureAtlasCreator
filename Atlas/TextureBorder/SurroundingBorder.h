@@ -7,7 +7,7 @@
 
 #include <QtCore/QRect>
 #include <QtGui/QColor>
-#include "TextureLogic/TextureBorder/Border.h"
+#include "Border.h"
 
 class QPainter;
 
@@ -19,7 +19,7 @@ namespace Tests
     }
 }
 
-namespace TextureLogic
+namespace Atlas
 {
     namespace TextureBorder
     {

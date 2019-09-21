@@ -18,21 +18,6 @@ namespace TextureLogic
         _textureName = _textureLocation.right(_textureLocation.size() - _textureLocation.lastIndexOf('/'));
     }
 
-    bool Texture::checkIntersection(const TextureLogic::Texture &otherTexture, TextureLogic::Zoom zoom)
-    {
-        if(this == &otherTexture)
-        {
-            return false;
-        }
-
-        return _texture[GetZoomIndex(zoom)].checkIntersection(otherTexture._texture[GetZoomIndex(zoom)]);
-    }
-
-    void Texture::drawBorder(QPainter &painter, Zoom zoom) const
-    {
-        _texture[GetZoomIndex(zoom)].drawBorder(painter);
-    }
-
     const QImage& Texture::getImage(TextureLogic::Zoom zoom) const
     {
        return  _texture[GetZoomIndex(zoom)].getImage();
@@ -51,13 +36,5 @@ namespace TextureLogic
     const QString &Texture::textureName() const
     {
         return _textureName;
-    }
-
-    void Texture::translate(int differenceX, int differenceY)
-    {
-        for(auto &i : _texture)
-        {
-            i.translate(differenceX, differenceY);
-        }
     }
 }

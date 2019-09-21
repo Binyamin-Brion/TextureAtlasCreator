@@ -9,15 +9,6 @@
 
 namespace TextureLogic
 {
-    bool ScaledTexture::checkIntersection(const TextureLogic::ScaledTexture &scaledTexture)
-    {
-        return border.checkIntersection(scaledTexture.border);
-    }
-
-    void ScaledTexture::drawBorder(QPainter &painter) const
-    {
-        border.draw(painter);
-    }
 
     const QImage& ScaledTexture::getImage() const
     {
@@ -38,12 +29,5 @@ namespace TextureLogic
         auto newImageHeight = image.height() * zoomFactorValue;
 
         image = image.scaled(newImageWidth, newImageHeight, Qt::KeepAspectRatio);
-
-        border.initialize(newImageWidth, newImageHeight);
-    }
-
-    void ScaledTexture::translate(int differenceX, int differenceY)
-    {
-        border.translate(differenceX, differenceY);
     }
 }
