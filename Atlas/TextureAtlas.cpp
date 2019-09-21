@@ -92,7 +92,7 @@ namespace Atlas
         return{false, QSize{-1, -1}};
     }
 
-    void TextureAtlas::mouseClicked()
+    void TextureAtlas::mouseClicked(int mouseX, int mouseY)
     {
         if(selectedTexture->isOpen())
         {
@@ -100,7 +100,24 @@ namespace Atlas
         }
         else
         {
+            for(auto &i : textureDrawingPositions)
+            {
+                int currentTextureWidth = i.texture->getImage(currentZoom).width();
 
+                int currentTextureHeight = i.texture->getImage(currentZoom).height();
+
+                if(mouseX >= i.drawingPosition.x() && mouseX <= i.drawingPosition.x() + currentTextureWidth)
+                {
+                    if(mouseY >= i.drawingPosition.y() && mouseY <= i.drawingPosition.y() + currentTextureHeight)
+                    {
+                        i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(!i.surroundingBorder[currentZoomIndex].getSelectedBorderVisible());
+
+                        continue;
+                    }
+                }
+
+                i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(false);
+            }
         }
     }
 
@@ -214,7 +231,10 @@ namespace Atlas
 
         selectedTexture->setTexture(texture);
 
-        texturesInAtlas.push_back(texture.textureLocation());
+        for(auto &i : textureDrawingPositions)
+        {
+            i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(false);
+        }
     }
 
     void TextureAtlas::textureLoaded(const std::vector<TextureLogic::Texture> &textures)
@@ -246,6 +266,8 @@ namespace Atlas
             textureDrawingPositions.back().texture = &selectedTexture->getImage();
 
             textureDrawingPositions.back().surroundingBorder = selectedTexture->getSurroundingBorder();
+
+            texturesInAtlas.push_back(selectedTexture->getImage().textureLocation());
 
             for(int i = 0; i < textures->size(); ++i)
             {

@@ -79,6 +79,11 @@ namespace Atlas
             painter.setPen(previousPen);
         }
 
+        bool SurroundingBorder::getSelectedBorderVisible() const
+        {
+            return drawSelectionBorder;
+        }
+
         /*
         *  The surrounding border looks like this:
         *

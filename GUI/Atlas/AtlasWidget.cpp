@@ -130,7 +130,9 @@ namespace GUI
         {
             if(event->button() == Qt::LeftButton)
             {
-                textureAtlas->mouseClicked();
+                textureAtlas->mouseClicked(event->x(), event->y());
+
+                QWidget::repaint();
             }
         }
 

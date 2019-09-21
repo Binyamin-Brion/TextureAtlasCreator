@@ -40,6 +40,7 @@ namespace Atlas
 
                 bool checkIntersection(const SurroundingBorder &otherBorder);
                 void draw(QPainter &painter) const;
+                bool getSelectedBorderVisible() const;
                 void initialize(int textureWidth, int textureHeight);
                 void setSelectedBorderVisible(bool value);
                 void translate(int differenceX, int differenceY);
