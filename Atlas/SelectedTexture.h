@@ -33,6 +33,7 @@ namespace Atlas
             const QString& getTextureLocation() const;
             bool isOpen() const;
             void move(int mouseX, int mouseY, QSize boundaries);
+            void setDrawSelectedSurroundingBorder(bool value);
             void setTexture(const TextureLogic::Texture &selectedTexture);
             void setZoom(TextureLogic::Zoom zoom);
             void translateSurroundingBorder(int x, int y);

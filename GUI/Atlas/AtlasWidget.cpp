@@ -136,6 +136,13 @@ namespace GUI
             }
         }
 
+        void AtlasWidget::mouseReleaseEvent(QMouseEvent *event)
+        {
+            textureAtlas->mouseReleased(event->x(), event->y());
+
+            QWidget::repaint();
+        }
+
         void AtlasWidget::paintEvent(QPaintEvent *event)
         {
             QWidget::paintEvent(event);

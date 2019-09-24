@@ -16,6 +16,8 @@ namespace Atlas
     {
         selectedTexture = new SelectedTexture;
 
+        selectedExistingTexture = new SelectedTexture;
+
         currentZoom = TextureLogic::Zoom::Normal;
 
         currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
@@ -64,6 +66,13 @@ namespace Atlas
         {
             painter.drawImage(selectedTexture->getDrawingCoordinates(), selectedTexture->getImageForDrawing().getImage(currentZoom));
         }
+
+        if(selectedExistingTexture->isOpen())
+        {
+            painter.drawImage(selectedExistingTexture->getDrawingCoordinates(), selectedExistingTexture->getImageForDrawing().getImage(currentZoom));
+
+            selectedExistingTexture->getSurroundingBorderForDrawing()[currentZoomIndex].draw(painter);
+        }
     }
 
     std::pair<bool, QSize> TextureAtlas::getAtlasSize() const
@@ -94,12 +103,37 @@ namespace Atlas
 
     void TextureAtlas::mouseClicked(int mouseX, int mouseY)
     {
-        if(selectedTexture->isOpen())
+        if(selectedExistingTexture->isOpen())
         {
-            addTexture();
+            //selectedExistingTexture->setDrawSelectedSurroundingBorder(false);
+
+            if(mouseX >= selectedExistingTexture->getDrawingCoordinates().x() && mouseX <= selectedExistingTexture->getDrawingCoordinates().x() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).width())
+            {
+                if(mouseY >= selectedExistingTexture->getDrawingCoordinates().y() && mouseY <= selectedExistingTexture->getDrawingCoordinates().y() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).height())
+                {
+                    ignoreMouseRelease = false;
+                }
+                else
+                {
+                    selectedExistingTexture->setDrawSelectedSurroundingBorder(false);
+
+                    addTexture(selectedExistingTexture);
+                }
+            }
+            else
+            {
+                selectedExistingTexture->setDrawSelectedSurroundingBorder(false);
+
+                addTexture(selectedExistingTexture);
+            }
         }
-        else
+
+       // if(!selectedExistingTexture->isOpen())
         {
+            bool deleteTextureDrawingPosition = false;
+
+            unsigned int deleteIndex = 0;
+//printf("Num drawing pos: %d \n", textureDrawingPositions.size());
             for(auto &i : textureDrawingPositions)
             {
                 int currentTextureWidth = i.texture->getImage(currentZoom).width();
@@ -110,13 +144,41 @@ namespace Atlas
                 {
                     if(mouseY >= i.drawingPosition.y() && mouseY <= i.drawingPosition.y() + currentTextureHeight)
                     {
-                        i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(!i.surroundingBorder[currentZoomIndex].getSelectedBorderVisible());
+                        if(selectedExistingTexture->isOpen())
+                        {
+                            addTexture(selectedExistingTexture);
+                        }
 
-                        continue;
+                        i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(true);
+
+                        selectedExistingTexture->setTexture(*i.texture);
+
+                        selectedExistingTexture->translateSurroundingBorder(i.drawingPosition.x(), i.drawingPosition.y());
+
+                        selectedExistingTexture->move(i.drawingPosition.x() + i.texture->getImage(currentZoom).width() / 2,
+                                              i.drawingPosition.y() + i.texture->getImage(currentZoom).height() / 2,
+                                              atlasSize);
+
+                        selectedExistingTexture->setDrawSelectedSurroundingBorder(true);
+
+
+                        ignoreMouseRelease = true;
+
+                        deleteTextureDrawingPosition = true;
                     }
                 }
 
-                i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(false);
+                if(!deleteTextureDrawingPosition)
+                {
+                    deleteIndex += 1;
+printf("Clearing \n");
+                    i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(false);
+                }
+            }
+
+            if(deleteTextureDrawingPosition)
+            {
+                textureDrawingPositions.erase(textureDrawingPositions.begin() + deleteIndex);
             }
         }
     }
@@ -166,6 +228,50 @@ namespace Atlas
             selectedTexture->move(mouseX, mouseY, atlasSize);
 
             checkIntersection();
+        }
+    }
+
+    void TextureAtlas::mouseReleased(int mouseX, int mouseY)
+    {
+        printf("Open: %d , %d \n", selectedExistingTexture->isOpen(), ignoreMouseRelease);
+
+        if(selectedExistingTexture->isOpen() && !ignoreMouseRelease)
+        {
+
+
+            if(mouseX >= selectedExistingTexture->getDrawingCoordinates().x() && mouseX <= selectedExistingTexture->getDrawingCoordinates().x() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).width())
+                {
+                    if(mouseY >= selectedExistingTexture->getDrawingCoordinates().y() && mouseY <= selectedExistingTexture->getDrawingCoordinates().y() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).height())
+                    {
+                        selectedExistingTexture->setDrawSelectedSurroundingBorder(false);
+
+                        addTexture(selectedExistingTexture);
+                    }
+                }
+
+//            for(auto &i : textureDrawingPositions)
+//            {
+//                int currentTextureWidth = i.texture->getImage(currentZoom).width();
+//
+//                int currentTextureHeight = i.texture->getImage(currentZoom).height();
+//
+//                if(mouseX >= i.drawingPosition.x() && mouseX <= i.drawingPosition.x() + currentTextureWidth)
+//                {
+//                    if(mouseY >= i.drawingPosition.y() && mouseY <= i.drawingPosition.y() + currentTextureHeight)
+//                    {
+//                        i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(false);
+//
+//                        existingTextureSelected = false;
+//
+//                        continue;
+//                    }
+//                }
+//            }
+        }
+
+        if(selectedTexture->isOpen())
+        {
+            addTexture(selectedTexture);
         }
     }
 
@@ -250,19 +356,21 @@ namespace Atlas
         }
     }
 
-    void TextureAtlas::addTexture()
+    void TextureAtlas::addTexture(SelectedTexture *selectedTexture)
     {
         if(intersectionOccured)
         {
             return;
         }
 
+
+
         if(selectedTexture->isOpen())
         {
             textureDrawingPositions.emplace_back();
 
             textureDrawingPositions.back().drawingPosition = selectedTexture->getDrawingCoordinates();
-
+//printf("Pos: %d, %d \n", textureDrawingPositions.back().drawingPosition.x(), textureDrawingPositions.back().drawingPosition.y());
             textureDrawingPositions.back().texture = &selectedTexture->getImage();
 
             textureDrawingPositions.back().surroundingBorder = selectedTexture->getSurroundingBorder();

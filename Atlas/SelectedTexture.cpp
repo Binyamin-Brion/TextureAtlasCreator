@@ -91,6 +91,11 @@ namespace Atlas
 
     }
 
+    void SelectedTexture::setDrawSelectedSurroundingBorder(bool value)
+    {
+        surroundingBorder[::TextureLogic::GetZoomIndex(currentZoom)].setSelectedBorderVisible(value);
+    }
+
     void SelectedTexture::setTexture(const TextureLogic::Texture &selectedTexture)
     {
         this->selectedTexture = &selectedTexture;
