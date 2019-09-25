@@ -29,7 +29,7 @@ namespace TextureLogic
     class TextureBank
     {
         public:
-
+            TextureBank(){printf("Size textures: %d \n", textures.capacity());}
             const std::vector<Texture>& WARN_UNUSED deleteImage(std::vector<Texture>::iterator texture, AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>);
             const std::vector<Texture>& WARN_UNUSED getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const;
             void setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget);

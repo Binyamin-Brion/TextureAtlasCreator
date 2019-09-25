@@ -14,6 +14,11 @@ namespace Atlas
         return drawingCoordinates;
     }
 
+    int SelectedTexture::getTextureIndex() const
+    {
+        return textureIndex;
+    }
+
     const TextureLogic::Texture &SelectedTexture::getImage()
     {
         _isOpen = false;
@@ -61,6 +66,8 @@ namespace Atlas
             firstMouse = true;
         }
 
+        QPoint previousDrawingCoords = drawingCoordinates;
+
         auto currentZoomImage = selectedTexture->getImage(currentZoom);
 
         if(mouseX - currentZoomImage.width() / 2 < 0)
@@ -89,6 +96,17 @@ namespace Atlas
             drawingCoordinates.setY(mouseY - currentZoomImage.height() / 2);
         }
 
+      //  printf("Now drawing at: %d, %d \n", drawingCoordinates.x(), drawingCoordinates.y());
+
+        for(auto &i : surroundingBorder)
+        {
+            i.translate(drawingCoordinates.x() - previousDrawingCoords.x(), drawingCoordinates.y() - previousDrawingCoords.y());
+        }
+    }
+
+    void SelectedTexture::setDrawingCoordinates(QPoint drawingCoords)
+    {
+        drawingCoordinates = drawingCoords;
     }
 
     void SelectedTexture::setDrawSelectedSurroundingBorder(bool value)
@@ -96,9 +114,11 @@ namespace Atlas
         surroundingBorder[::TextureLogic::GetZoomIndex(currentZoom)].setSelectedBorderVisible(value);
     }
 
-    void SelectedTexture::setTexture(const TextureLogic::Texture &selectedTexture)
+    void SelectedTexture::setTexture(const TextureLogic::Texture &selectedTexture, int index)
     {
         this->selectedTexture = &selectedTexture;
+
+        textureIndex = index;
 
         drawingCoordinates.setX(0);
         drawingCoordinates.setY(0);
@@ -121,6 +141,11 @@ namespace Atlas
         }
     }
 
+    void SelectedTexture::setTextureReference(const TextureLogic::Texture &selectedTexture)
+    {
+        this->selectedTexture = &selectedTexture;
+    }
+
     void SelectedTexture::setZoom(TextureLogic::Zoom zoom)
     {
         currentZoom = zoom;
@@ -128,10 +153,10 @@ namespace Atlas
 
     void SelectedTexture::translateSurroundingBorder(int x, int y)
     {
-        for(auto &i : surroundingBorder)
-        {
-            i.translate(x, y);
-        }
+//        for(auto &i : surroundingBorder)
+//        {
+//            i.translate(x, y);
+//        }
     }
 
 }

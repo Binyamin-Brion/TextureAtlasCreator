@@ -25,6 +25,8 @@ namespace GUI
             public:
                 ScrollArea(QSize atlasSize, QWidget *parent = nullptr);
                 void addTexture(const TextureLogic::Texture &texture);
+                void scrollContentsBy(int dx, int dy);
+                void resizeEvent(QResizeEvent *event) override;
                 void updateTextureReferences(const std::vector<TextureLogic::Texture> &textures);
 
             private:

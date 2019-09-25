@@ -17,7 +17,7 @@ namespace GUI
 
             connect(ui->fileButton, &QPushButton::clicked, [this]()
             {
-                ui->fileButton->setText(QFileDialog::getOpenFileName(this, tr("Open Image"), "C:/Users/BinyBrion/Pictures", tr("Image Files (*.png *.jpg")));
+                ui->fileButton->setText(QFileDialog::getOpenFileName(this, tr("Open Image"), "C:/Users/BinyBrion/Pictures", tr("Image Files ()")));
 
                 ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 

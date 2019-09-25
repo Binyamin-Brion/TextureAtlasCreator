@@ -26,6 +26,7 @@ namespace Atlas
         public:
 
             QPoint getDrawingCoordinates() const;
+            int getTextureIndex() const;
             const TextureLogic::Texture& getImage();
             const TextureLogic::Texture& getImageForDrawing() const;
             const SurroundingBorder& getSurroundingBorderForDrawing() const;
@@ -33,13 +34,16 @@ namespace Atlas
             const QString& getTextureLocation() const;
             bool isOpen() const;
             void move(int mouseX, int mouseY, QSize boundaries);
+            void setDrawingCoordinates(QPoint drawingCoords);
             void setDrawSelectedSurroundingBorder(bool value);
-            void setTexture(const TextureLogic::Texture &selectedTexture);
+            void setTexture(const TextureLogic::Texture &selectedTexture, int index = -1);
+            void setTextureReference(const TextureLogic::Texture &selectedTexture);
             void setZoom(TextureLogic::Zoom zoom);
             void translateSurroundingBorder(int x, int y);
 
         private:
             const TextureLogic::Texture* selectedTexture;
+            int textureIndex = -1;
             TextureLogic::Zoom currentZoom = TextureLogic::Zoom::Normal;
             QPoint drawingCoordinates;
             bool _isOpen = false;

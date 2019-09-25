@@ -40,7 +40,7 @@ namespace TextureLogic
         }
 
         textures.emplace_back(textureLocation);
-
+        printf("Size textures: %d \n", textures.capacity());
         // Tell the texture atlas to reset its texture references as its references may now be invalid if the
         // textures vector reallocated memory
 

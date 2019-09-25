@@ -23,6 +23,20 @@ namespace GUI
             atlasWidget->textureButtonPressed(texture);
         }
 
+        void ScrollArea::scrollContentsBy(int dx, int dy)
+        {
+            QScrollArea::scrollContentsBy(dx, dy);
+
+            atlasWidget->translateViewPort(dx, dy);
+        }
+
+        void ScrollArea::resizeEvent(QResizeEvent *event)
+        {
+            QScrollArea::resizeEvent(event);
+
+            atlasWidget->setViewPort(QSize{viewport()->width(), viewport()->height()});
+        }
+
         void ScrollArea::updateTextureReferences(const std::vector<TextureLogic::Texture> &textures)
         {
             atlasWidget->updateTextureReferences(textures);
