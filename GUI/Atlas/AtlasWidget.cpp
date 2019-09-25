@@ -215,7 +215,7 @@ namespace GUI
                 {
                     QCursor c = cursor();
 
-                    c.setPos(mapToGlobal(QPoint{textureAtlas->resetCursorPosition().second.x(), mouseY}));
+                    c.setPos(mapToGlobal(QPoint{mouseX, mouseY}));
 
                     setCursor(c);
                 }
