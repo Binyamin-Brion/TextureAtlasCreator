@@ -36,9 +36,6 @@ namespace Atlas
             void mouseClicked(int mouseX, int mouseY, int mouseButton);
             void mouseMoved(int mouseX, int mouseY);
             void mouseReleased(int mouseX, int mouseY, int mouseButton);
-            std::pair<bool, QPoint> moveMouseTo() const;
-            std::pair<bool, QPoint> resetCursorPosition() const;
-            void resetFirstMouse();
             void setAtlasSize(QSize size);
             void setAtlasWidgetReference(GUI::Atlas::AtlasWidget *atlasWidget);
             void setSelectedTexture(const TextureLogic::Texture &texture);
@@ -61,13 +58,9 @@ namespace Atlas
             QSize atlasSize;
 
             bool intersectionOccured = false;
-            bool firstMouse = true;
             bool ignoreMouseRelease = false;
             bool leftMouseButtonDown = false;
-            int previousMouseX;
-            int previousMouseY;
 
-            bool moveMouse = false;
             QPoint newMousePosition;
     };
 }

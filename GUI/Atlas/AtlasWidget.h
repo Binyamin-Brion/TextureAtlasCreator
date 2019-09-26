@@ -28,8 +28,6 @@ namespace GUI
 
             public:
                 explicit AtlasWidget(QSize atlasSize, QWidget *parent = nullptr);
-                void enterEvent(QEvent *event) override;
-                void leaveEvent(QEvent *event) override;
                 void keyPressEvent(QKeyEvent *event) override;
                 void mouseMoveEvent(QMouseEvent *event) override;
                 void mousePressEvent(QMouseEvent *event) override;
@@ -46,6 +44,7 @@ namespace GUI
                 void textureButtonPressed(const TextureLogic::Texture &texture);
 
             private:
+                bool moveCursorToViewPort(int &mouseX, int &mouseY);
 
                 std::unique_ptr<::Atlas::TextureAtlas> textureAtlas;
                 QSize size;
@@ -53,7 +52,6 @@ namespace GUI
                 QPoint viewPortOffset;
 
                 QPoint previousMouseCoords;
-                bool cursorCanLeaveWidget = true;
         };
     }
 }

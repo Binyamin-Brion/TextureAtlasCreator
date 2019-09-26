@@ -39,7 +39,6 @@ namespace Atlas
             void setTexture(const TextureLogic::Texture &selectedTexture, int index = -1);
             void setTextureReference(const TextureLogic::Texture &selectedTexture);
             void setZoom(TextureLogic::Zoom zoom);
-            void translateSurroundingBorder(int x, int y);
 
         private:
             const TextureLogic::Texture* selectedTexture;
@@ -47,9 +46,6 @@ namespace Atlas
             TextureLogic::Zoom currentZoom = TextureLogic::Zoom::Normal;
             QPoint drawingCoordinates;
             bool _isOpen = false;
-            bool firstMouse = true;
-            int previousMouseX = 0;
-            int previousMouseY = 0;
             SurroundingBorder surroundingBorder;
     };
 

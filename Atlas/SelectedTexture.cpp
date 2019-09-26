@@ -19,6 +19,23 @@ namespace Atlas
         return textureIndex;
     }
 
+    /*
+     *  For the get(Image|SurroundingBorder) functions, there are two versions of each:
+     *
+     * 1. get(Image|SurroundingBorder)
+     * 2. get(Image|SurroundingBorder)ForDrawing
+     *
+     * If the function is getImage, the difference is that the normal getImage function marks the selected texture as
+     * not opened; it is a marker that the selected texture does not hold a texture (it still does- the reference is not
+     * reseated) but by marking the selected texture as not open, it changes the logic executed in texture atlas.
+     *
+     * For the getSurroundingBorder, the difference is that the normal getSurroundingBorder returns a copy of the surrounding
+     * border, which is used when the selected texture is being placed back into the atlas. A copy is needed as if it is not done,
+     * a newly selected texture will change the surrounding border of the previously selected border. The other version of
+     * getSurroundingBorder returns a reference which is to prevent needless copying (though it could be removed in favour of the normal
+     * version- logically the result will be the same due to how texture atlas handles the call to these functions)
+     */
+
     const TextureLogic::Texture &SelectedTexture::getImage()
     {
         _isOpen = false;
@@ -57,15 +74,6 @@ namespace Atlas
 
     void SelectedTexture::move(int mouseX, int mouseY, QSize boundaries)
     {
-        if(firstMouse)
-        {
-            previousMouseX = mouseX;
-
-            previousMouseY = mouseY;
-
-            firstMouse = true;
-        }
-
         QPoint previousDrawingCoords = drawingCoordinates;
 
         auto currentZoomImage = selectedTexture->getImage(currentZoom);
@@ -96,8 +104,6 @@ namespace Atlas
             drawingCoordinates.setY(mouseY - currentZoomImage.height() / 2);
         }
 
-      //  printf("Now drawing at: %d, %d \n", drawingCoordinates.x(), drawingCoordinates.y());
-
         for(auto &i : surroundingBorder)
         {
             i.translate(drawingCoordinates.x() - previousDrawingCoords.x(), drawingCoordinates.y() - previousDrawingCoords.y());
@@ -123,13 +129,7 @@ namespace Atlas
         drawingCoordinates.setX(0);
         drawingCoordinates.setY(0);
 
-        previousMouseX = 0;
-
-        previousMouseY = 0;
-
         _isOpen = true;
-
-        firstMouse = false;
 
         int loopCounter = 0;
 
@@ -149,14 +149,6 @@ namespace Atlas
     void SelectedTexture::setZoom(TextureLogic::Zoom zoom)
     {
         currentZoom = zoom;
-    }
-
-    void SelectedTexture::translateSurroundingBorder(int x, int y)
-    {
-//        for(auto &i : surroundingBorder)
-//        {
-//            i.translate(x, y);
-//        }
     }
 
 }
