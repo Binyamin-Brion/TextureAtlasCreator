@@ -15,6 +15,11 @@ namespace TextureLogic
         return image;
     }
 
+    QImage& ScaledTexture::getSpecularTexture()
+    {
+        return specularTexture;
+    }
+
     void ScaledTexture::initialize(const QString &textureLocation, TextureLogic::Zoom zoom)
     {
         if(!image.load(textureLocation))
@@ -26,8 +31,11 @@ namespace TextureLogic
 
         int newImageWidth = image.width() * zoomFactorValue;
 
-        auto newImageHeight = image.height() * zoomFactorValue;
+        int newImageHeight = image.height() * zoomFactorValue;
 
         image = image.scaled(newImageWidth, newImageHeight, Qt::KeepAspectRatio);
+
+        specularTexture = QImage{newImageWidth, newImageHeight, image.format()};
+        specularTexture.fill(QColor{0, 0, 0});
     }
 }

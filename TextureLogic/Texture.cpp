@@ -23,6 +23,11 @@ namespace TextureLogic
        return  _texture[GetZoomIndex(zoom)].getImage();
     }
 
+    QImage& Texture::getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    {
+        return _texture[GetZoomIndex(zoom)].getSpecularTexture();
+    }
+
     Texture::TextureImages &Texture::textureImages()
     {
         return _texture;

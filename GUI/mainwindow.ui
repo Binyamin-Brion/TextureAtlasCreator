@@ -19,14 +19,14 @@
      <widget class="GUI::Atlas::AtlasTabWidget" name="atlasWidget"/>
     </item>
     <item>
-     <widget class="GUI::LoadResults::LoadedTextures" name="loadedTextures">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>300</height>
-       </size>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="GUI::LoadResults::LoadedTextures" name="loadedTextures"/>
+      </item>
+      <item>
+       <widget class="GUI::CurrentTexture::CurrentTextureTabWidget" name="currentTexture"/>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -36,7 +36,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -53,6 +53,12 @@
    <class>GUI::Atlas::AtlasTabWidget</class>
    <extends>QTabWidget</extends>
    <header>GUI/Atlas/AtlasTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GUI::CurrentTexture::CurrentTextureTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>GUI/CurrentTexture/CurrentTextureTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

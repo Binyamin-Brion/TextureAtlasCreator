@@ -5,12 +5,16 @@
 #ifndef TEXTUREATLASCREATOR_TEXTUREATLAS_H
 #define TEXTUREATLASCREATOR_TEXTUREATLAS_H
 
-#include <c++/functional>
 #include "TextureLogic/Texture.h"
 #include "Atlas/TextureDrawingPosition.h"
 #include "AccessRestriction/PassKey.h"
 
 class QPainter;
+
+namespace TextureLogic
+{
+    class TextureBank;
+}
 
 namespace GUI
 {
@@ -31,7 +35,6 @@ namespace Atlas
             bool checkIntersection();
             void draw(QPainter &painter);
             std::pair<bool, QSize> getAtlasSize() const;
-            std::pair<bool, QPoint> getDrawingCoordinates() const;
             std::pair<bool, QSize> getSelectedTextureSize() const;
             void mouseClicked(int mouseX, int mouseY, int mouseButton);
             void mouseMoved(int mouseX, int mouseY);
@@ -39,6 +42,7 @@ namespace Atlas
             void setAtlasSize(QSize size);
             void setAtlasWidgetReference(GUI::Atlas::AtlasWidget *atlasWidget);
             void setSelectedTexture(const TextureLogic::Texture &texture);
+            void setTextureBankReference(TextureLogic::TextureBank *textureBank);
             void textureLoaded(const std::vector<TextureLogic::Texture> &textures);
 
         private:
@@ -47,6 +51,7 @@ namespace Atlas
             std::vector<QString> texturesInAtlas;
             std::vector<TextureDrawingPosition> textureDrawingPositions;
             const std::vector<TextureLogic::Texture> *textures = nullptr;
+            TextureLogic::TextureBank *textureBank = nullptr;
 
             SelectedTexture *selectedTexture = nullptr;
             SelectedTexture *selectedExistingTexture = nullptr;

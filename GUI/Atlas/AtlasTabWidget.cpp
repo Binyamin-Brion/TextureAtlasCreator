@@ -31,6 +31,11 @@ namespace GUI
             if(textureBank != nullptr)
             {
                 this->textureBank = textureBank;
+
+                for(auto &i : currentTabs)
+                {
+                    i.first->setTextureBankReference(this->textureBank);
+                }
             }
         }
 

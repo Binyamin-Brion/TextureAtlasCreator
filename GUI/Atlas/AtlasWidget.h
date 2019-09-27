@@ -16,6 +16,7 @@ namespace Atlas
 namespace TextureLogic
 {
     class Texture;
+    class TextureBank;
 }
 
 namespace GUI
@@ -36,6 +37,7 @@ namespace GUI
                 void paintEvent(QPaintEvent *event) override;
                 void resizeEvent(QResizeEvent *event) override;
                 void setViewPort(QSize viewPort);
+                void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(const std::vector<TextureLogic::Texture> &textures);
                 void translateViewPort(int dx, int dy);
                 ~AtlasWidget();

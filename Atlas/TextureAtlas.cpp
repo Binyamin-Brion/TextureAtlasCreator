@@ -92,22 +92,6 @@ namespace Atlas
         return {false, QSize{-1, -1}};
     }
 
-    std::pair<bool, QPoint> TextureAtlas::getDrawingCoordinates() const
-    {
-      // Same idea for using pair and checking if a texture is selected as fn getAtlasSize
-
-        if(selectedTexture->isOpen())
-        {
-            return {true, selectedTexture->getDrawingCoordinates()};
-        }
-        else if(selectedExistingTexture->isOpen())
-        {
-            return {true,selectedTexture->getDrawingCoordinates()};
-        }
-
-        return{false, QPoint{-1, -1}};
-    }
-
     std::pair<bool, QSize> TextureAtlas::getSelectedTextureSize() const
     {
         // Same idea for using pair and checking if a texture is selected as fn getAtlasSize
@@ -226,6 +210,8 @@ namespace Atlas
                         ignoreMouseRelease = true;
 
                         deleteTextureDrawingPosition = true;
+
+                        textureBank->textureSelected(i.texture);
                     }
                 }
 
@@ -273,12 +259,18 @@ namespace Atlas
                 newMousePosition = {drawingCoords.x() + currentImage.width() / 2, drawingCoords.y() + currentImage.height() / 2};
 
                 atlasWidget->moveMouseTo(newMousePosition.x(), newMousePosition.y());
+
+                // If the user has dragged the mouse, then don't automatically deselect the texture.
+                // That would be annoying if that happened
+
+                ignoreMouseRelease = true;
+
+                // There is a small error in the program logic that causes the selected texture to jump the first time
+                // it is moved after being selected. Returning early from the function (causing mouse movements to begin
+                // from the centre of the texture due to the above code) fixes that issue.
+
+                return;
             }
-
-            // If the user has dragged the mouse, then don't automatically deselect the texture.
-            // That would be annoying if that happened
-
-            ignoreMouseRelease = true;
 
             selectedExistingTexture->move(mouseX, mouseY, atlasSize);
 
@@ -390,6 +382,14 @@ namespace Atlas
         for(auto &i : textureDrawingPositions)
         {
             i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(false);
+        }
+    }
+
+    void TextureAtlas::setTextureBankReference(TextureLogic::TextureBank *textureBank)
+    {
+        if(this->textureBank == nullptr)
+        {
+            this->textureBank = textureBank;
         }
     }
 

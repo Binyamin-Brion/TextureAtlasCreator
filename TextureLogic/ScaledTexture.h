@@ -6,6 +6,7 @@
 #define TEXTUREATLAS_SCALEDTEXTURE_H
 
 #include <QtGui/QImage>
+#include "AccessRestriction/PassKey.h"
 #include "Zoom.h"
 
 class QPainter;
@@ -17,10 +18,12 @@ namespace TextureLogic
         public:
 
             const QImage& getImage() const;
+            QImage& getSpecularTexture();
             void initialize(const QString &textureLocation, Zoom zoom);
 
         private:
             QImage image;
+            QImage specularTexture;
     };
 }
 

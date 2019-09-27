@@ -146,7 +146,7 @@ namespace GUI
                 previousMouseCoords = QPoint{mouseX, mouseY};
             }
 
-            textureAtlas->mouseMoved(event->x(), event->y());
+            textureAtlas->mouseMoved(mouseX, mouseY);
 
             QWidget::repaint();
         }
@@ -194,6 +194,11 @@ namespace GUI
         void AtlasWidget::setViewPort(QSize viewPort)
         {
             this->viewPort = QSize{viewPort.width(), viewPort.height()};
+        }
+
+        void AtlasWidget::setTextureBankReference(TextureLogic::TextureBank *textureBank)
+        {
+            textureAtlas->setTextureBankReference(textureBank);
         }
 
         void AtlasWidget::updateTextureReferences(const std::vector<TextureLogic::Texture> &textures)
@@ -305,6 +310,8 @@ namespace GUI
 
                 return true;
             }
+
+            return false;
         }
     }
 }

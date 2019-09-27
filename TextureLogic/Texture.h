@@ -9,6 +9,15 @@
 #include "TextureLogic/Zoom.h"
 #include <array>
 
+namespace GUI
+{
+    namespace CurrentTexture
+    {
+        class RenderArea;
+    }
+}
+
+
 class QPainter;
 
 namespace TextureLogic
@@ -20,6 +29,7 @@ namespace TextureLogic
         public:
             explicit Texture(const QString &texturePath);
             const QImage& getImage(TextureLogic::Zoom zoom) const;
+            QImage& getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             TextureImages& textureImages();
             const QString& textureLocation() const;
             const QString& textureName() const;

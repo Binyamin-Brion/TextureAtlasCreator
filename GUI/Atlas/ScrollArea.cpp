@@ -37,6 +37,11 @@ namespace GUI
             atlasWidget->setViewPort(QSize{viewport()->width(), viewport()->height()});
         }
 
+        void ScrollArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
+        {
+            atlasWidget->setTextureBankReference(textureBank);
+        }
+
         void ScrollArea::updateTextureReferences(const std::vector<TextureLogic::Texture> &textures)
         {
             atlasWidget->updateTextureReferences(textures);

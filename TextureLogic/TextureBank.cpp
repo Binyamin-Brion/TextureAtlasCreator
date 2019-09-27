@@ -5,6 +5,7 @@
 #include "TextureBank.h"
 
 #include "GUI/Atlas/AtlasTabWidget.h"
+#include "GUI/CurrentTexture/CurrentTextureTabWidget.h"
 
 namespace TextureLogic
 {
@@ -29,6 +30,14 @@ namespace TextureLogic
         }
     }
 
+    void TextureBank::setCurrentTextureTabWidgetReference(GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget)
+    {
+        if(this->currentTextureTabWidget == nullptr)
+        {
+            this->currentTextureTabWidget = currentTextureTabWidget;
+        }
+    }
+
     void TextureBank::storeNewTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
     {
         for(const auto &i : textures)
@@ -40,7 +49,7 @@ namespace TextureLogic
         }
 
         textures.emplace_back(textureLocation);
-        printf("Size textures: %d \n", textures.capacity());
+
         // Tell the texture atlas to reset its texture references as its references may now be invalid if the
         // textures vector reallocated memory
 
@@ -67,5 +76,10 @@ namespace TextureLogic
         {
             Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Fatal internal error: requested texture has not been loaded into the texture bank first!");
         }
+    }
+
+    void TextureBank::textureSelected(const Texture *texture)
+    {
+        currentTextureTabWidget->setSelectedTexture(const_cast<Texture*>(texture), {});
     }
 }

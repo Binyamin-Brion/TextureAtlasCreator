@@ -10,6 +10,7 @@
 namespace TextureLogic
 {
     class Texture;
+    class TextureBank;
 }
 
 namespace GUI
@@ -27,6 +28,7 @@ namespace GUI
                 void addTexture(const TextureLogic::Texture &texture);
                 void scrollContentsBy(int dx, int dy);
                 void resizeEvent(QResizeEvent *event) override;
+                void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(const std::vector<TextureLogic::Texture> &textures);
 
             private:
