@@ -20,6 +20,8 @@ namespace GUI
 
         textureBank->setCurrentTextureTabWidgetReference(ui->currentTexture);
 
+        connect(ui->currentTexture, SIGNAL(repaintSelectedTexture()), ui->atlasWidget, SLOT(repaintSelectedTexture()));
+
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
 
         setMinimumSize(1280, 720);

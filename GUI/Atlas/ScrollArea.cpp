@@ -30,6 +30,11 @@ namespace GUI
             atlasWidget->translateViewPort(dx, dy);
         }
 
+        void ScrollArea::repaintSelectedTexture()
+        {
+            atlasWidget->update();
+        }
+
         void ScrollArea::resizeEvent(QResizeEvent *event)
         {
             QScrollArea::resizeEvent(event);

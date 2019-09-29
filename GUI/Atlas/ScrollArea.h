@@ -21,12 +21,11 @@ namespace GUI
 
         class ScrollArea : public QScrollArea
         {
-            Q_OBJECT
-
             public:
                 ScrollArea(QSize atlasSize, QWidget *parent = nullptr);
                 void addTexture(const TextureLogic::Texture &texture);
                 void scrollContentsBy(int dx, int dy);
+                void repaintSelectedTexture();
                 void resizeEvent(QResizeEvent *event) override;
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(const std::vector<TextureLogic::Texture> &textures);

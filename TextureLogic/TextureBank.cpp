@@ -54,6 +54,8 @@ namespace TextureLogic
         // textures vector reallocated memory
 
         atlasTabWidget->updateTextureReferences({});
+
+        currentTextureTabWidget->setTexturesReference(textures);
     }
 
     void TextureBank::textureButtonPressed(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)

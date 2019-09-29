@@ -13,6 +13,8 @@ namespace GUI
         RenderArea::RenderArea(CurrentTextureImage currentTextureImage, QWidget *parent) : QWidget{parent}, currentTextureImage{currentTextureImage}
         {
             currentZoom = TextureLogic::Zoom::Normal;
+
+            brush.setPaintTypeSolid(QSize{5, 5}, QColor{255, 255, 255});
         }
 
         void RenderArea::paintEvent(QPaintEvent *event)
@@ -25,6 +27,7 @@ namespace GUI
                 {
                     case CurrentTextureImage::SelectedTexture:
                         painter.drawImage(QPoint{0, 0}, texture->getImage(currentZoom));
+                        emit repaintSelectedTexture();
                         break;
 
                     case CurrentTextureImage::SpecularTexture:

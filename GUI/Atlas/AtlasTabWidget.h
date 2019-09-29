@@ -22,11 +22,16 @@ namespace GUI
 
         class AtlasTabWidget : public QTabWidget
         {
+            Q_OBJECT
+
             public:
                 explicit AtlasTabWidget(QWidget *parent = nullptr);
                 void addTextureToCurrentAtlas(const TextureLogic::Texture &texture);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>);
+
+            private slots:
+                void repaintSelectedTexture();
 
             private:
                 std::vector<std::pair<ScrollArea*, QString>> currentTabs;

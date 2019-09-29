@@ -27,9 +27,17 @@ namespace GUI
             public:
                 explicit CurrentTextureTabWidget(QWidget *parent = nullptr);
                 void setSelectedTexture(TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>);
+                void setTextureBankReference(TextureLogic::TextureBank *textureBank);
+                void setTexturesReference(std::vector<TextureLogic::Texture> &textures);
+
+            signals:
+                void repaintSelectedTexture();
 
             private:
                 std::array<std::pair<QString, RenderArea*>, 2> currentTexture;
+                std::vector<TextureLogic::Texture> *textures = nullptr;
+                TextureLogic::TextureBank *textureBank = nullptr;
+                int currentTextureIndex;
         };
     }
 }

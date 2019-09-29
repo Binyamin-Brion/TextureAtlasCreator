@@ -46,5 +46,10 @@ namespace GUI
                 i.first->updateTextureReferences(textureBank->getTextures({}));
             }
         }
+
+        void AtlasTabWidget::repaintSelectedTexture()
+        {
+            currentTabs[currentIndex()].first->repaintSelectedTexture();
+        }
     }
 }
