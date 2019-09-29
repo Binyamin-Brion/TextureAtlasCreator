@@ -25,6 +25,9 @@ namespace GUI
 
             public:
                 explicit RenderArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
+                void mouseMoveEvent(QMouseEvent *event) override;
+                void mousePressEvent(QMouseEvent *event) override;
+                void mouseReleaseEvent(QMouseEvent *event) override;
                 void paintEvent(QPaintEvent *event) override;
                 void setTexture(TextureLogic::Texture *texture);
 
@@ -32,11 +35,16 @@ namespace GUI
                 void repaintSelectedTexture();
 
             private:
+                void applyBrush(QPoint mousePosition);
+
                 TextureLogic::Texture *texture = nullptr;
                 CurrentTextureImage currentTextureImage;
                 TextureLogic::Zoom currentZoom;
 
                 PaintFunctions::Brush brush;
+
+                QPoint previousMousePosition;
+                bool leftMouseButtonDown = false;
         };
     }
 }

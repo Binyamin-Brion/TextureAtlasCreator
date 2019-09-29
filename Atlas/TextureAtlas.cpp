@@ -154,6 +154,8 @@ namespace Atlas
             addTexture(selectedExistingTexture);
         }
 
+        textureBank->textureSelected(nullptr);
+
         if(!selectedTexture->isOpen())
         {
             // If a texture is selected, then it needs to removed from the texture drawing position,
