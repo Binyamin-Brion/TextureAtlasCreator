@@ -3,6 +3,7 @@
 //
 
 #include "Texture.h"
+#include "PaintFunctions/PaintHistoryCommand.h"
 
 namespace TextureLogic
 {
@@ -18,6 +19,16 @@ namespace TextureLogic
         _textureName = _textureLocation.right(_textureLocation.size() - _textureLocation.lastIndexOf('/'));
     }
 
+    void Texture::addPaintHistorySpecular(PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    {
+        _texture[GetZoomIndex(Zoom::Normal)].addPaintHistorySpecular(paintHistoryCommand);
+    }
+
+    void Texture::addPaintHistoryTexture(PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    {
+        _texture[GetZoomIndex(Zoom::Normal)].addPaintHistoryTexture(paintHistoryCommand);
+    }
+
     const QImage& Texture::getImage(TextureLogic::Zoom zoom) const
     {
        return  _texture[GetZoomIndex(zoom)].getImage();
@@ -26,6 +37,16 @@ namespace TextureLogic
     QImage& Texture::getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
     {
         return _texture[GetZoomIndex(zoom)].getSpecularTexture();
+    }
+
+    PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistorySpecular(AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    {
+        return _texture[GetZoomIndex(Zoom::Normal)].removePaintHistorySpecular();
+    }
+
+    PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistoryTexture(AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    {
+        return _texture[GetZoomIndex(Zoom::Normal)].removePaintHistoryTexture();
     }
 
     Texture::TextureImages &Texture::textureImages()

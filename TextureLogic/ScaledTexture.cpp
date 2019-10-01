@@ -9,6 +9,15 @@
 
 namespace TextureLogic
 {
+    void ScaledTexture::addPaintHistorySpecular(PaintFunctions::PaintHistoryCommand *paintHistoryCommand)
+    {
+        specularPaintHistory.push(paintHistoryCommand);
+    }
+
+    void ScaledTexture::addPaintHistoryTexture(PaintFunctions::PaintHistoryCommand *paintHistoryCommand)
+    {
+        texturePaintHistory.push(paintHistoryCommand);
+    }
 
     const QImage& ScaledTexture::getImage() const
     {
@@ -37,5 +46,33 @@ namespace TextureLogic
 
         specularTexture = QImage{newImageWidth, newImageHeight, image.format()};
         specularTexture.fill(QColor{0, 0, 0});
+    }
+
+    PaintFunctions::PaintHistoryCommand *ScaledTexture::removePaintHistorySpecular()
+    {
+        if(specularPaintHistory.empty())
+        {
+            return nullptr;
+        }
+
+        auto mostRecentHistory = specularPaintHistory.top();
+
+        specularPaintHistory.pop();
+
+        return mostRecentHistory;
+    }
+
+    PaintFunctions::PaintHistoryCommand *ScaledTexture::removePaintHistoryTexture()
+    {
+        if(texturePaintHistory.empty())
+        {
+            return nullptr;
+        }
+
+        auto mostRecentHistory = texturePaintHistory.top();
+
+        texturePaintHistory.pop();
+
+        return mostRecentHistory;
     }
 }

@@ -9,10 +9,17 @@
 #include "CurrentTextureImage.h"
 #include "TextureLogic/Zoom.h"
 #include "PaintFunctions/Brush.h"
+#include "PaintFunctions/PaintedArea.h"
+#include <stack>
 
 namespace TextureLogic
 {
     class Texture;
+}
+
+namespace PaintFunctions
+{
+    class PaintHistoryCommand;
 }
 
 namespace GUI
@@ -34,14 +41,21 @@ namespace GUI
             signals:
                 void repaintSelectedTexture();
 
+            private slots:
+                void undoPaintOperation();
+
             private:
-                void applyBrush(QPoint mousePosition);
+                const QImage& getReferredToImage() const;
+                PaintFunctions::PaintHistoryCommand* getReferredToImageHistory() const;
+                void paintTexture(QPoint mousePosition, const QImage &applyImage, QImage &targetImage, bool undoOperation);
+                void storePaintHistory();
 
                 TextureLogic::Texture *texture = nullptr;
                 CurrentTextureImage currentTextureImage;
                 TextureLogic::Zoom currentZoom;
 
                 PaintFunctions::Brush brush;
+                std::stack<PaintFunctions::PaintedArea> appliedBrushAreas;
 
                 QPoint previousMousePosition;
                 bool leftMouseButtonDown = false;
