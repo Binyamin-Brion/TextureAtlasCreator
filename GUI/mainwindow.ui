@@ -24,7 +24,31 @@
        <widget class="GUI::LoadResults::LoadedTextures" name="loadedTextures"/>
       </item>
       <item>
-       <widget class="GUI::CurrentTexture::CurrentTextureTabWidget" name="currentTexture"/>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="GUI::BrushSettings::CurrentBrushSettings" name="widget" native="true"/>
+        </item>
+        <item>
+         <widget class="GUI::CurrentTexture::CurrentTextureTabWidget" name="currentTexture"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents_3">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>252</width>
+           <height>256</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
       </item>
      </layout>
     </item>
@@ -36,7 +60,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
@@ -59,6 +83,12 @@
    <class>GUI::CurrentTexture::CurrentTextureTabWidget</class>
    <extends>QTabWidget</extends>
    <header>GUI/CurrentTexture/CurrentTextureTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GUI::BrushSettings::CurrentBrushSettings</class>
+   <extends>QWidget</extends>
+   <header>GUI/BrushSettings/CurrentBrushSettings.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
