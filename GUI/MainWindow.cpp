@@ -12,6 +12,8 @@ namespace GUI
     {
         ui->setupUi(this);
 
+        ui->selectedTextureInformation->setCentralWidget();
+
         ui->loadedTextures->setTextureBankReference(textureBank.get());
 
         ui->atlasWidget->setTextureBankReference(textureBank.get());
