@@ -7,6 +7,7 @@
 
 #include "CurrentTextureImage.h"
 #include "TextureLogic/TextureBank.h"
+#include "ScrollArea.h"
 
 namespace GUI
 {
@@ -18,17 +19,17 @@ namespace GUI
             selectedTextureSize = QSize{-1, -1};
 
             currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].first = "Selected Texture";
-            currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second = new RenderArea{CurrentTextureImage::SelectedTexture, this};
+            currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second = new ScrollArea{CurrentTextureImage::SelectedTexture, this};
 
             currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SpecularTexture)].first = "Specular Texture";
-            currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SpecularTexture)].second = new RenderArea{CurrentTextureImage::SpecularTexture, this};
+            currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SpecularTexture)].second = new ScrollArea{CurrentTextureImage::SpecularTexture, this};
 
             for(auto &i : currentTexture)
             {
                 addTab(i.second, i.first);
             }
 
-            connect(currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second, &RenderArea::repaintSelectedTexture, [this]()
+            connect(currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second, &ScrollArea::repaintSelectedTexture, [this]()
             {
                 emit repaintSelectedTexture();
             });

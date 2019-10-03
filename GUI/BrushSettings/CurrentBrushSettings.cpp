@@ -63,6 +63,8 @@ namespace GUI
                     QMessageBox::warning(this, tr("Texture Atlas Creator"), tr("You have entered an invalid brush dimension. \n"
                                         "The width must be greater than 0 and not greater than either the selected texture width or height!"),
                                          QMessageBox::Ok);
+
+                    currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush->getPaintImage().size().width())));
                 }
                 else
                 {

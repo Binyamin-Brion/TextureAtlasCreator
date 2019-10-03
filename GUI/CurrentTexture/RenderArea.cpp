@@ -106,6 +106,11 @@ namespace GUI
         {
             this->texture = texture;
 
+            if(texture != nullptr)
+            {
+                setMinimumSize(texture->getImage(TextureLogic::Zoom::Normal).size());
+            }
+
             QWidget::repaint();
         }
 

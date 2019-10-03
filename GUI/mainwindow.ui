@@ -26,7 +26,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="GUI::BrushSettings::CurrentBrushSettings" name="widget" native="true"/>
+         <widget class="GUI::BrushSettings::CurrentBrushSettings" name="brushSettings" native="true"/>
         </item>
         <item>
          <widget class="GUI::CurrentTexture::CurrentTextureTabWidget" name="currentTexture"/>
@@ -34,7 +34,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QScrollArea" name="scrollArea">
+       <widget class="QScrollArea" name="selectedTextureInformation">
         <property name="widgetResizable">
          <bool>true</bool>
         </property>

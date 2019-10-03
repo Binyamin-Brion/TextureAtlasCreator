@@ -20,6 +20,8 @@ namespace GUI
 {
     namespace CurrentTexture
     {
+        class ScrollArea;
+
         class CurrentTextureTabWidget : public QTabWidget
         {
             Q_OBJECT
@@ -36,7 +38,7 @@ namespace GUI
                 void selectedTextureChanged(QSize, QSize);
 
             private:
-                std::array<std::pair<QString, RenderArea*>, 2> currentTexture;
+                std::array<std::pair<QString, ScrollArea*>, 2> currentTexture;
                 std::vector<TextureLogic::Texture> *textures = nullptr;
                 TextureLogic::TextureBank *textureBank = nullptr;
                 int currentTextureIndex;
