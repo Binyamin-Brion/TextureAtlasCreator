@@ -16,6 +16,11 @@ namespace GUI
     {
         class RenderArea;
     }
+
+    namespace TextureInformation
+    {
+        class SelectedTextureInformation;
+    }
 }
 
 
@@ -33,14 +38,17 @@ namespace TextureLogic
             void addPaintHistoryTexture(PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             const QImage& getImage(TextureLogic::Zoom zoom) const;
             QImage& getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
+            const QString& getTextureDescription(AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>) const;
             PaintFunctions::PaintHistoryCommand* removeRecentPaintHistorySpecular(AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             PaintFunctions::PaintHistoryCommand* removeRecentPaintHistoryTexture(AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
+            void setTextureDescription(const QString &description, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
             TextureImages& textureImages();
             const QString& textureLocation() const;
             const QString& textureName() const;
 
         private:
 
+            QString textureDescription;
             QString _textureLocation;
             QString _textureName;
 

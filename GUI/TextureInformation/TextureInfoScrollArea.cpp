@@ -9,7 +9,6 @@ namespace GUI
 {
     namespace TextureInformation
     {
-
         TextureInfoScrollArea::TextureInfoScrollArea(QWidget *parent) : QScrollArea{parent},
                                                                         selectedTextureInformation{new SelectedTextureInformation{this}}
         {
@@ -21,6 +20,11 @@ namespace GUI
         void TextureInfoScrollArea::setCentralWidget()
         {
             setWidget(selectedTextureInformation);
+        }
+
+        void TextureInfoScrollArea::setTexture(const TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>)
+        {
+            selectedTextureInformation->setTexture(texture);
         }
     }
 }

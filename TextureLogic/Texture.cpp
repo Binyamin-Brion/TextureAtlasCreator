@@ -39,6 +39,11 @@ namespace TextureLogic
         return _texture[GetZoomIndex(zoom)].getSpecularTexture();
     }
 
+    const QString& Texture::getTextureDescription(AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>) const
+    {
+        return textureDescription;
+    }
+
     PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistorySpecular(AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
     {
         return _texture[GetZoomIndex(Zoom::Normal)].removePaintHistorySpecular();
@@ -47,6 +52,21 @@ namespace TextureLogic
     PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistoryTexture(AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
     {
         return _texture[GetZoomIndex(Zoom::Normal)].removePaintHistoryTexture();
+    }
+
+    void Texture::setTextureDescription(const QString &description, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)
+    { printf("adding: %s \n", description.toStdString().c_str());
+        int descriptionLengthDifference = description.size() - textureDescription.size();
+
+        if(descriptionLengthDifference > 0)
+        {
+            //textureDescription += description.mid(textureDescription.size() + 1);
+            textureDescription += description[description.size() - 1];
+        }
+        else
+        {
+            textureDescription.chop(1);
+        }
     }
 
     Texture::TextureImages &Texture::textureImages()

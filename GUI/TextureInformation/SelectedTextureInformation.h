@@ -8,6 +8,11 @@
 #include <QtWidgets/QWidget>
 #include "ui_selectedTextureInformation.h"
 
+namespace TextureLogic
+{
+    class Texture;
+}
+
 namespace GUI
 {
     namespace TextureInformation
@@ -16,9 +21,13 @@ namespace GUI
         {
             public:
                 explicit SelectedTextureInformation(QWidget *parent = nullptr);
+                void setTexture(const TextureLogic::Texture *texture);
 
             private:
+                void resetDefaultLabels();
+
                 Ui::SelectedTextureInformation *ui = nullptr;
+                TextureLogic::Texture *texture = nullptr;
         };
     }
 }

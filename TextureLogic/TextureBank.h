@@ -10,7 +10,6 @@
 #include "Attributes/AttributeMacros.h"
 #include "AccessRestriction/PassKey.h"
 
-
 namespace GUI
 {
     namespace Atlas
@@ -27,6 +26,11 @@ namespace GUI
     {
         class TextureButtonArea;
     }
+
+    namespace TextureInformation
+    {
+        class TextureInfoScrollArea;
+    }
 }
 
 namespace TextureLogic
@@ -39,6 +43,7 @@ namespace TextureLogic
             const std::vector<Texture>& WARN_UNUSED getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const;
             void setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget);
             void setCurrentTextureTabWidgetReference(GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget);
+            void setTextureInfoScrollAreaReference(GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea);
             void storeNewTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
             void textureButtonPressed(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
             void textureSelected(const Texture *texture);
@@ -46,6 +51,7 @@ namespace TextureLogic
         private:
             GUI::Atlas::AtlasTabWidget *atlasTabWidget = nullptr;
             GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget = nullptr;
+            GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea = nullptr;
             std::vector<Texture> textures;
 
     };

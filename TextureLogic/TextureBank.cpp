@@ -6,6 +6,7 @@
 
 #include "GUI/Atlas/AtlasTabWidget.h"
 #include "GUI/CurrentTexture/CurrentTextureTabWidget.h"
+#include "GUI/TextureInformation/TextureInfoScrollArea.h"
 
 namespace TextureLogic
 {
@@ -35,6 +36,14 @@ namespace TextureLogic
         if(this->currentTextureTabWidget == nullptr)
         {
             this->currentTextureTabWidget = currentTextureTabWidget;
+        }
+    }
+
+    void TextureBank::setTextureInfoScrollAreaReference(GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea)
+    {
+        if(this->textureInfoScrollArea == nullptr)
+        {
+            this->textureInfoScrollArea = textureInfoScrollArea;
         }
     }
 
@@ -83,5 +92,7 @@ namespace TextureLogic
     void TextureBank::textureSelected(const Texture *texture)
     {
         currentTextureTabWidget->setSelectedTexture(const_cast<Texture*>(texture), {});
+
+        textureInfoScrollArea->setTexture(texture, {});
     }
 }

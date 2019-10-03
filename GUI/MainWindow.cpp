@@ -22,6 +22,8 @@ namespace GUI
 
         textureBank->setCurrentTextureTabWidgetReference(ui->currentTexture);
 
+        textureBank->setTextureInfoScrollAreaReference(ui->selectedTextureInformation);
+
         connect(ui->currentTexture, SIGNAL(repaintSelectedTexture()), ui->atlasWidget, SLOT(repaintSelectedTexture()));
 
         connect(ui->currentTexture, SIGNAL(changedRenderArea(const PaintFunctions::Brush&)), ui->brushSettings, SLOT(showDifferentBrush(const PaintFunctions::Brush&)));

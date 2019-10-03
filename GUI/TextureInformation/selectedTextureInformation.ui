@@ -29,49 +29,49 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="textureLocationLabel">
      <property name="text">
       <string>Texture Location: N/A</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="textureWidthLabel">
      <property name="text">
       <string>Texture Width: N/A</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="textureHeightLabel">
      <property name="text">
       <string>Texture Height: N/A</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="textureDepthLabel">
      <property name="text">
       <string>Texture Depth: N/A</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_5">
+    <widget class="QLabel" name="textureSizeBytesLabel">
      <property name="text">
       <string>Texture Size Bytes: N/A</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_6">
+    <widget class="QLabel" name="lastSavedLabel">
      <property name="text">
       <string>Last Saved: N/A</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_8">
+    <widget class="QLabel" name="lastSavedToLabel">
      <property name="text">
       <string>Last Saved To: N/A</string>
      </property>
@@ -102,6 +102,9 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="plainText">
+      <string/>
      </property>
     </widget>
    </item>

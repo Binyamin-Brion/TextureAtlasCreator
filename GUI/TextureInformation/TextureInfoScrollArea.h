@@ -6,6 +6,13 @@
 #define TEXTUREATLASCREATOR_TEXTUREINFOSCROLLAREA_H
 
 #include <QtWidgets/QScrollArea>
+#include "AccessRestriction/PassKey.h"
+
+namespace TextureLogic
+{
+    class Texture;
+    class TextureBank;
+}
 
 namespace GUI
 {
@@ -18,6 +25,7 @@ namespace GUI
             public:
                 explicit TextureInfoScrollArea(QWidget *parent = nullptr);
                 void setCentralWidget();
+                void setTexture(const TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>);
 
             private:
                 SelectedTextureInformation *selectedTextureInformation = nullptr;
