@@ -22,6 +22,13 @@ namespace GUI
 
         connect(ui->currentTexture, SIGNAL(repaintSelectedTexture()), ui->atlasWidget, SLOT(repaintSelectedTexture()));
 
+        connect(ui->currentTexture, SIGNAL(changedRenderArea(const PaintFunctions::Brush&)), ui->widget, SLOT(showDifferentBrush(const PaintFunctions::Brush&)));
+        connect(ui->currentTexture, SIGNAL(selectedTextureChanged(QSize, QSize)), ui->widget, (SLOT(updateSelectedTextureSize(QSize, QSize))));
+
+        ui->currentTexture->setCurrentIndex(1);
+        ui->currentTexture->setCurrentIndex(0);
+        ui->widget->updateSelectedTextureSize(QSize{-1, 1}, QSize{25, 25});
+
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
 
         setMinimumSize(1280, 720);

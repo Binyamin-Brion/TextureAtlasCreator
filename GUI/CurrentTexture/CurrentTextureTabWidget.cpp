@@ -15,6 +15,7 @@ namespace GUI
         CurrentTextureTabWidget::CurrentTextureTabWidget(QWidget *parent) : QTabWidget{parent}
         {
             currentTextureIndex = -1;
+            selectedTextureSize = QSize{-1, -1};
 
             currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].first = "Selected Texture";
             currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second = new RenderArea{CurrentTextureImage::SelectedTexture, this};
@@ -30,6 +31,11 @@ namespace GUI
             connect(currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second, &RenderArea::repaintSelectedTexture, [this]()
             {
                 emit repaintSelectedTexture();
+            });
+
+            connect(this, &QTabWidget::currentChanged, [this](int index)
+            {
+                emit changedRenderArea(currentTexture[index].second->getBrush());
             });
         }
 
@@ -58,6 +64,14 @@ namespace GUI
                 {
                     Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
                 }
+
+                selectedTextureSize = texture->getImage(TextureLogic::Zoom::Normal).size();
+
+                emit selectedTextureChanged(texture->getImage(TextureLogic::Zoom::Normal).size(), currentTexture[currentIndex()].second->getBrush().getPaintImage().size());
+            }
+            else
+            {
+                emit selectedTextureChanged(QSize{-1, -1}, currentTexture[currentIndex()].second->getBrush().getPaintImage().size());
             }
 
             currentTextureIndex = index;

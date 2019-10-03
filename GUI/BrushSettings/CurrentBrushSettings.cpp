@@ -9,6 +9,8 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QColorDialog>
+#include <QtWidgets/QMessageBox>
+#include "PaintFunctions/Brush.h"
 
 namespace GUI
 {
@@ -46,7 +48,58 @@ namespace GUI
             connect(colourDialog, &QColorDialog::colorSelected, [this](QColor selectedColour)
             {
                 currentBrushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(selectedColour));
+
+                brush->setPaintTypeSolid( brush->getPaintImage().size(), selectedColour);
             });
+
+            connect(currentBrushWidthLineEdit, &QLineEdit::returnPressed, [this]()
+            {
+                bool ok = false;
+
+                int enteredWidth = currentBrushWidthLineEdit->text().toInt(&ok);
+
+                if(!ok || (enteredWidth > selectedTextureSize.width() || enteredWidth > selectedTextureSize.height() || enteredWidth <= 0))
+                {
+                    QMessageBox::warning(this, tr("Texture Atlas Creator"), tr("You have entered an invalid brush dimension. \n"
+                                        "The width must be greater than 0 and not greater than either the selected texture width or height!"),
+                                         QMessageBox::Ok);
+                }
+                else
+                {
+                    QColor brushColour = brush->getPaintImage().pixelColor(0, 0);
+
+                    brush->setPaintTypeSolid(QSize{enteredWidth, enteredWidth}, brushColour);
+                }
+            });
+        }
+
+        void CurrentBrushSettings::showDifferentBrush(const PaintFunctions::Brush &brush)
+        {
+            this->brush = const_cast<PaintFunctions::Brush*>(&brush);
+
+            QColor brushColour = brush.getPaintImage().pixelColor(0, 0);
+
+            currentBrushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(brushColour));
+
+            currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush.getPaintImage().size().width())));
+        }
+
+        void CurrentBrushSettings::updateSelectedTextureSize(QSize size, QSize brushSize)
+        {
+            selectedTextureSize = size;
+
+            if(size.width() == -1)
+            {
+                currentBrushWidthLineEdit->setText("No texture selected");
+
+                currentBrushWidthLineEdit->setEnabled(false);
+            }
+            else
+            {
+                currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brushSize.width())));
+
+                currentBrushWidthLineEdit->setEnabled(true);
+            }
         }
 
         void CurrentBrushSettings::handleColourButtonPressed()

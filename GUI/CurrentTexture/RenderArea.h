@@ -32,6 +32,7 @@ namespace GUI
 
             public:
                 explicit RenderArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
+                const PaintFunctions::Brush& getBrush() const;
                 void mouseMoveEvent(QMouseEvent *event) override;
                 void mousePressEvent(QMouseEvent *event) override;
                 void mouseReleaseEvent(QMouseEvent *event) override;

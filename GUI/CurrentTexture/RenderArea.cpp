@@ -26,6 +26,11 @@ namespace GUI
             new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z), this, SLOT(undoPaintOperation()));
         }
 
+        const PaintFunctions::Brush& RenderArea::getBrush() const
+        {
+            return brush;
+        }
+
         void RenderArea::mouseMoveEvent(QMouseEvent *event)
         {
             if(texture != nullptr)
@@ -118,6 +123,11 @@ namespace GUI
             }
 
             auto mostRecentPaintHistory = getReferredToImageHistory();
+
+            if(mostRecentPaintHistory == nullptr)
+            {
+                return;
+            }
 
             // Remember that a paint history could compromise of more than one paint action if the mouse was dragged
             // while the left button was done, for example.

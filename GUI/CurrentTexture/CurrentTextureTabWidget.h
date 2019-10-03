@@ -31,13 +31,16 @@ namespace GUI
                 void setTexturesReference(std::vector<TextureLogic::Texture> &textures);
 
             signals:
+                void changedRenderArea(const PaintFunctions::Brush&);
                 void repaintSelectedTexture();
+                void selectedTextureChanged(QSize, QSize);
 
             private:
                 std::array<std::pair<QString, RenderArea*>, 2> currentTexture;
                 std::vector<TextureLogic::Texture> *textures = nullptr;
                 TextureLogic::TextureBank *textureBank = nullptr;
                 int currentTextureIndex;
+                QSize selectedTextureSize;
         };
     }
 }

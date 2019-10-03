@@ -13,6 +13,11 @@ class QPushButton;
 class QLineEdit;
 class QColorDialog;
 
+namespace PaintFunctions
+{
+    class Brush;
+}
+
 namespace GUI
 {
     namespace BrushSettings
@@ -23,6 +28,10 @@ namespace GUI
 
             public:
                 explicit CurrentBrushSettings(QWidget *parent = nullptr);
+
+            public slots:
+                void showDifferentBrush(const PaintFunctions::Brush &brush);
+                void updateSelectedTextureSize(QSize size, QSize brushSize);
 
             private slots:
                 void handleColourButtonPressed();
@@ -40,6 +49,9 @@ namespace GUI
 
                 QColorDialog *colourDialog = nullptr;
                 bool colourSelected = false;
+
+                PaintFunctions::Brush *brush = nullptr;
+                QSize selectedTextureSize;
         };
     }
 }
