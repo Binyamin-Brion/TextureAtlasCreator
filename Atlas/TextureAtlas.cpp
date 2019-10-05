@@ -351,14 +351,19 @@ namespace Atlas
 
         bool textureLoadedAlready = false;
 
-        for(const auto &i : texturesInAtlas)
+        for(const auto &i : textureDrawingPositions)
         {
-            if(i == texture.textureLocation())
+            if(i.texture->textureName() == texture.textureName())
             {
                 textureLoadedAlready = true;
 
                 break;
             }
+        }
+
+        if(selectedExistingTexture->isOpen() && selectedExistingTexture->getImageForDrawing().textureName() == texture.textureName())
+        {
+            textureLoadedAlready = true;
         }
 
         if(textureLoadedAlready)
@@ -437,8 +442,6 @@ namespace Atlas
             textureDrawingPositions.back().texture = &selectedTexture->getImage();
 
             textureDrawingPositions.back().surroundingBorder = selectedTexture->getSurroundingBorder();
-
-            texturesInAtlas.push_back(selectedTexture->getImage().textureLocation());
 
             for(int i = 0; i < textures->size(); ++i)
             {

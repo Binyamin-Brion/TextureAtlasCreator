@@ -42,6 +42,9 @@ namespace TextureLogic
             PaintFunctions::PaintHistoryCommand* removeRecentPaintHistorySpecular(AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             PaintFunctions::PaintHistoryCommand* removeRecentPaintHistoryTexture(AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             void setTextureDescription(const QString &description, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
+            void setTextureLocation(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
+            void setTextureName(const QString &textureName, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
+            const QString& textureFormat() const;
             TextureImages& textureImages();
             const QString& textureLocation() const;
             const QString& textureName() const;
@@ -49,6 +52,7 @@ namespace TextureLogic
         private:
 
             QString textureDescription;
+            QString _textureFormat;
             QString _textureLocation;
             QString _textureName;
 

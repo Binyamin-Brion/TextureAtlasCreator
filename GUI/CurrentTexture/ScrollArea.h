@@ -34,6 +34,7 @@ namespace GUI
                 void setTexture(TextureLogic::Texture *texture);
 
             signals:
+                void paintedSelectedTexture();
                 void repaintSelectedTexture();
 
             private:

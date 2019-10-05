@@ -18,6 +18,10 @@ namespace GUI
 
         ui->atlasWidget->setTextureBankReference(textureBank.get());
 
+        ui->currentTexture->setTextureBankReference(textureBank.get());
+
+        ui->selectedTextureInformation->setTextureBankReference(textureBank.get());
+
         textureBank->setAtlasTabWidgetReference(ui->atlasWidget);
 
         textureBank->setCurrentTextureTabWidgetReference(ui->currentTexture);

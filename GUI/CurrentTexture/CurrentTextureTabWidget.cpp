@@ -34,6 +34,14 @@ namespace GUI
                 emit repaintSelectedTexture();
             });
 
+            connect(currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second, &ScrollArea::paintedSelectedTexture, [this]()
+            {
+                if(textureBank != nullptr)
+                {
+                    textureBank->selectedTextureChanged();
+                }
+            });
+
             connect(this, &QTabWidget::currentChanged, [this](int index)
             {
                 emit changedRenderArea(currentTexture[index].second->getBrush());

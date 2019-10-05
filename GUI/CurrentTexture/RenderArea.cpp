@@ -296,6 +296,8 @@ namespace GUI
                     texture->addPaintHistorySpecular(paintHistoryCommand, {});
                     break;
             }
+
+            emit paintedSelectedTexture();
         }
     }
 }

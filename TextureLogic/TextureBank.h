@@ -38,17 +38,22 @@ namespace TextureLogic
     class TextureBank
     {
         public:
-           
+
             const std::vector<Texture>& WARN_UNUSED deleteImage(std::vector<Texture>::iterator texture, AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>);
             const std::vector<Texture>& WARN_UNUSED getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const;
+            const std::vector<Texture>& WARN_UNUSED getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
+            void selectedTextureChanged();
             void setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget);
             void setCurrentTextureTabWidgetReference(GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget);
             void setTextureInfoScrollAreaReference(GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea);
             void storeNewTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
+            void reuploadTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
             void textureButtonPressed(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
             void textureSelected(const Texture *texture);
 
         private:
+            void loadNewTexture(const QString &textureLocation);
+
             GUI::Atlas::AtlasTabWidget *atlasTabWidget = nullptr;
             GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget = nullptr;
             GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea = nullptr;

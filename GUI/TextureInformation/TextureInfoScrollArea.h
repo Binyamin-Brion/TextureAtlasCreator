@@ -24,11 +24,14 @@ namespace GUI
         {
             public:
                 explicit TextureInfoScrollArea(QWidget *parent = nullptr);
+                void selectedTextureModified();
                 void setCentralWidget();
                 void setTexture(const TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>);
+                void setTextureBankReference(TextureLogic::TextureBank *textureBank);
 
             private:
                 SelectedTextureInformation *selectedTextureInformation = nullptr;
+                TextureLogic::TextureBank *textureBank = nullptr;
 
         };
     }

@@ -22,6 +22,11 @@ namespace GUI
             {
                 emit repaintSelectedTexture();
             });
+
+            connect(renderArea, &RenderArea::paintedSelectedTexture, [this]()
+            {
+                emit paintedSelectedTexture();
+            });
         }
 
         const PaintFunctions::Brush &ScrollArea::getBrush() const

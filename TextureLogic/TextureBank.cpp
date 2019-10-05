@@ -23,6 +23,16 @@ namespace TextureLogic
         return textures;
     }
 
+    const std::vector<Texture>& TextureBank::getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>)
+    {
+    return textures;
+    }
+
+    void TextureBank::selectedTextureChanged()
+    {
+        textureInfoScrollArea->selectedTextureModified();
+    }
+
     void TextureBank::setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget)
     {
         if(this->atlasTabWidget == nullptr)
@@ -49,22 +59,12 @@ namespace TextureLogic
 
     void TextureBank::storeNewTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
     {
-        for(const auto &i : textures)
-        {
-            if(i.textureLocation() == textureLocation)
-            {
-                return;
-            }
-        }
+        loadNewTexture(textureLocation);
+    }
 
-        textures.emplace_back(textureLocation);
-
-        // Tell the texture atlas to reset its texture references as its references may now be invalid if the
-        // textures vector reallocated memory
-
-        atlasTabWidget->updateTextureReferences({});
-
-        currentTextureTabWidget->setTexturesReference(textures);
+    void TextureBank::reuploadTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>)
+    {
+        loadNewTexture(textureLocation);
     }
 
     void TextureBank::textureButtonPressed(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
@@ -94,5 +94,25 @@ namespace TextureLogic
         currentTextureTabWidget->setSelectedTexture(const_cast<Texture*>(texture), {});
 
         textureInfoScrollArea->setTexture(texture, {});
+    }
+
+    void TextureBank::loadNewTexture(const QString &textureLocation)
+    {
+        for(const auto &i : textures)
+        {
+            if(i.textureLocation() == textureLocation)
+            {
+                return;
+            }
+        }
+
+        textures.emplace_back(textureLocation);
+
+        // Tell the texture atlas to reset its texture references as its references may now be invalid if the
+        // textures vector reallocated memory
+
+        atlasTabWidget->updateTextureReferences({});
+
+        currentTextureTabWidget->setTexturesReference(textures);
     }
 }

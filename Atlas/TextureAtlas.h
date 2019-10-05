@@ -48,7 +48,6 @@ namespace Atlas
         private:
             void addTexture(SelectedTexture *selectedTexture);
             GUI::Atlas::AtlasWidget *atlasWidget = nullptr;
-            std::vector<QString> texturesInAtlas;
             std::vector<TextureDrawingPosition> textureDrawingPositions;
             const std::vector<TextureLogic::Texture> *textures = nullptr;
             TextureLogic::TextureBank *textureBank = nullptr;

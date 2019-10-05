@@ -16,7 +16,11 @@ namespace TextureLogic
 
         _textureLocation.replace('\\', '/');
 
-        _textureName = _textureLocation.right(_textureLocation.size() - _textureLocation.lastIndexOf('/'));
+        _textureName = _textureLocation.right(_textureLocation.size() - _textureLocation.lastIndexOf('/') - 1);
+
+        _textureFormat = _textureName.right(_textureLocation.size() - _textureLocation.lastIndexOf('.') - 1);
+
+        _textureName.chop(_textureFormat.size() + 1);
     }
 
     void Texture::addPaintHistorySpecular(PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
@@ -55,7 +59,7 @@ namespace TextureLogic
     }
 
     void Texture::setTextureDescription(const QString &description, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)
-    { printf("adding: %s \n", description.toStdString().c_str());
+    {
         int descriptionLengthDifference = description.size() - textureDescription.size();
 
         if(descriptionLengthDifference > 0)
@@ -67,6 +71,27 @@ namespace TextureLogic
         {
             textureDescription.chop(1);
         }
+    }
+
+    void Texture::setTextureLocation(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)
+    {
+        _textureLocation = textureLocation;
+
+        _textureLocation.replace('\\', '/');
+
+        QString tempTextureName = _textureLocation.right(_textureLocation.size() - _textureLocation.lastIndexOf('/') - 1);
+
+        _textureFormat = tempTextureName.right(tempTextureName.size() - tempTextureName.lastIndexOf('.') - 1);
+    }
+
+    void Texture::setTextureName(const QString &textureName, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)
+    {
+        _textureName = textureName;
+    }
+
+    const QString& Texture::textureFormat() const
+    {
+        return _textureFormat;
     }
 
     Texture::TextureImages &Texture::textureImages()
