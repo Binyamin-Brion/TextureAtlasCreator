@@ -15,6 +15,12 @@ namespace GUI
     {
         SelectedTextureInformation::SelectedTextureInformation(QWidget *parent) : QWidget{parent}, ui{new Ui::SelectedTextureInformation}
         {
+            // There is a need to use both the actual enum for the format of the string (as when saving) and its string
+            // representation (for use with the GUI). To ease this conversion, all of the supported Image formats are pushed
+            // to this vector along with its string representation. Whenever there is need to convert from one to the other,
+            // search the vector using the information available. For example, if the string "Mono" is known, search the
+            // vector for the word "Mono", which will yield the respective enum.
+
             internalFormatPairs.push_back(InternalFormatPair{QImage::Format_Invalid, "Invalid"});
             internalFormatPairs.push_back(InternalFormatPair{QImage::Format_Mono, "Mono"});
             internalFormatPairs.push_back(InternalFormatPair{QImage::Format_MonoLSB, "MonoLSB"});
@@ -41,6 +47,9 @@ namespace GUI
             internalFormatPairs.push_back(InternalFormatPair{QImage::Format_Alpha8, "Alpha8"});
             internalFormatPairs.push_back(InternalFormatPair{QImage::Format_Grayscale8, "Grayscale8"});
 
+            // This is for convenience- whenever a new image extension needs to be added, just add it to this
+            // vector which will ensure it is shown in the GUI
+
             imageExtensions.push_back("png");
             imageExtensions.push_back("jpg");
             imageExtensions.push_back("bmp");
@@ -48,6 +57,12 @@ namespace GUI
             imageExtensions.push_back("svg");
 
             ui->setupUi(this);
+
+            // Whenever the text of the texture description area changes, then it usually means that the user
+            // typed a description in. However, because internally the texture does not store a "No Description"
+            // description internally, the texture's description should only be updated when it is a different description.
+            // Note that when a texture with no description is selected, the plaintextedit is updated to show "No Description"
+            // which would inadvertently set the texture's description. Hence the check in the connect function.
 
            connect(ui->plainTextEdit, &QPlainTextEdit::textChanged, [this]()
            {
@@ -72,13 +87,13 @@ namespace GUI
                 {
                     QMessageBox::warning(this, tr("Error: Invalid Texture Name"), "You must choose unique name, different than an existing texture's!.", QMessageBox::Ok);
                 }
-//                else
-//                {
-//                    if(texture != nullptr)
-//                    {
-//                        texture->setTextureName(ui->textureNameLineEdit->text(), {});
-//                    }
-//                }
+                else
+                {
+                    if(texture != nullptr)
+                    {
+                        texture->setTextureName(ui->textureNameLineEdit->text(), {});
+                    }
+                }
            });
 
            connect(ui->pushButton, &QPushButton::pressed, [this]()
