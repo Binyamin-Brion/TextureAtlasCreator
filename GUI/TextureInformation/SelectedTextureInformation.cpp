@@ -64,21 +64,27 @@ namespace GUI
             // Note that when a texture with no description is selected, the plaintextedit is updated to show "No Description"
             // which would inadvertently set the texture's description. Hence the check in the connect function.
 
-           connect(ui->plainTextEdit, &QPlainTextEdit::textChanged, [this]()
+           connect(ui->textureDescription, &QPlainTextEdit::textChanged, [this]()
            {
-               if(texture != nullptr)
+               if(texture != nullptr) // This check should not be needed as the texture description is disabled if no texture is selected, but just in case
                {
-                   if(ui->plainTextEdit->toPlainText() != "No Description")
+                   if(ui->textureDescription->toPlainText() != "No Description")
                    {
-                        texture->setTextureDescription(ui->plainTextEdit->toPlainText(), {});
+                        texture->setTextureDescription(ui->textureDescription->toPlainText(), {});
+                   }
+                   else
+                   {
+                       Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Invalid if branch taken");
                    }
                }
            });
 
+           // Note that even if return is pressed, the texture is not changed until the texture is saved.
+           // This is because due to how textures are loaded when a texture button is pressed (texture location is given to find an image)
+           // the user will still not be able to load the old texture with the old name in. Therefore there is no point in doing so now.
+
            connect(ui->textureNameLineEdit, &QLineEdit::returnPressed, [this]()
            {
-               printf("%s, %s \n",ui->textureNameLineEdit->text().toStdString().c_str() , texture->textureName().toStdString().c_str());
-
                 if(ui->textureNameLineEdit->text().contains("Modified"))
                 {
                     QMessageBox::warning(this, tr("Error: Invalid Texture Name"), "Cannot have a texture name with the word Modified.", QMessageBox::Ok);
@@ -87,24 +93,21 @@ namespace GUI
                 {
                     QMessageBox::warning(this, tr("Error: Invalid Texture Name"), "You must choose unique name, different than an existing texture's!.", QMessageBox::Ok);
                 }
-                else
-                {
-                    if(texture != nullptr)
-                    {
-                        texture->setTextureName(ui->textureNameLineEdit->text(), {});
-                    }
-                }
            });
 
-           connect(ui->pushButton, &QPushButton::pressed, [this]()
+           // TODO: Change where the file save dialog opens to- doubtful that every computer where this program runs has a user called BinyBrion
+
+           connect(ui->saveTextureToButton, &QPushButton::pressed, [this]()
            {
                if(ui->textureNameLineEdit->text().isEmpty())
                {
                    QMessageBox::warning(this, tr("Error: No texture name given."), "Enter a texture name first before trying to save.", QMessageBox::Ok);
                }
-               else if(texture == nullptr)
+               else if(texture == nullptr) // This if statement should not occur as the push button is disabled when there is no texture selected. But just in case.
                {
                    QMessageBox::warning(this, tr("Error: No Texture Selected"), "You must first selected a texture.", QMessageBox::Ok);
+
+                   Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Invalid if branch taken");
                }
                else
                {
@@ -142,10 +145,16 @@ namespace GUI
                }
            });
 
+           // When adding the internal format representations, the format "Invalid Format" is a weird option to be able to select.
+           // Therefore the user should not be able to select it.
+
             for(auto i = internalFormatPairs.cbegin() + 1; i != internalFormatPairs.cend(); ++i)
             {
                 ui->interalFormatComboBox->addItem(i->formatStringRepresentation);
             }
+
+            // By default, set the texture format that a texture is saved as RGB32- since the first format was not
+            // not added to the combo box, the index of RGB32 is 3, not 4
 
             ui->interalFormatComboBox->setCurrentIndex(3);
 
@@ -154,11 +163,12 @@ namespace GUI
                 ui->formatComboBox->addItem(i);
             }
 
+            // By default the export texture quality should be 100
+
             ui->saveQualityLineEdit->setText("100");
-            ui->saveQualitySlider->setMinimum(0);
-            ui->saveQualitySlider->setMaximum(100);
-            ui->saveQualitySlider->setValue(100);
-            ui->saveQualitySlider->setSingleStep(5);
+
+            // Next two connect statements ensure that the line edit controlling the export image quality
+            // and the associated slider are synchronized in the values they are showing
 
             connect(ui->saveQualitySlider, &QSlider::sliderMoved, [this](int newValue)
             {
@@ -169,6 +179,8 @@ namespace GUI
             {
                 ui->saveQualityLineEdit->setText(QString::number(value));
             });
+
+            // Ensure valid quality factor is entered into the line edit associated with texture save quality
 
             connect(ui->saveQualityLineEdit, &QLineEdit::returnPressed, [this]()
             {
@@ -191,6 +203,9 @@ namespace GUI
 
         void SelectedTextureInformation::selectedTextureModified()
         {
+            // This check should not be needed as the render area and this widget are synchronized in the widget that is selected.
+            // The only way for a texture to be modified is if the render area holds a selected texture, in which case so does this widget
+
             if(texture != nullptr)
             {
                 QString currentTextureName = texture->textureName();
@@ -206,11 +221,18 @@ namespace GUI
                     ui->textureLocationLabel->setText("Texture Location: " + texture->textureLocation());
                 }
             }
+            else
+            {
+                Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Invalid if branch taken");
+            }
         }
 
         void SelectedTextureInformation::setTexture(const TextureLogic::Texture *texture)
         {
             this->texture = const_cast<TextureLogic::Texture*>(texture);
+
+            // No texture is selected, in whicase reset to the default state of showing texture information
+            // (Clear any texture-specific text and disable
 
             if(texture == nullptr)
             {
@@ -219,14 +241,22 @@ namespace GUI
                 return;
             }
 
-            ui->plainTextEdit->setEnabled(true);
+            // Valid texture is selected, and therefore the texture information area widgets
+            // should be enabled so the user can interact with them
 
-            ui->pushButton->setEnabled(true);
+            ui->textureDescription->setEnabled(true);
+
+            ui->saveTextureToButton->setEnabled(true);
             ui->formatComboBox->setEnabled(true);
             ui->interalFormatComboBox->setEnabled(true);
             ui->textureNameLineEdit->setEnabled(true);
             ui->saveQualityLineEdit->setEnabled(true);
             ui->saveQualitySlider->setEnabled(true);
+
+            // Note that when displaying information about a texture, a sample image is needed from information
+            // can be queried from. For everything but the image dimensions, any zoom can be selected, as the
+            // texture format is the same. However, to be consistent with what the user loaded form disk, the
+            // normal zoom is selected to ensure that the dimensions shown reflect what is on the disk.
 
             const QImage& textureImage = texture->getImage(TextureLogic::Zoom::Normal);
 
@@ -238,18 +268,23 @@ namespace GUI
             ui->textureSizeBytesLabel->setText("Texture Size Bytes: " + QString::number(textureImage.byteCount()));
             ui->lastSavedToLabel->setText("Last Saved: " + texture->textureLocation());
 
+            // Get the last time the selected texture was modified and display it to the user.
+            // Note that the location of the texture used for loading the image is queried.
+
             QFileInfo fileInfo{texture->textureLocation()};
 
             ui->lastSavedLabel->setText("Last Saved To: " + fileInfo.lastModified().toString());
 
             if(texture->getTextureDescription({}).isEmpty())
             {
-                ui->plainTextEdit->setPlainText("No Description");
+                ui->textureDescription->setPlainText("No Description");
             }
             else
             {
-                ui->plainTextEdit->setPlainText(texture->getTextureDescription({}));
+                ui->textureDescription->setPlainText(texture->getTextureDescription({}));
             }
+
+            // Find and display format information to the user
 
             auto texturePixelInternalFormat = std::find_if(internalFormatPairs.begin(), internalFormatPairs.end(), [texture](const InternalFormatPair &internalFormatPair)
             {
@@ -269,6 +304,10 @@ namespace GUI
 
         void SelectedTextureInformation::resetDefaultLabels()
         {
+            // This is called during initialization, which is a subset of the scenario of when this function is called:
+            // when no texture is selected. In that case, all of the texture information widgets are disabled, which
+            // prevents the any querying of a null pointer to a selected texture
+
             ui->textureLocationLabel->setText("Original Texture Location: N/A");
             ui->textureWidthLabel->setText("Texture Width: N/A");
             ui->textureHeightLabel->setText("Texture Height: N/A");
@@ -276,10 +315,10 @@ namespace GUI
             ui->textureSizeBytesLabel->setText("Texture Size Bytes: N/A");
             ui->lastSavedLabel->setText("Last Saved: N/A");
             ui->lastSavedToLabel->setText("Last Saved To: NA");
-            ui->plainTextEdit->setPlainText("No Texture Selected");
-            ui->plainTextEdit->setEnabled(false);
+            ui->textureDescription->setPlainText("No Texture Selected");
+            ui->textureDescription->setEnabled(false);
 
-            ui->pushButton->setEnabled(false);
+            ui->saveTextureToButton->setEnabled(false);
             ui->formatComboBox->setEnabled(false);
             ui->interalFormatComboBox->setEnabled(false);
             ui->textureNameLineEdit->setEnabled(false);
@@ -298,6 +337,10 @@ namespace GUI
             {
                 Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Unknown texture internal format encountered");
             }
+
+            // If the selected texture has a different format different than what the the user selected to save as,
+            // then convert the selected texture to that chosen format. Note however, that this means converting
+            // all of the zoom textures as well, as that is "part" of the selected texture.
 
             if(texturePixelInternalFormat->format != texture->getImage(TextureLogic::Zoom::Normal).format())
             {
@@ -333,6 +376,11 @@ namespace GUI
                 texture->setTextureLocation(newFileLocation, {});
 
                 ui->textureFormatLabel->setText("Texture Format: " + texture->textureFormat());
+
+                // After saving the texture, it now has a new texture name and location. However, this effectively "erased"
+                // the old texture that a texture button refers to. Thus when that button is pressed again, an error saying
+                // no texture of that location was loaded will appear. To deal with that, the old texture has to be reuploaded
+                // so that in the texturebank a texture with the old details is present
 
                 emit reuploadTexture(previousTextureLocation, texture);
 

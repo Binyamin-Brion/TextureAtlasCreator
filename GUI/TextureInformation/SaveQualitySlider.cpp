@@ -13,6 +13,10 @@ namespace GUI
         SaveQualitySlider::SaveQualitySlider(QWidget *parent) : QSlider{parent}
         {
             setPageStep(5);
+            setMinimum(0);
+            setMaximum(100);
+            setValue(100);
+            setSingleStep(5);
         }
 
         void SaveQualitySlider::mousePressEvent(QMouseEvent *event)
