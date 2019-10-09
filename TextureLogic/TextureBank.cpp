@@ -11,11 +11,11 @@
 namespace TextureLogic
 {
 
-    const std::vector<Texture>& TextureBank::deleteImage(std::vector<Texture>::iterator texture, AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>)
+    void TextureBank::deleteTexture(unsigned int textureIndex, AccessRestriction::PassKey<Atlas::TextureAtlas>)
     {
-        textures.erase(texture);
+        unusedIndexes.push_back(textureIndex);
 
-        return textures;
+        textureSelected(nullptr);
     }
 
     const std::vector<Texture>& TextureBank::getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const
@@ -106,7 +106,17 @@ namespace TextureLogic
             }
         }
 
-        textures.emplace_back(textureLocation);
+
+        if(unusedIndexes.empty())
+        {
+            textures.emplace_back(textureLocation);
+        }
+        else
+        {
+            textures[unusedIndexes.front()] = std::move(Texture{textureLocation});
+
+            unusedIndexes.erase(unusedIndexes.begin());
+        }
 
         // Tell the texture atlas to reset its texture references as its references may now be invalid if the
         // textures vector reallocated memory

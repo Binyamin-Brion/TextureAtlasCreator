@@ -66,15 +66,15 @@ namespace GUI
 
            connect(ui->textureDescription, &QPlainTextEdit::textChanged, [this]()
            {
-               if(texture != nullptr) // This check should not be needed as the texture description is disabled if no texture is selected, but just in case
+               // This check should not be needed as the texture description is disabled if no texture is selected, but just in case.
+               // Note that an assert in an else statement cannot be placed as during initialization this connect is called, and no texture is set yet.
+               // This leads to an errorneous assert.
+
+               if(texture != nullptr)
                {
                    if(ui->textureDescription->toPlainText() != "No Description")
                    {
                         texture->setTextureDescription(ui->textureDescription->toPlainText(), {});
-                   }
-                   else
-                   {
-                       Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Invalid if branch taken");
                    }
                }
            });

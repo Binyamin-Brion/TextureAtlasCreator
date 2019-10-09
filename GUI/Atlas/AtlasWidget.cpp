@@ -37,6 +37,12 @@ namespace GUI
             {
                 QCoreApplication::quit();
             }
+            else if(event->key() == Qt::Key_Delete)
+            {
+                textureAtlas->keyPressed(Qt::Key_Delete);
+
+                QWidget::repaint();
+            }
         }
 
         void AtlasWidget::mouseMoveEvent(QMouseEvent *event)

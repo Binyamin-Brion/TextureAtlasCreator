@@ -10,6 +10,11 @@
 #include "Attributes/AttributeMacros.h"
 #include "AccessRestriction/PassKey.h"
 
+namespace Atlas
+{
+    class TextureAtlas;
+}
+
 namespace GUI
 {
     namespace Atlas
@@ -39,7 +44,7 @@ namespace TextureLogic
     {
         public:
 
-            const std::vector<Texture>& WARN_UNUSED deleteImage(std::vector<Texture>::iterator texture, AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>);
+            void deleteTexture(unsigned int textureIndex, AccessRestriction::PassKey<Atlas::TextureAtlas>);
             const std::vector<Texture>& WARN_UNUSED getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const;
             const std::vector<Texture>& WARN_UNUSED getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
             void selectedTextureChanged();
@@ -58,6 +63,7 @@ namespace TextureLogic
             GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget = nullptr;
             GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea = nullptr;
             std::vector<Texture> textures;
+            std::vector<unsigned int> unusedIndexes;
 
     };
 }

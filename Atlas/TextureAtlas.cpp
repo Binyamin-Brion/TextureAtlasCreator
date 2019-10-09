@@ -110,6 +110,21 @@ namespace Atlas
         return{false, QSize{-1, -1}};
     }
 
+    void TextureAtlas::keyPressed(int keyID)
+    {
+        if(keyID == Qt::Key_Delete)
+        {
+            if(selectedExistingTexture->isOpen())
+            {
+                textureBank->deleteTexture(selectedExistingTexture->getTextureIndex(), {});
+
+                delete selectedExistingTexture;
+
+                selectedExistingTexture = new SelectedTexture;
+            }
+        }
+    }
+
     void TextureAtlas::mouseClicked(int mouseX, int mouseY, int mouseButton)
     {
         leftMouseButtonDown = mouseButton == Qt::LeftButton;

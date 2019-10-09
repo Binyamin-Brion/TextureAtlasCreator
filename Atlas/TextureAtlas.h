@@ -36,6 +36,7 @@ namespace Atlas
             void draw(QPainter &painter);
             std::pair<bool, QSize> getAtlasSize() const;
             std::pair<bool, QSize> getSelectedTextureSize() const;
+            void keyPressed(int keyID);
             void mouseClicked(int mouseX, int mouseY, int mouseButton);
             void mouseMoved(int mouseX, int mouseY);
             void mouseReleased(int mouseX, int mouseY, int mouseButton);
