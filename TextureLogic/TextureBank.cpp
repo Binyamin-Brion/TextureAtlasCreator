@@ -112,7 +112,7 @@ namespace TextureLogic
             textures.emplace_back(textureLocation);
         }
         else
-        {
+        {printf("Loading at: %d \n", unusedIndexes.front());
             textures[unusedIndexes.front()] = std::move(Texture{textureLocation});
 
             unusedIndexes.erase(unusedIndexes.begin());

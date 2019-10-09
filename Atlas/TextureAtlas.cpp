@@ -116,11 +116,8 @@ namespace Atlas
         {
             if(selectedExistingTexture->isOpen())
             {
-                textureBank->deleteTexture(selectedExistingTexture->getTextureIndex(), {});
-
-                delete selectedExistingTexture;
-
-                selectedExistingTexture = new SelectedTexture;
+                selectedExistingTexture->getImage();
+                textureBank->textureSelected(nullptr);
             }
         }
     }
