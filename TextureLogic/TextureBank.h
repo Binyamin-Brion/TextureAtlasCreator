@@ -64,6 +64,8 @@ namespace TextureLogic
             GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget = nullptr;
             GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea = nullptr;
             std::vector<Texture> textures;
+
+            std::vector<unsigned int> freeSpotIndexes;
     };
 }
 

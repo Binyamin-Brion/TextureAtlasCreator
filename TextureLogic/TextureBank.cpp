@@ -38,9 +38,7 @@ namespace TextureLogic
 
         atlasTabWidget->removeTexture(&*texturePosition);
 
-        textures.erase(texturePosition);
-
-        resetTextureReference();
+        freeSpotIndexes.push_back(std::distance(textures.begin(), texturePosition));
     }
 
     void TextureBank::selectedTextureChanged()
@@ -121,7 +119,16 @@ namespace TextureLogic
             }
         }
 
-        textures.emplace_back(textureLocation);
+        if(freeSpotIndexes.empty())
+        {
+            textures.emplace_back(textureLocation);
+        }
+        else
+        {
+            textures[freeSpotIndexes.front()] = Texture{textureLocation};
+
+            freeSpotIndexes.erase(freeSpotIndexes.begin());
+        }
 
         resetTextureReference();
     }
