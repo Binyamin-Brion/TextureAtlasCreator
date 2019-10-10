@@ -81,6 +81,44 @@ namespace GUI
 
             textureButtons.push_back(new TextureButton{textureLocation, this});
 
+            connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&)), this, SLOT(textureButtonClicked(const QString&)));
+
+            placeTextureButton(textureButtons.back());
+        }
+
+        void TextureButtonArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
+        {
+            if(this->textureBank == nullptr)
+            {
+                this->textureBank = textureBank;
+            }
+        }
+
+        void TextureButtonArea::textureButtonClicked(const QString &textureLocation)
+        {
+            textureBank->textureButtonPressed(textureLocation, {});
+        }
+
+        void TextureButtonArea::addTextureButtonPlaceHolders(int addRows)
+        {
+            // Starting at the last row with place holders, add more of the place holders. Newly added buttons will
+            // be placed in the place holders created here
+
+            for(int i = currentRow; i <= addRows; ++i)
+            {
+                for(int j = 0; j < maxColumnCount; ++j)
+                {
+                    textureButtonPlaceHolders.push_back(new QWidget);
+
+                    gridLayout->addWidget(textureButtonPlaceHolders.back(), i, j, Qt::AlignTop | Qt::AlignLeft);
+                }
+            }
+
+            maxRowCount += addRows;
+        }
+
+        void TextureButtonArea::placeTextureButton(const TextureButton *button)
+        {
             gridLayout->removeWidget(textureButtonPlaceHolders.front());
 
             gridLayout->addWidget(textureButtons.back(), currentRow, currentColumn, Qt::AlignLeft | Qt::AlignTop);
@@ -118,39 +156,6 @@ namespace GUI
 
                 currentRow += 1;
             }
-
-            connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&)), this, SLOT(textureButtonClicked(const QString&)));
-        }
-
-        void TextureButtonArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
-        {
-            if(this->textureBank == nullptr)
-            {
-                this->textureBank = textureBank;
-            }
-        }
-
-        void TextureButtonArea::textureButtonClicked(const QString &textureLocation)
-        {
-            textureBank->textureButtonPressed(textureLocation, {});
-        }
-
-        void TextureButtonArea::addTextureButtonPlaceHolders(int addRows)
-        {
-            // Starting at the last row with place holders, add more of the place holders. Newly added buttons will
-            // be placed in the place holders created here
-
-            for(int i = currentRow; i <= addRows; ++i)
-            {
-                for(int j = 0; j < maxColumnCount; ++j)
-                {
-                    textureButtonPlaceHolders.push_back(new QWidget);
-
-                    gridLayout->addWidget(textureButtonPlaceHolders.back(), i, j, Qt::AlignTop | Qt::AlignLeft);
-                }
-            }
-
-            maxRowCount += addRows;
         }
     }
 }

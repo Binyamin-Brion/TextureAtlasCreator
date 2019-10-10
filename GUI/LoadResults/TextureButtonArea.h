@@ -41,6 +41,7 @@ namespace GUI
             private:
 
                 void addTextureButtonPlaceHolders(int addRows);
+                void placeTextureButton(const TextureButton *button);
 
                 std::vector<TextureButton*> textureButtons;
                 std::vector<QWidget*> textureButtonPlaceHolders; // See TextureButtonArea.cpp for explanation of this
