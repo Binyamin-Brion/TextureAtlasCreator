@@ -40,6 +40,7 @@ namespace Atlas
             void mouseClicked(int mouseX, int mouseY, int mouseButton);
             void mouseMoved(int mouseX, int mouseY);
             void mouseReleased(int mouseX, int mouseY, int mouseButton);
+            void removeTexture(const TextureLogic::Texture *texture);
             void setAtlasSize(QSize size);
             void setAtlasWidgetReference(GUI::Atlas::AtlasWidget *atlasWidget);
             void setSelectedTexture(const TextureLogic::Texture &texture);

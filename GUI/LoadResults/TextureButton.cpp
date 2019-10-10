@@ -48,5 +48,12 @@ namespace GUI
         {
             return textureLocation;
         }
+
+        bool TextureButton::mouseOver(QPoint mousePos) const
+        {
+            return pos().x() <= mousePos.x() && mousePos.x() <= pos().x() + width() &&
+                   pos().y() <= mousePos.y() && mousePos.y() <= pos().y() + height();
+
+        }
     }
 }

@@ -27,6 +27,7 @@ namespace GUI
             public:
                 explicit AtlasTabWidget(QWidget *parent = nullptr);
                 void addTextureToCurrentAtlas(const TextureLogic::Texture &texture);
+                void removeTexture(const TextureLogic::Texture *texture);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>);
 

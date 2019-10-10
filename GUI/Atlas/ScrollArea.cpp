@@ -30,6 +30,11 @@ namespace GUI
             atlasWidget->translateViewPort(dx, dy);
         }
 
+        void ScrollArea::removeTexture(const TextureLogic::Texture *texture)
+        {
+            atlasWidget->removeTexture(texture);
+        }
+
         void ScrollArea::repaintSelectedTexture()
         {
             atlasWidget->update();

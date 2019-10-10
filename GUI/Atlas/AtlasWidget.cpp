@@ -224,6 +224,13 @@ namespace GUI
 
         }
 
+        void AtlasWidget::removeTexture(const TextureLogic::Texture *texture)
+        {
+            textureAtlas->removeTexture(texture);
+
+            QWidget::repaint();
+        }
+
         void AtlasWidget::resizeEvent(QResizeEvent *event)
         {
             QWidget::resizeEvent(event);

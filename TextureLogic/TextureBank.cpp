@@ -10,14 +10,6 @@
 
 namespace TextureLogic
 {
-
-    void TextureBank::deleteTexture(unsigned int textureIndex, AccessRestriction::PassKey<Atlas::TextureAtlas>)
-    {
-        unusedIndexes.push_back(textureIndex);
-
-        textureSelected(nullptr);
-    }
-
     const std::vector<Texture>& TextureBank::getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const
     {
         return textures;
@@ -26,6 +18,29 @@ namespace TextureLogic
     const std::vector<Texture>& TextureBank::getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>)
     {
     return textures;
+    }
+
+    void TextureBank::removeTexture(const QString &textureLocation)
+    {
+        auto texturePosition = std::find_if(textures.begin(), textures.end(), [&textureLocation](const Texture &texture)
+        {
+             return textureLocation == texture.textureLocation();
+        });
+
+        if(texturePosition == textures.end())
+        {
+            QString errorMessage{"Unable to find requested texture to be deleted: " + textureLocation};
+
+            Q_ASSERT_X(false, __PRETTY_FUNCTION__, errorMessage.toStdString().c_str());
+        }
+
+        textureSelected(nullptr);
+
+        atlasTabWidget->removeTexture(&*texturePosition);
+
+        textures.erase(texturePosition);
+
+        resetTextureReference();
     }
 
     void TextureBank::selectedTextureChanged()
@@ -106,18 +121,13 @@ namespace TextureLogic
             }
         }
 
+        textures.emplace_back(textureLocation);
 
-        if(unusedIndexes.empty())
-        {
-            textures.emplace_back(textureLocation);
-        }
-        else
-        {printf("Loading at: %d \n", unusedIndexes.front());
-            textures[unusedIndexes.front()] = std::move(Texture{textureLocation});
+        resetTextureReference();
+    }
 
-            unusedIndexes.erase(unusedIndexes.begin());
-        }
-
+    void TextureBank::resetTextureReference()
+    {
         // Tell the texture atlas to reset its texture references as its references may now be invalid if the
         // textures vector reallocated memory
 

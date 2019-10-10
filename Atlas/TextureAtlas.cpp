@@ -340,6 +340,33 @@ namespace Atlas
         }
     }
 
+    void TextureAtlas::removeTexture(const TextureLogic::Texture *texture)
+    {
+        auto textureLocation = std::find_if(textureDrawingPositions.begin(), textureDrawingPositions.end(), [texture](const TextureDrawingPosition &drawingPosition)
+        {
+            return drawingPosition.texture == texture;
+        });
+
+        if(textureLocation != textureDrawingPositions.end())
+        {
+            textureDrawingPositions.erase(textureLocation);
+        }
+        else if(selectedTexture->isOpen())
+        {
+            if(selectedTexture->getTextureLocation() == texture->textureLocation())
+            {
+                selectedTexture->getImage();
+            }
+        }
+        else if(selectedExistingTexture->isOpen())
+        {
+            if(selectedExistingTexture->getTextureLocation() == texture->textureLocation())
+            {
+                selectedExistingTexture->getImage();
+            }
+        }
+    }
+
     void TextureAtlas::setAtlasSize(QSize size)
     {
         // This function is called when the atlasWidget holding this texture atlas resizes

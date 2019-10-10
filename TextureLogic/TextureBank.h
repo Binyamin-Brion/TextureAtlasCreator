@@ -44,9 +44,9 @@ namespace TextureLogic
     {
         public:
 
-            void deleteTexture(unsigned int textureIndex, AccessRestriction::PassKey<Atlas::TextureAtlas>);
             const std::vector<Texture>& WARN_UNUSED getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const;
             const std::vector<Texture>& WARN_UNUSED getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
+            void removeTexture(const QString &textureLocation);
             void selectedTextureChanged();
             void setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget);
             void setCurrentTextureTabWidgetReference(GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget);
@@ -58,13 +58,12 @@ namespace TextureLogic
 
         private:
             void loadNewTexture(const QString &textureLocation);
+            void resetTextureReference();
 
             GUI::Atlas::AtlasTabWidget *atlasTabWidget = nullptr;
             GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget = nullptr;
             GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea = nullptr;
             std::vector<Texture> textures;
-            std::vector<unsigned int> unusedIndexes;
-
     };
 }
 

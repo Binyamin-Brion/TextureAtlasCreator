@@ -18,6 +18,7 @@ namespace GUI
 {
     namespace LoadResults
     {
+        class OptionsMenu;
         class TextureButton;
 
         /*
@@ -33,9 +34,11 @@ namespace GUI
             public:
                 explicit TextureButtonArea(QWidget *parent = nullptr);
                 void addTextureButton(const QString &textureLocation);
+                void mousePressEvent(QMouseEvent *event) override;
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
 
             private slots:
+                void deleteTextureButton();
                 void showContextMenu(const QPoint &pos);
                 void textureButtonClicked(const QString &textureLocation);
 
@@ -49,6 +52,8 @@ namespace GUI
                 std::vector<QWidget*> textureButtonPlaceHolders; // See TextureButtonArea.cpp for explanation of this
                 TextureLogic::TextureBank *textureBank = nullptr;
 
+                OptionsMenu *optionsMenu = nullptr;
+
                 int currentRow = 0;
                 int currentColumn = 0;
 
@@ -60,7 +65,6 @@ namespace GUI
                 int gridHorizontalSpacing;
 
                 int cursorOverButtonIndex = -1;
-                bool enteredContextMenu = false;
         };
     }
 }

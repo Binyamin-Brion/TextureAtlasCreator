@@ -26,6 +26,14 @@ namespace GUI
             currentTabs[currentIndex()].first->addTexture(texture);
         }
 
+        void AtlasTabWidget::removeTexture(const TextureLogic::Texture *texture)
+        {
+            for(auto &i : currentTabs)
+            {
+                i.first->removeTexture(texture);
+            }
+        }
+
         void AtlasTabWidget::setTextureBankReference(TextureLogic::TextureBank *textureBank)
         {
             if(textureBank != nullptr)

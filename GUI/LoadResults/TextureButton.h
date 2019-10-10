@@ -26,6 +26,7 @@ namespace GUI
                 void enterEvent(QEvent *event) override;
                 void leaveEvent(QEvent *event) override;
                 const QString& getTextureLocation() const;
+                bool mouseOver(QPoint mousePos) const;
                 static const int buttonSizeLength = 150;
 
             signals:

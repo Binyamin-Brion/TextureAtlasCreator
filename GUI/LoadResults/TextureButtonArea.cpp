@@ -6,6 +6,8 @@
 
 #include "TextureButton.h"
 #include "TextureLogic/TextureBank.h"
+#include "OptionsMenu.h"
+#include <QMouseEvent>
 
 #include <QGridLayout>
 #include <QtWidgets/QMessageBox>
@@ -48,6 +50,10 @@ namespace GUI
             this->setContextMenuPolicy(Qt::CustomContextMenu);
 
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+
+            optionsMenu = new OptionsMenu{this};
+
+            connect(optionsMenu, SIGNAL(deleteActionTriggered()), this, SLOT(deleteTextureButton()));
         }
 
         void TextureButtonArea::addTextureButton(const QString &textureLocation)
@@ -80,38 +86,36 @@ namespace GUI
 
             connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&)), this, SLOT(textureButtonClicked(const QString&)));
 
-            connect(textureButtons.back(), &TextureButton::cursorOverButton, [this](const TextureButton *button)
-            {
-                cursorOverButtonIndex = -1;
-                bool foundTexture = false;
-
-                for(const auto &i : textureButtons)
-                {
-                    cursorOverButtonIndex += 1;
-
-                    if(button == i)
-                    {
-                        foundTexture = true;
-
-                        break;
-                    }
-                }
-
-                if(!foundTexture)
-                {
-                    Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Unable to find texture button that cursor is over!");
-                }
-            });
-
-            connect(textureButtons.back(), &TextureButton::cursorNotOverButton, [this](const TextureButton *button)
-            {
-                if(!enteredContextMenu)
-                {
-                    cursorOverButtonIndex = -1;
-                }
-            });
-
             placeTextureButton(textureButtons.back());
+        }
+
+        void TextureButtonArea::mousePressEvent(QMouseEvent *event)
+        {
+            cursorOverButtonIndex = -1;
+            bool foundTexture = false;
+
+            int index = 0;
+
+            for(const auto &i : textureButtons)
+            {
+                if(i->mouseOver(event->pos()))
+                {
+                    cursorOverButtonIndex = index;
+
+                    optionsMenu->showDeleteAction(true);
+
+                    foundTexture = true;
+
+                    break;
+                }
+
+                index += 1;
+            }
+
+            if(!foundTexture)
+            {
+                optionsMenu->showDeleteAction(false);
+            }
         }
 
         void TextureButtonArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
@@ -122,54 +126,41 @@ namespace GUI
             }
         }
 
-        void TextureButtonArea::showContextMenu(const QPoint &pos)
+        void TextureButtonArea::deleteTextureButton()
         {
-            enteredContextMenu = true;
+            int questionResponse = QMessageBox::question(this, tr("Confirmation Required"), "Are you sure you wish to delete this texture button? \n"
+                                                                                            "\n This will remove all instances of this texture in all atlases!",
+                                                                                            QMessageBox::Yes | QMessageBox::Cancel);
 
-            QMenu contextMenu(tr("Context menu"), this);
-
-            QAction moveTabLeft("Move Tab Left", this);
-            QAction moveTabRight("Move Tab Right", this);
-
-            contextMenu.addAction(&moveTabLeft);
-            contextMenu.addAction(&moveTabRight);
-
-            QAction deleteTextureButton("Delete texture button", this);
-
-            if(cursorOverButtonIndex != -1)
+            if(questionResponse == QMessageBox::Cancel)
             {
-                contextMenu.addAction(&deleteTextureButton);
-
-                connect(&deleteTextureButton, &QAction::triggered, [this](bool checked)
-                {
-                    delete textureButtons[cursorOverButtonIndex];
-
-                    textureButtons.erase(textureButtons.begin() + cursorOverButtonIndex);
-
-                    for(auto &i : textureButtonPlaceHolders)
-                    {
-                        delete i;
-                    }
-
-                    textureButtonPlaceHolders.clear();
-
-                    createLayout();
-
-                    for(auto &i : textureButtons)
-                    {
-                        placeTextureButton(i);
-                    }
-
-                    if(textureButtons.empty())
-                    {
-                        cursorOverButtonIndex = -1;
-                    }
-                });
+                return;
             }
 
-            contextMenu.exec(mapToGlobal(pos));
+            textureBank->removeTexture(textureButtons[cursorOverButtonIndex]->getTextureLocation());
 
-            enteredContextMenu = false;
+            delete textureButtons[cursorOverButtonIndex];
+
+            textureButtons.erase(textureButtons.begin() + cursorOverButtonIndex);
+
+            for(auto &i : textureButtonPlaceHolders)
+            {
+                delete i;
+            }
+
+            textureButtonPlaceHolders.clear();
+
+            createLayout();
+
+            for(auto &i : textureButtons)
+            {
+                placeTextureButton(i);
+            }
+        }
+
+        void TextureButtonArea::showContextMenu(const QPoint &pos)
+        {
+            optionsMenu->exec(mapToGlobal(pos));
         }
 
         void TextureButtonArea::textureButtonClicked(const QString &textureLocation)

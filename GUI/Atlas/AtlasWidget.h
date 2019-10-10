@@ -35,6 +35,7 @@ namespace GUI
                 void mouseReleaseEvent(QMouseEvent *event) override;
                 void moveMouseTo(int x, int y);
                 void paintEvent(QPaintEvent *event) override;
+                void removeTexture(const TextureLogic::Texture *texture);
                 void resizeEvent(QResizeEvent *event) override;
                 void setViewPort(QSize viewPort);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
