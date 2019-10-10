@@ -9,6 +9,7 @@
 
 #include <QGridLayout>
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QMenu>
 
 namespace GUI
 {
@@ -36,21 +37,17 @@ namespace GUI
         {
             // Minimum width is set so that there is no horizontal scrolling when the window is made full screen
 
-            setMinimumSize(1860, 900);
+            setMinimumSize(500, 900);
 
             // Determine how many buttons can be fit, along with spacing, given the above minimum width
 
             maxColumnCount = minimumWidth() / TextureButton::buttonSizeLength;
 
-            gridHorizontalSpacing = (minimumWidth() - (maxColumnCount * TextureButton::buttonSizeLength)) / maxColumnCount;
+            createLayout();
 
-            gridLayout = new QGridLayout{this};
+            this->setContextMenuPolicy(Qt::CustomContextMenu);
 
-            gridLayout->setHorizontalSpacing(gridHorizontalSpacing);
-
-            // By default there are 5 rows of maxColumnCount available slots for textures to be placed
-
-            addTextureButtonPlaceHolders(5);
+            connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
         }
 
         void TextureButtonArea::addTextureButton(const QString &textureLocation)
@@ -79,9 +76,40 @@ namespace GUI
             // Swap the place holder widget with the newly created plcae holder; see the description at the top of
             // this file for more information.
 
-            textureButtons.push_back(new TextureButton{textureLocation, this});
+            textureButtons.push_back(new TextureButton{textureLocation});
 
             connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&)), this, SLOT(textureButtonClicked(const QString&)));
+
+            connect(textureButtons.back(), &TextureButton::cursorOverButton, [this](const TextureButton *button)
+            {
+                cursorOverButtonIndex = -1;
+                bool foundTexture = false;
+
+                for(const auto &i : textureButtons)
+                {
+                    cursorOverButtonIndex += 1;
+
+                    if(button == i)
+                    {
+                        foundTexture = true;
+
+                        break;
+                    }
+                }
+
+                if(!foundTexture)
+                {
+                    Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Unable to find texture button that cursor is over!");
+                }
+            });
+
+            connect(textureButtons.back(), &TextureButton::cursorNotOverButton, [this](const TextureButton *button)
+            {
+                if(!enteredContextMenu)
+                {
+                    cursorOverButtonIndex = -1;
+                }
+            });
 
             placeTextureButton(textureButtons.back());
         }
@@ -92,6 +120,56 @@ namespace GUI
             {
                 this->textureBank = textureBank;
             }
+        }
+
+        void TextureButtonArea::showContextMenu(const QPoint &pos)
+        {
+            enteredContextMenu = true;
+
+            QMenu contextMenu(tr("Context menu"), this);
+
+            QAction moveTabLeft("Move Tab Left", this);
+            QAction moveTabRight("Move Tab Right", this);
+
+            contextMenu.addAction(&moveTabLeft);
+            contextMenu.addAction(&moveTabRight);
+
+            QAction deleteTextureButton("Delete texture button", this);
+
+            if(cursorOverButtonIndex != -1)
+            {
+                contextMenu.addAction(&deleteTextureButton);
+
+                connect(&deleteTextureButton, &QAction::triggered, [this](bool checked)
+                {
+                    delete textureButtons[cursorOverButtonIndex];
+
+                    textureButtons.erase(textureButtons.begin() + cursorOverButtonIndex);
+
+                    for(auto &i : textureButtonPlaceHolders)
+                    {
+                        delete i;
+                    }
+
+                    textureButtonPlaceHolders.clear();
+
+                    createLayout();
+
+                    for(auto &i : textureButtons)
+                    {
+                        placeTextureButton(i);
+                    }
+
+                    if(textureButtons.empty())
+                    {
+                        cursorOverButtonIndex = -1;
+                    }
+                });
+            }
+
+            contextMenu.exec(mapToGlobal(pos));
+
+            enteredContextMenu = false;
         }
 
         void TextureButtonArea::textureButtonClicked(const QString &textureLocation)
@@ -117,11 +195,34 @@ namespace GUI
             maxRowCount += addRows;
         }
 
+        void TextureButtonArea::createLayout()
+        {
+            delete gridLayout;
+
+            currentRow = 0;
+
+            currentColumn = 0;
+
+            maxRowCount = 0;
+
+            gridHorizontalSpacing = (minimumWidth() - (maxColumnCount * TextureButton::buttonSizeLength)) / maxColumnCount;
+
+            gridLayout = new QGridLayout;
+
+            setLayout(gridLayout);
+
+            gridLayout->setHorizontalSpacing(gridHorizontalSpacing);
+
+            // By default there are 5 rows of maxColumnCount available slots for textures to be placed
+
+            addTextureButtonPlaceHolders(5);
+        }
+
         void TextureButtonArea::placeTextureButton(const TextureButton *button)
         {
-            gridLayout->removeWidget(textureButtonPlaceHolders.front());
+            textureButtonPlaceHolders.front()->hide();
 
-            gridLayout->addWidget(textureButtons.back(), currentRow, currentColumn, Qt::AlignLeft | Qt::AlignTop);
+            gridLayout->addWidget(const_cast<TextureButton*>(button), currentRow, currentColumn, Qt::AlignLeft | Qt::AlignTop);
 
             // The below erase call will not all the destructor as the vector storing the placeholders stores raw pointers
 

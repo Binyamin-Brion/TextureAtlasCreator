@@ -34,6 +34,16 @@ namespace GUI
             });
         }
 
+        void TextureButton::enterEvent(QEvent *event)
+        {
+            emit cursorOverButton(this);
+        }
+
+        void TextureButton::leaveEvent(QEvent *event)
+        {
+            emit cursorNotOverButton(this);
+        }
+
         const QString &TextureButton::getTextureLocation() const
         {
             return textureLocation;

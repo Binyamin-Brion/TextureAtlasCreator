@@ -36,11 +36,13 @@ namespace GUI
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
 
             private slots:
+                void showContextMenu(const QPoint &pos);
                 void textureButtonClicked(const QString &textureLocation);
 
             private:
 
                 void addTextureButtonPlaceHolders(int addRows);
+                void createLayout();
                 void placeTextureButton(const TextureButton *button);
 
                 std::vector<TextureButton*> textureButtons;
@@ -56,6 +58,9 @@ namespace GUI
                 QGridLayout *gridLayout = nullptr;
 
                 int gridHorizontalSpacing;
+
+                int cursorOverButtonIndex = -1;
+                bool enteredContextMenu = false;
         };
     }
 }
