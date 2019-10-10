@@ -20,11 +20,14 @@ namespace GUI
                 void showDeleteAction(bool value);
 
             signals:
+                void addTabActionTriggered();
                 void deleteActionTriggered();
 
             private:
+                QAction addTab;
                 QAction moveTabLeft;
                 QAction moveTabRight;
+                QAction deleteTab;
                 QAction deleteTextureButton;
         };
     }

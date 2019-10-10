@@ -53,6 +53,11 @@ namespace GUI
 
             optionsMenu = new OptionsMenu{this};
 
+            connect(optionsMenu, &OptionsMenu::addTabActionTriggered, [this]()
+            {
+                emit addNewTabRequest();
+            });
+
             connect(optionsMenu, SIGNAL(deleteActionTriggered()), this, SLOT(deleteTextureButton()));
         }
 
@@ -91,30 +96,33 @@ namespace GUI
 
         void TextureButtonArea::mousePressEvent(QMouseEvent *event)
         {
-            cursorOverButtonIndex = -1;
-            bool foundTexture = false;
-
-            int index = 0;
-
-            for(const auto &i : textureButtons)
+            if(event->button() == Qt::RightButton)
             {
-                if(i->mouseOver(event->pos()))
+                cursorOverButtonIndex = -1;
+                bool foundTexture = false;
+
+                int index = 0;
+
+                for(const auto &i : textureButtons)
                 {
-                    cursorOverButtonIndex = index;
+                    if(i->mouseOver(event->pos()))
+                    {
+                        cursorOverButtonIndex = index;
 
-                    optionsMenu->showDeleteAction(true);
+                        optionsMenu->showDeleteAction(true);
 
-                    foundTexture = true;
+                        foundTexture = true;
 
-                    break;
+                        break;
+                    }
+
+                    index += 1;
                 }
 
-                index += 1;
-            }
-
-            if(!foundTexture)
-            {
-                optionsMenu->showDeleteAction(false);
+                if(!foundTexture)
+                {
+                    optionsMenu->showDeleteAction(false);
+                }
             }
         }
 

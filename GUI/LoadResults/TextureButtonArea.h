@@ -37,6 +37,10 @@ namespace GUI
                 void mousePressEvent(QMouseEvent *event) override;
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
 
+            signals:
+                void addNewTabRequest();
+                void deleteCurrentTab();
+
             private slots:
                 void deleteTextureButton();
                 void showContextMenu(const QPoint &pos);

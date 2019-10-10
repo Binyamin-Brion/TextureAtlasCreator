@@ -30,6 +30,11 @@ namespace GUI
             textureButtonArea->addTextureButton(textureLocation);
         }
 
+        const TextureButtonArea* ScrollArea::getTextureArea() const
+        {
+            return textureButtonArea;
+        }
+
         void ScrollArea::setTextureBankReference(const TextureLogic::TextureBank *textureBank)
         {
             textureButtonArea->setTextureBankReference(const_cast<TextureLogic::TextureBank*>(textureBank));
