@@ -111,12 +111,21 @@ namespace TextureLogic
 
     void TextureBank::loadNewTexture(const QString &textureLocation)
     {
+        unsigned int loopCount = 0;
+
         for(const auto &i : textures)
         {
+            if(std::find(freeSpotIndexes.begin(), freeSpotIndexes.end(), loopCount) != freeSpotIndexes.end())
+            {
+                continue;
+            }
+
             if(i.textureLocation() == textureLocation)
             {
                 return;
             }
+
+            loopCount += 1;
         }
 
         if(freeSpotIndexes.empty())

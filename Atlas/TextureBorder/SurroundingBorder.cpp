@@ -12,18 +12,6 @@ namespace Atlas
     {
         bool SurroundingBorder::checkIntersection(const SurroundingBorder &otherBorder)
         {
-//            for(QRect &rect : intersectionBorder)
-//            {
-//                if(otherBorder.entireTextureArea.intersects(rect))
-//                {
-//                    drawIntersectionBorder = true;
-//
-//                    printf("Intersecting \n");
-//
-//                    return true;
-//                }
-//            }
-
             if(entireTextureArea.intersects(otherBorder.entireTextureArea) ||
                otherBorder.entireTextureArea.intersects(entireTextureArea))
             {
