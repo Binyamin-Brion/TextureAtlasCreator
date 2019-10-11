@@ -12,13 +12,11 @@ namespace GUI
     {
         AtlasTabWidget::AtlasTabWidget(QWidget *parent) : QTabWidget{parent}
         {
-            QString defaultTabName{"Default"};
+            addAtlasWidget("Default");
 
-            auto *defaultTabScrollArea = new ScrollArea{QSize{1920, 1080}, this};
+            this->setContextMenuPolicy(Qt::CustomContextMenu);
 
-            currentTabs.emplace_back(defaultTabScrollArea, defaultTabName);
-
-            addTab(currentTabs.back().first, currentTabs.back().second);
+            connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
         }
 
         void AtlasTabWidget::addTextureToCurrentAtlas(const TextureLogic::Texture &texture)
@@ -58,6 +56,22 @@ namespace GUI
         void AtlasTabWidget::repaintSelectedTexture()
         {
             currentTabs[currentIndex()].first->repaintSelectedTexture();
+        }
+
+        void AtlasTabWidget::showContextMenu(const QPoint &pos)
+        {
+
+        }
+
+        void AtlasTabWidget::addAtlasWidget(const QString &tabName)
+        {
+            auto *tabScrollArea = new ScrollArea{QSize{1920, 1080}, this};
+
+            tabScrollArea->setTextureBankReference(textureBank);
+
+            currentTabs.emplace_back(tabScrollArea, tabName);
+
+            addTab(currentTabs.back().first, currentTabs.back().second);
         }
     }
 }

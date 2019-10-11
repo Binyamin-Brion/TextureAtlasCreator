@@ -39,6 +39,8 @@ namespace GUI
 
             signals:
                 void addNewTabRequest();
+                void moveTabLeft();
+                void moveTabRight();
                 void deleteCurrentTab();
 
             private slots:

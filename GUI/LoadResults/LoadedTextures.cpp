@@ -25,18 +25,7 @@ namespace GUI
 
             connect(chooseTexture, SIGNAL(textureChosen(QString)), this, SLOT(openTexture(QString)));
 
-            QString defaultTabName{"Default"};
-            addNewTab->addNameExistingTab(defaultTabName);
-
-            auto *defaultTabScrollArea = new ScrollArea;
-
-            connect(defaultTabScrollArea->getTextureArea(), SIGNAL(addNewTabRequest()), this, SLOT(showAddTabDialog()));
-
-            currentTabs.emplace_back(defaultTabScrollArea, defaultTabName);
-
-            addTab(currentTabs.back().first, currentTabs.back().second);
-
-            chooseTexture->addTab(currentTabs.back().second);
+            addTextureButtonArea("Default");
 
             this->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -44,19 +33,13 @@ namespace GUI
 
             connect(optionsMenu, SIGNAL(addTabActionTriggered()), this, SLOT(showAddTabDialog()));
 
+            connect(optionsMenu, SIGNAL(moveTabLeft()), this, SLOT(moveTabLeft()));
+
+            connect(optionsMenu, SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
+
             connect(addNewTab, &Dialogs::AddNewTab::newTabNameChosen, [this](QString newTabName)
             {
-                auto *defaultTabScrollArea = new ScrollArea;
-
-                connect(defaultTabScrollArea->getTextureArea(), SIGNAL(addNewTabRequest()), this, SLOT(showAddTabDialog()));
-
-                currentTabs.emplace_back(defaultTabScrollArea, newTabName);
-
-                currentTabs.back().first->setTextureBankReference(textureBank);
-
-                addTab(currentTabs.back().first, currentTabs.back().second);
-
-                addNewTab->addNameExistingTab(newTabName);
+                addTextureButtonArea(newTabName);
             });
         }
 
@@ -66,7 +49,10 @@ namespace GUI
             {
                 this->textureBank = textureBank;
 
-                currentTabs.front().first->setTextureBankReference(this->textureBank);
+                for(auto &i : currentTabs)
+                {
+                    i.first->setTextureBankReference(this->textureBank);
+                }
             }
         }
 
@@ -88,6 +74,65 @@ namespace GUI
         void LoadedTextures::openTexture(QString textureLocation)
         {
             currentTabs[currentIndex()].first->addTextureButton(textureLocation);
+        }
+
+        void LoadedTextures::moveTabLeft()
+        {
+            if(currentIndex() == 0)
+            {
+                return;
+            }
+
+            int previousIndex = currentIndex();
+
+            removeTab(previousIndex);
+
+            insertTab(previousIndex - 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+            std::swap(currentTabs[previousIndex], currentTabs[previousIndex - 1]);
+
+            setCurrentIndex(previousIndex - 1);
+
+            printf("New index: %d \n\n", currentIndex());
+        }
+
+        void LoadedTextures::moveTabRight()
+        {
+            if(currentIndex() == currentTabs.size() - 1)
+            {
+                return;
+            }
+
+            int previousIndex = currentIndex();
+
+            removeTab(currentIndex());
+
+            insertTab(previousIndex + 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+            std::swap(currentTabs[previousIndex], currentTabs[previousIndex + 1]);
+
+            setCurrentIndex(previousIndex + 1);
+        }
+
+        void LoadedTextures::addTextureButtonArea(const QString &tabName)
+        {
+            auto *scrollArea = new ScrollArea;
+
+            scrollArea->setTextureBankReference(textureBank);
+
+            connect(scrollArea->getTextureArea(), SIGNAL(addNewTabRequest()), this, SLOT(showAddTabDialog()));
+
+            connect(scrollArea->getTextureArea(), SIGNAL(moveTabLeft()), this, SLOT(moveTabLeft()));
+
+            connect(scrollArea->getTextureArea(), SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
+
+            currentTabs.emplace_back(scrollArea, tabName);
+
+            addTab(currentTabs.back().first, currentTabs.back().second);
+
+            addNewTab->addNameExistingTab(tabName);
+
+            chooseTexture->addTab(currentTabs.back().second);
         }
     }
 }

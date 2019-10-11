@@ -41,8 +41,12 @@ namespace GUI
 
             private slots:
                 void openTexture(QString textureLocation);
+                void moveTabLeft();
+                void moveTabRight();
 
             private:
+                void addTextureButtonArea(const QString &tabName);
+
                 std::vector<std::pair<GUI::LoadResults::ScrollArea*, QString>> currentTabs;
                 const TextureLogic::TextureBank *textureBank = nullptr;
                 Dialogs::AddNewTab *addNewTab = nullptr;

@@ -33,8 +33,11 @@ namespace GUI
 
             private slots:
                 void repaintSelectedTexture();
+                void showContextMenu(const QPoint &pos);
 
             private:
+                void addAtlasWidget(const QString &tabName);
+
                 std::vector<std::pair<ScrollArea*, QString>> currentTabs;
                 TextureLogic::TextureBank *textureBank = nullptr;
         };
