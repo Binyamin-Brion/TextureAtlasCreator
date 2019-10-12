@@ -43,7 +43,7 @@ namespace GUI
                 void showContextMenu(const QPoint &pos);
 
             private:
-                void addAtlasWidget(const QString &tabName);
+                void addAtlasWidget(const QString &tabName, QSize atlasSize);
 
                 std::vector<std::pair<ScrollArea*, QString>> currentTabs;
                 TextureLogic::TextureBank *textureBank = nullptr;
