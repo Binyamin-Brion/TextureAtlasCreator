@@ -16,8 +16,14 @@ namespace TextureLogic
 
 namespace GUI
 {
+    namespace Dialogs
+    {
+        class AddNewAtlasTab;
+    }
+
     namespace Atlas
     {
+        class AtlasTabOptionsMenu;
         class ScrollArea;
 
         class AtlasTabWidget : public QTabWidget
@@ -33,6 +39,7 @@ namespace GUI
 
             private slots:
                 void repaintSelectedTexture();
+                void showAddNewAtlasTab();
                 void showContextMenu(const QPoint &pos);
 
             private:
@@ -40,6 +47,8 @@ namespace GUI
 
                 std::vector<std::pair<ScrollArea*, QString>> currentTabs;
                 TextureLogic::TextureBank *textureBank = nullptr;
+                AtlasTabOptionsMenu *atlasTabOptionsMenu = nullptr;
+                Dialogs::AddNewAtlasTab *addNewAtlasTab = nullptr;
         };
     }
 }

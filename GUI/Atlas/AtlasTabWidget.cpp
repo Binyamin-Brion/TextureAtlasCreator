@@ -6,6 +6,9 @@
 #include "TextureLogic/TextureBank.h"
 #include "ScrollArea.h"
 
+#include "AtlasTabOptionsMenu.h"
+#include "GUI/Dialogs/AddNewAtlasTab.h"
+
 namespace GUI
 {
     namespace Atlas
@@ -17,6 +20,14 @@ namespace GUI
             this->setContextMenuPolicy(Qt::CustomContextMenu);
 
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+
+            atlasTabOptionsMenu = new AtlasTabOptionsMenu{this};
+
+            connect(atlasTabOptionsMenu, SIGNAL(addTabActionTriggered()), this, SLOT(showAddNewAtlasTab()));
+
+            addNewAtlasTab = new Dialogs::AddNewAtlasTab{this};
+
+            addNewAtlasTab->addExistingTabName("Default");
         }
 
         void AtlasTabWidget::addTextureToCurrentAtlas(const TextureLogic::Texture &texture)
@@ -58,9 +69,14 @@ namespace GUI
             currentTabs[currentIndex()].first->repaintSelectedTexture();
         }
 
+        void AtlasTabWidget::showAddNewAtlasTab()
+        {
+            addNewAtlasTab->show();
+        }
+
         void AtlasTabWidget::showContextMenu(const QPoint &pos)
         {
-
+            atlasTabOptionsMenu->exec(mapToGlobal(pos));
         }
 
         void AtlasTabWidget::addAtlasWidget(const QString &tabName)

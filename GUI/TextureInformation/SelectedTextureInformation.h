@@ -7,6 +7,7 @@
 
 #include <QtWidgets/QWidget>
 #include "ui_selectedTextureInformation.h"
+#include "GUI/TextureHelperFunctions/TextureFormats.h"
 
 namespace TextureLogic
 {
@@ -36,13 +37,7 @@ namespace GUI
                 Ui::SelectedTextureInformation *ui = nullptr;
                 TextureLogic::Texture *texture = nullptr;
 
-                struct InternalFormatPair
-                {
-                    QImage::Format format;
-                    QString formatStringRepresentation;
-                };
-
-                std::vector<InternalFormatPair> internalFormatPairs;
+                std::vector<GUI::TextureHelperFunctions::InternalFormatPair> internalFormatPairs;
                 std::vector<QString> imageExtensions;
         };
     }
