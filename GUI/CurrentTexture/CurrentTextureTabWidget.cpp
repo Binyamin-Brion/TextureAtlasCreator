@@ -59,7 +59,9 @@ namespace GUI
 
             if(texture != nullptr)
             {
-                for(const auto &i : *textures)
+                unsigned formatIndex = TextureHelperFunctions::indexFormat(texture->getImage(TextureLogic::Zoom::Normal).format(), true);
+
+                for(const auto &i : (*textures)[formatIndex].first)
                 {
                     index += 1;
 
@@ -94,15 +96,21 @@ namespace GUI
             }
         }
 
-        void CurrentTextureTabWidget::setTexturesReference(std::vector<TextureLogic::Texture>& textures)
+        void CurrentTextureTabWidget::setTexturesReference(std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>>& textures)
         {
             this->textures = &textures;
 
+            unsigned int formatIndex = TextureHelperFunctions::indexFormat(currentTexture[
+                                       GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second->getCurrentTextureFormat(), true);
+
+
+
             if(currentTextureIndex != -1)
             {
+
                 for(auto &i : currentTexture)
                 {
-                    i.second->setTexture(&(*this->textures)[currentTextureIndex]);
+                    i.second->setTexture(&(*this->textures)[formatIndex].first[currentTextureIndex]);
                 }
             }
         }

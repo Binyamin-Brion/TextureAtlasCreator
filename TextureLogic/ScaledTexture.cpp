@@ -19,6 +19,11 @@ namespace TextureLogic
         texturePaintHistory.push(paintHistoryCommand);
     }
 
+    void ScaledTexture::convertToFormat(QImage::Format newFormat)
+    {
+        image = image.convertToFormat(newFormat);
+    }
+
     const QImage& ScaledTexture::getImage() const
     {
         return image;

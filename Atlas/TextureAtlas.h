@@ -31,9 +31,10 @@ namespace Atlas
     class TextureAtlas
     {
         public:
-            TextureAtlas();
+            explicit TextureAtlas(QImage::Format atlasFormat);
             bool checkIntersection();
             void draw(QPainter &painter);
+            QImage::Format getAtlasFormat() const;
             std::pair<bool, QSize> getAtlasSize() const;
             std::pair<bool, QSize> getSelectedTextureSize() const;
             void keyPressed(int keyID);
@@ -45,13 +46,13 @@ namespace Atlas
             void setAtlasWidgetReference(GUI::Atlas::AtlasWidget *atlasWidget);
             void setSelectedTexture(const TextureLogic::Texture &texture);
             void setTextureBankReference(TextureLogic::TextureBank *textureBank);
-            void textureLoaded(const std::vector<TextureLogic::Texture> &textures);
+            void textureLoaded(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
 
         private:
             void addTexture(SelectedTexture *selectedTexture);
             GUI::Atlas::AtlasWidget *atlasWidget = nullptr;
             std::vector<TextureDrawingPosition> textureDrawingPositions;
-            const std::vector<TextureLogic::Texture> *textures = nullptr;
+            const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> *textures = nullptr;
             TextureLogic::TextureBank *textureBank = nullptr;
 
             SelectedTexture *selectedTexture = nullptr;
@@ -68,6 +69,8 @@ namespace Atlas
             bool leftMouseButtonDown = false;
 
             QPoint newMousePosition;
+
+            QImage::Format atlasFormat;
     };
 }
 

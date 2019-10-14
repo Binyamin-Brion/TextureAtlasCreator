@@ -165,6 +165,11 @@ namespace GUI
             resetDefaultLabels();
         }
 
+        QImage::Format SelectedTextureInformation::getSelectedTextureFormat() const
+        {
+            return texture->getImage(TextureLogic::Zoom::Normal).format();
+        }
+
         void SelectedTextureInformation::selectedTextureModified()
         {
             // This check should not be needed as the render area and this widget are synchronized in the widget that is selected.

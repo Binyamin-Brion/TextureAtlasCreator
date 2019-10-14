@@ -30,7 +30,7 @@ namespace GUI
                 explicit CurrentTextureTabWidget(QWidget *parent = nullptr);
                 void setSelectedTexture(TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
-                void setTexturesReference(std::vector<TextureLogic::Texture> &textures);
+                void setTexturesReference(std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
 
             signals:
                 void changedRenderArea(const PaintFunctions::Brush&);
@@ -39,7 +39,7 @@ namespace GUI
 
             private:
                 std::array<std::pair<QString, ScrollArea*>, 2> currentTexture;
-                std::vector<TextureLogic::Texture> *textures = nullptr;
+                std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> *textures = nullptr;
                 TextureLogic::TextureBank *textureBank = nullptr;
                 int currentTextureIndex;
                 QSize selectedTextureSize;

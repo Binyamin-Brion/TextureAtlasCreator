@@ -22,14 +22,15 @@ namespace GUI
         class ScrollArea : public QScrollArea
         {
             public:
-                ScrollArea(QSize atlasSize, QWidget *parent = nullptr);
+                ScrollArea(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
                 void addTexture(const TextureLogic::Texture &texture);
-                void scrollContentsBy(int dx, int dy);
+                QImage::Format getAtlasFormat() const;
+                void scrollContentsBy(int dx, int dy) override;
                 void removeTexture(const TextureLogic::Texture *texture);
                 void repaintSelectedTexture();
                 void resizeEvent(QResizeEvent *event) override;
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
-                void updateTextureReferences(const std::vector<TextureLogic::Texture> &textures);
+                void updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
 
             private:
                 AtlasWidget *atlasWidget = nullptr;

@@ -33,6 +33,7 @@ namespace GUI
             public:
                 explicit RenderArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
                 const PaintFunctions::Brush& getBrush() const;
+                QImage::Format getCurrentTextureFormat() const;
                 void mouseMoveEvent(QMouseEvent *event) override;
                 void mousePressEvent(QMouseEvent *event) override;
                 void mouseReleaseEvent(QMouseEvent *event) override;
@@ -61,6 +62,8 @@ namespace GUI
 
                 QPoint previousMousePosition;
                 bool leftMouseButtonDown = false;
+
+                QImage::Format textureFormat;
         };
     }
 }

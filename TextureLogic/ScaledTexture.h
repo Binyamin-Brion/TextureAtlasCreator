@@ -25,6 +25,7 @@ namespace TextureLogic
 
             void addPaintHistorySpecular(PaintFunctions::PaintHistoryCommand *paintHistoryCommand);
             void addPaintHistoryTexture(PaintFunctions::PaintHistoryCommand *paintHistoryCommand);
+            void convertToFormat(QImage::Format newFormat);
             const QImage& getImage() const;
             QImage& getSpecularTexture();
             void initialize(const QString &textureLocation, Zoom zoom);

@@ -31,6 +31,16 @@ namespace GUI
             return brush;
         }
 
+        QImage::Format RenderArea::getCurrentTextureFormat() const
+        {
+            if(texture == nullptr)
+            {
+                return QImage::Format_Invalid;
+            }
+
+            return textureFormat;
+        }
+
         void RenderArea::mouseMoveEvent(QMouseEvent *event)
         {
             if(texture != nullptr)
@@ -109,6 +119,8 @@ namespace GUI
             if(texture != nullptr)
             {
                 setMinimumSize(texture->getImage(TextureLogic::Zoom::Normal).size());
+
+                textureFormat = texture->getImage(TextureLogic::Zoom::Normal).format();
             }
 
             QWidget::repaint();

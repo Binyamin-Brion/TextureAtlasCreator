@@ -17,8 +17,8 @@ namespace GUI
 {
     namespace Atlas
     {
-        AtlasWidget::AtlasWidget(QSize atlasSize, QWidget *parent)
-                                : QWidget{parent}, textureAtlas{std::make_unique<::Atlas::TextureAtlas>()}, size{atlasSize}
+        AtlasWidget::AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent)
+                                : QWidget{parent}, textureAtlas{std::make_unique<::Atlas::TextureAtlas>(atlasFormat)}, size{atlasSize}
         {
             setMinimumSize(size);
             setMaximumSize(size);
@@ -29,6 +29,11 @@ namespace GUI
             textureAtlas->setAtlasWidgetReference(this);
 
             viewPortOffset = QPoint{0, 0};
+        }
+
+        QImage::Format AtlasWidget::getAtlasFormat() const
+        {
+            return textureAtlas->getAtlasFormat();
         }
 
         void AtlasWidget::keyPressEvent(QKeyEvent *event)
@@ -207,7 +212,7 @@ namespace GUI
             textureAtlas->setTextureBankReference(textureBank);
         }
 
-        void AtlasWidget::updateTextureReferences(const std::vector<TextureLogic::Texture> &textures)
+        void AtlasWidget::updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures)
         {
             textureAtlas->textureLoaded(textures);
         }

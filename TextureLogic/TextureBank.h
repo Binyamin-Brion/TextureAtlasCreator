@@ -9,6 +9,9 @@
 
 #include "Attributes/AttributeMacros.h"
 #include "AccessRestriction/PassKey.h"
+#include "GUI/TextureHelperFunctions/TextureFormats.h"
+
+#include <unordered_map>
 
 namespace Atlas
 {
@@ -44,8 +47,9 @@ namespace TextureLogic
     {
         public:
 
-            const std::vector<Texture>& WARN_UNUSED getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const;
-            const std::vector<Texture>& WARN_UNUSED getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
+            TextureBank();
+            const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& WARN_UNUSED getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const;
+            const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& WARN_UNUSED getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
             void removeTexture(const QString &textureLocation);
             void selectedTextureChanged();
             void setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget);
@@ -63,9 +67,10 @@ namespace TextureLogic
             GUI::Atlas::AtlasTabWidget *atlasTabWidget = nullptr;
             GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget = nullptr;
             GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea = nullptr;
-            std::vector<Texture> textures;
 
-            std::vector<unsigned int> freeSpotIndexes;
+            std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>> textures;
+            std::unordered_map<std::string, unsigned int> originalTextureUploadLocation;
+            std::vector<GUI::TextureHelperFunctions::InternalFormatPair> internalFormats;
     };
 }
 

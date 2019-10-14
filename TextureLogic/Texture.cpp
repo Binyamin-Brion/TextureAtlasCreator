@@ -33,6 +33,14 @@ namespace TextureLogic
         _texture[GetZoomIndex(Zoom::Normal)].addPaintHistoryTexture(paintHistoryCommand);
     }
 
+    void Texture::convertToFormat(QImage::Format newFormat)
+    {
+        for(auto &i : AllZoomValues)
+        {
+            _texture[GetZoomIndex(i)].convertToFormat(newFormat);
+        }
+    }
+
     const QImage& Texture::getImage(TextureLogic::Zoom zoom) const
     {
        return  _texture[GetZoomIndex(zoom)].getImage();

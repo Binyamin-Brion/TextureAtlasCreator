@@ -62,5 +62,35 @@ namespace GUI
 
             return imageExtensions;
         }
+
+        unsigned int indexFormat(QImage::Format format, bool ignoreInvalidFormat)
+        {
+            auto internalFormats = internalFormatPairRepresentations();
+
+            auto requestedFormatLocation = std::find_if(internalFormats.begin(), internalFormats.end(), [format]
+                    (const InternalFormatPair &internalFormatPair)
+            {
+                return internalFormatPair.format == format;
+            });
+
+            Q_ASSERT_X(requestedFormatLocation != internalFormats.end(), __PRETTY_FUNCTION__, "Failed to find the requested image format!");
+
+            return std::distance(internalFormats.begin(), requestedFormatLocation) - ignoreInvalidFormat;
+        }
+
+        unsigned int indexFormatString(const QString &formatStringRepresentation, bool ignoreInvalidFormat)
+        {
+            auto internalFormats = internalFormatPairRepresentations();
+
+            auto requestedFormatLocation = std::find_if(internalFormats.begin(), internalFormats.end(), [formatStringRepresentation]
+                    (const InternalFormatPair &internalFormatPair)
+            {
+                return internalFormatPair.formatStringRepresentation == formatStringRepresentation;
+            });
+
+            Q_ASSERT_X(requestedFormatLocation != internalFormats.end(), __PRETTY_FUNCTION__, "Failed to find the requested image format!");
+
+            return std::distance(internalFormats.begin(), requestedFormatLocation) - ignoreInvalidFormat;
+        }
     }
 }

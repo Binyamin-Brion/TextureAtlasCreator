@@ -15,7 +15,7 @@ namespace GUI
     {
         AtlasTabWidget::AtlasTabWidget(QWidget *parent) : QTabWidget{parent}
         {
-            addAtlasWidget("Default", QSize{1920, 1080});
+            addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
 
             this->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -32,13 +32,18 @@ namespace GUI
             connect(addNewAtlasTab, &Dialogs::AddNewAtlasTab::newAtlasInformationSpecified, [this]
                    (QString newTabName, int requestedWidth, int requestedHeight, QImage::Format atlasFormat)
             {
-                addAtlasWidget(newTabName, QSize{requestedWidth, requestedHeight});
+                addAtlasWidget(newTabName, QSize{requestedWidth, requestedHeight}, atlasFormat);
             });
         }
 
         void AtlasTabWidget::addTextureToCurrentAtlas(const TextureLogic::Texture &texture)
         {
             currentTabs[currentIndex()].first->addTexture(texture);
+        }
+
+        QImage::Format AtlasTabWidget::getCurrentAtlasFormat() const
+        {
+            return currentTabs[currentIndex()].first->getAtlasFormat();
         }
 
         void AtlasTabWidget::removeTexture(const TextureLogic::Texture *texture)
@@ -85,9 +90,9 @@ namespace GUI
             atlasTabOptionsMenu->exec(mapToGlobal(pos));
         }
 
-        void AtlasTabWidget::addAtlasWidget(const QString &tabName, QSize atlasSize)
+        void AtlasTabWidget::addAtlasWidget(const QString &tabName, QSize atlasSize, QImage::Format atlasFormat)
         {
-            auto *tabScrollArea = new ScrollArea{atlasSize, this};
+            auto *tabScrollArea = new ScrollArea{atlasSize, atlasFormat, this};
 
             tabScrollArea->setTextureBankReference(textureBank);
 

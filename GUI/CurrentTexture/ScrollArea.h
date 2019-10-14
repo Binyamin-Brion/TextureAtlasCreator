@@ -31,6 +31,7 @@ namespace GUI
             public:
                 ScrollArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
                 const PaintFunctions::Brush& getBrush() const;
+                QImage::Format getCurrentTextureFormat() const;
                 void setTexture(TextureLogic::Texture *texture);
 
             signals:

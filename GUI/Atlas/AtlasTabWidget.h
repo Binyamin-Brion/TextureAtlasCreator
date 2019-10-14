@@ -33,6 +33,7 @@ namespace GUI
             public:
                 explicit AtlasTabWidget(QWidget *parent = nullptr);
                 void addTextureToCurrentAtlas(const TextureLogic::Texture &texture);
+                QImage::Format getCurrentAtlasFormat() const;
                 void removeTexture(const TextureLogic::Texture *texture);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>);
@@ -43,7 +44,7 @@ namespace GUI
                 void showContextMenu(const QPoint &pos);
 
             private:
-                void addAtlasWidget(const QString &tabName, QSize atlasSize);
+                void addAtlasWidget(const QString &tabName, QSize atlasSize, QImage::Format atlasFormat);
 
                 std::vector<std::pair<ScrollArea*, QString>> currentTabs;
                 TextureLogic::TextureBank *textureBank = nullptr;

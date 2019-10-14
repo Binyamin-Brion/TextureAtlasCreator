@@ -34,6 +34,11 @@ namespace GUI
             return renderArea->getBrush();
         }
 
+        QImage::Format ScrollArea::getCurrentTextureFormat() const
+        {
+            return renderArea->getCurrentTextureFormat();
+        }
+
         void ScrollArea::setTexture(TextureLogic::Texture *texture)
         {
             renderArea->setTexture(texture);

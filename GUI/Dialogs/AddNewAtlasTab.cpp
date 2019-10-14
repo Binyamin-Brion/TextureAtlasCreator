@@ -80,6 +80,8 @@ namespace GUI
             {
                 lineEdit->setStyleSheet("");
 
+                dimension = -1;
+
                 return;
             }
 
@@ -103,7 +105,7 @@ namespace GUI
 
         void AddNewAtlasTab::checkAllInformationValid()
         {
-            if(requestedHeight != -1 && requestedWidth != -1)
+            if(requestedHeight != -1 && requestedWidth != -1 && !ui->newTabNameLineEdit->text().isEmpty())
             {
                 if(std::find(existingTabNames.begin(), existingTabNames.end(), ui->newTabNameLineEdit->text()) == existingTabNames.end())
                 {

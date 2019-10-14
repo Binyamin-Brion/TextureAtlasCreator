@@ -22,7 +22,7 @@ namespace GUI
             {
                 int index = 0;
 
-                for(const auto &i : textureBank->getTexturesTextureInfo({}))
+                for(const auto &i : textureBank->getTexturesTextureInfo({})[selectedTextureInformation->getSelectedTextureFormat()].first)
                 {
                     if(texture == &i)
                     {
@@ -34,7 +34,7 @@ namespace GUI
 
                 textureBank->reuploadTexture(textureLocation, {});
 
-                selectedTextureInformation->setTexture(&textureBank->getTexturesTextureInfo({})[index]);
+                selectedTextureInformation->setTexture(&textureBank->getTexturesTextureInfo({})[selectedTextureInformation->getSelectedTextureFormat()].first[index]);
             });
         }
 

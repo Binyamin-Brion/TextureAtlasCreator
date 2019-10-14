@@ -7,13 +7,14 @@
 #include "TextureLogic/TextureBank.h"
 #include "Atlas/SelectedTexture.h"
 #include "Exceptions/Atlas/TextureAlreadyLoaded.h"
+#include "GUI/TextureHelperFunctions/TextureFormats.h"
 
 #include <QPainter>
 #include "GUI/Atlas/AtlasWidget.h"
 
 namespace Atlas
 {
-    TextureAtlas::TextureAtlas()
+    TextureAtlas::TextureAtlas(QImage::Format atlasFormat) : atlasFormat{atlasFormat}
     {
         selectedTexture = new SelectedTexture;
 
@@ -73,6 +74,11 @@ namespace Atlas
 
             selectedExistingTexture->getSurroundingBorderForDrawing()[currentZoomIndex].draw(painter);
         }
+    }
+
+    QImage::Format TextureAtlas::getAtlasFormat() const
+    {
+        return atlasFormat;
     }
 
     std::pair<bool, QSize> TextureAtlas::getAtlasSize() const
@@ -439,7 +445,7 @@ namespace Atlas
         }
     }
 
-    void TextureAtlas::textureLoaded(const std::vector<TextureLogic::Texture> &textures)
+    void TextureAtlas::textureLoaded(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures)
     {
         // Texture has been added to the texture bank. Note that when adding a texture to the image, the old vector of textures
         // might be moved in memory due to reallocation of the vector. Therefore references to that vector have to be reset just in case.
@@ -448,12 +454,12 @@ namespace Atlas
 
         for(auto &i : textureDrawingPositions)
         {
-            i.texture = &((*this->textures)[i.index]);
+            i.texture = &((*this->textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[i.index]);
         }
 
         if(selectedExistingTexture->isOpen())
         {
-            selectedExistingTexture->setTextureReference(((*this->textures)[selectedExistingTexture->getTextureIndex()]));
+            selectedExistingTexture->setTextureReference(((*this->textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[selectedExistingTexture->getTextureIndex()]));
         }
     }
 
@@ -484,7 +490,7 @@ namespace Atlas
 
             for(int i = 0; i < textures->size(); ++i)
             {
-                if((*textures)[i].textureLocation() == selectedTexture->getTextureLocation())
+                if((*textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[i].textureLocation() == selectedTexture->getTextureLocation())
                 {
                     textureDrawingPositions.back().index = i;
 

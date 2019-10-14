@@ -24,6 +24,7 @@ namespace GUI
 
             public:
                 explicit SelectedTextureInformation(QWidget *parent = nullptr);
+                QImage::Format getSelectedTextureFormat() const;
                 void selectedTextureModified();
                 void setTexture(const TextureLogic::Texture *texture);
 

@@ -20,6 +20,9 @@ namespace GUI
 
         std::vector<InternalFormatPair> internalFormatPairRepresentations();
         std::vector<QString> listImageExtensions();
+
+        unsigned int indexFormat(QImage::Format format, bool ignoreInvalidFormat = false);
+        unsigned int indexFormatString(const QString &formatStringRepresentation, bool ignoreInvalidFormat = false);
     }
 }
 
