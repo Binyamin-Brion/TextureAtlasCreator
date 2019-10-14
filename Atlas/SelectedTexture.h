@@ -19,6 +19,15 @@ namespace TextureLogic
 
 namespace Atlas
 {
+    /*
+     *  Represents a texture that is selected. It is used in conjunction with the TextureAtlas class.
+     *  Whenever a user clicks on a texture in the atlas, the reference to that texture is passed to an instance
+     *  of this class from the TextureAtlas class. The reference in the TextureAtlas class is removed until the user
+     *  moves to the selected texture to the desired place and indicates the texture is to be placed there. Then,
+     *  this class becomes "empty" (doesn't hold any reference), and the TextureAtlas class once again holds the texture
+     *  reference.
+     */
+
     class SelectedTexture
     {
         using SurroundingBorder = std::array<TextureBorder::SurroundingBorder, ::TextureLogic::NumberZoomElements()>;
@@ -41,8 +50,13 @@ namespace Atlas
             void setZoom(TextureLogic::Zoom zoom);
 
         private:
-            const TextureLogic::Texture* selectedTexture;
+            const TextureLogic::Texture* selectedTexture = nullptr;
+
+            // The texture index refers to the index of the selected texture inside the appropriate format texture
+            // in the TextureBank class. See fn setTextureReference of this class for details.
+
             int textureIndex = -1;
+
             TextureLogic::Zoom currentZoom = TextureLogic::Zoom::Normal;
             QPoint drawingCoordinates;
             bool _isOpen = false;

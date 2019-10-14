@@ -442,6 +442,8 @@ namespace Atlas
         if(this->textureBank == nullptr)
         {
             this->textureBank = textureBank;
+
+            textures = &textureBank->getTextures();
         }
     }
 

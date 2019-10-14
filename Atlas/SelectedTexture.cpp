@@ -48,7 +48,9 @@ namespace Atlas
         return *selectedTexture;
     }
 
-#define SurroundingBorder std::array<TextureBorder::SurroundingBorder, ::TextureLogic::NumberZoomElements()>
+    // This macro is to make the following two functions easier to read- nothing more. That is why it is undefined after the two functions.
+
+    #define SurroundingBorder std::array<TextureBorder::SurroundingBorder, ::TextureLogic::NumberZoomElements()>
 
     const SurroundingBorder& SelectedTexture::getSurroundingBorderForDrawing() const
     {
@@ -60,7 +62,7 @@ namespace Atlas
         return surroundingBorder;
     }
 
-#undef SurroundingBorder
+    #undef SurroundingBorder
 
     const QString &SelectedTexture::getTextureLocation() const
     {
@@ -78,28 +80,35 @@ namespace Atlas
 
         auto currentZoomImage = selectedTexture->getImage(currentZoom);
 
-        if(mouseX - currentZoomImage.width() / 2 < 0)
+        // Remember that when moving the texture, it is done so relative to the centre of the texture.
+        // Thus while the cursor is moved to the centre of the texture when moving the texture around,
+        // the texture's edges are checked to make sure they don't go off screen. If they do, the texture
+        // is prevent from being drawn off screen. The cursor is also locked from going offscreen, but it is
+        // possible that for a brief second, the texture cursor is allowed to move the texture offscreen.
+        // In that case, these checks make sure that at no time the texture is drawn offscreen.
+
+        if(mouseX - currentZoomImage.width() / 2 < 0) // Don't allow texture to be drawn offscreen to the left
         {
             drawingCoordinates.setX(0);
         }
-        else if(mouseX + currentZoomImage.width() / 2 > boundaries.width())
+        else if(mouseX + currentZoomImage.width() / 2 > boundaries.width()) // Don't allow texture to be drawn offscreen to the right
         {
             drawingCoordinates.setX(boundaries.width() - currentZoomImage.width());
         }
-        else
+        else // Valid X drawing position
         {
             drawingCoordinates.setX(mouseX - currentZoomImage.width() / 2);
         }
 
-        if(mouseY - currentZoomImage.height() / 2 < 0)
+        if(mouseY - currentZoomImage.height() / 2 < 0) // Don't allow texture to be drawn offscreen to the top
         {
             drawingCoordinates.setY(0);
         }
-        else if(mouseY + currentZoomImage.height() / 2 > boundaries.height())
+        else if(mouseY + currentZoomImage.height() / 2 > boundaries.height()) // Don't allow texture to be drawn offscreen to the bottom
         {
             drawingCoordinates.setY(boundaries.height() - currentZoomImage.height());
         }
-        else
+        else // Valid Y drawing position
         {
             drawingCoordinates.setY(mouseY - currentZoomImage.height() / 2);
         }
@@ -120,9 +129,13 @@ namespace Atlas
         surroundingBorder[::TextureLogic::GetZoomIndex(currentZoom)].setSelectedBorderVisible(value);
     }
 
+    // This function (re)initializes an instance of this class to represent the texture passed in
+
     void SelectedTexture::setTexture(const TextureLogic::Texture &selectedTexture, int index)
     {
         this->selectedTexture = &selectedTexture;
+
+        // This is used to update the reference to the texture if the old reference becomes invalidated. See TextureBank.cpp for more details.
 
         textureIndex = index;
 
@@ -140,6 +153,10 @@ namespace Atlas
             loopCounter += 1;
         }
     }
+
+    // If a texture is loaded while a selected texture is open, then it is possible that the reference stored in an instance
+    // of this class is no longer valid. See TextureBank.cpp for more details. In that case, the reference to the old texture
+    // needs to be updated to point to the new location in memory of the selected texture.
 
     void SelectedTexture::setTextureReference(const TextureLogic::Texture &selectedTexture)
     {

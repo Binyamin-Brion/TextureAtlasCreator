@@ -12,8 +12,11 @@ namespace Atlas
     {
         bool SurroundingBorder::checkIntersection(const SurroundingBorder &otherBorder)
         {
-            if(entireTextureArea.intersects(otherBorder.entireTextureArea) ||
-               otherBorder.entireTextureArea.intersects(entireTextureArea))
+            // Intersection of the borders are commutative. It does not matter in what order the borders are checked.
+            // Both of these operations should be the same- but just in case Qt's implementation of QRect gives different
+            // results based off of the order of QRect implementation
+
+            if(entireTextureArea.intersects(otherBorder.entireTextureArea) || otherBorder.entireTextureArea.intersects(entireTextureArea))
             {
                 drawIntersectionBorder = true;
 
@@ -151,8 +154,6 @@ namespace Atlas
             {
                 rect.translate(differenceX, differenceY);
             }
-
-      //     printf("%d \n", intersectionBorder[BorderValue(Border::Top)].x());
 
             for(QRect &rect : selectedBorder)
             {

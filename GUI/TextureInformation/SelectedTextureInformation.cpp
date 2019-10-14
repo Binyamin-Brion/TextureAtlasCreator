@@ -163,11 +163,13 @@ namespace GUI
             });
 
             resetDefaultLabels();
+
+            selectedTextureFormat = QImage::Format_Invalid;
         }
 
         QImage::Format SelectedTextureInformation::getSelectedTextureFormat() const
         {
-            return texture->getImage(TextureLogic::Zoom::Normal).format();
+            return selectedTextureFormat;
         }
 
         void SelectedTextureInformation::selectedTextureModified()
@@ -206,6 +208,8 @@ namespace GUI
             if(texture == nullptr)
             {
                 resetDefaultLabels();
+
+                selectedTextureFormat = QImage::Format_Invalid;
 
                 return;
             }
@@ -269,6 +273,8 @@ namespace GUI
             ui->interalFormatComboBox->setCurrentIndex(std::distance(internalFormatPairs.begin(), texturePixelInternalFormat) - 1);
 
             ui->textureFormatLabel->setText("Texture Format: " + texture->textureFormat());
+
+            selectedTextureFormat = texture->getImage(TextureLogic::Zoom::Normal).format();
         }
 
         void SelectedTextureInformation::resetDefaultLabels()

@@ -48,7 +48,7 @@ namespace TextureLogic
         public:
 
             TextureBank();
-            const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& WARN_UNUSED getTextures(AccessRestriction::PassKey<GUI::Atlas::AtlasTabWidget>) const;
+            const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& WARN_UNUSED getTextures() const;
             const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& WARN_UNUSED getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
             void removeTexture(const QString &textureLocation);
             void selectedTextureChanged();
@@ -68,9 +68,9 @@ namespace TextureLogic
             GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget = nullptr;
             GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea = nullptr;
 
+            // See TextureBank.cpp for more details of these two variables
             std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>> textures;
             std::unordered_map<std::string, unsigned int> originalTextureUploadLocation;
-            std::vector<GUI::TextureHelperFunctions::InternalFormatPair> internalFormats;
     };
 }
 

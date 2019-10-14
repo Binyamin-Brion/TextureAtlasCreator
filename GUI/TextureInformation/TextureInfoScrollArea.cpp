@@ -20,9 +20,11 @@ namespace GUI
 
             connect(selectedTextureInformation, &SelectedTextureInformation::reuploadTexture, [this](const QString& textureLocation, const TextureLogic::Texture *texture)
             {
+                unsigned int formatIndex = TextureHelperFunctions::indexFormat(selectedTextureInformation->getSelectedTextureFormat(), true);
+
                 int index = 0;
 
-                for(const auto &i : textureBank->getTexturesTextureInfo({})[selectedTextureInformation->getSelectedTextureFormat()].first)
+                for(const auto &i : textureBank->getTexturesTextureInfo({})[formatIndex].first)
                 {
                     if(texture == &i)
                     {
@@ -34,7 +36,7 @@ namespace GUI
 
                 textureBank->reuploadTexture(textureLocation, {});
 
-                selectedTextureInformation->setTexture(&textureBank->getTexturesTextureInfo({})[selectedTextureInformation->getSelectedTextureFormat()].first[index]);
+                selectedTextureInformation->setTexture(&textureBank->getTexturesTextureInfo({})[formatIndex].first[index]);
             });
         }
 

@@ -40,6 +40,8 @@ namespace GUI
 
                 std::vector<GUI::TextureHelperFunctions::InternalFormatPair> internalFormatPairs;
                 std::vector<QString> imageExtensions;
+
+                QImage::Format selectedTextureFormat;
         };
     }
 }

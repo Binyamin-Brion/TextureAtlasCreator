@@ -71,7 +71,7 @@ namespace GUI
         {
             for(auto &i : currentTabs)
             {
-                i.first->updateTextureReferences(textureBank->getTextures({}));
+                i.first->updateTextureReferences(textureBank->getTextures());
             }
         }
 

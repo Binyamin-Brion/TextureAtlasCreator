@@ -28,6 +28,12 @@ namespace Atlas
 {
     class SelectedTexture;
 
+    /*
+     *  Logically holds textures inside one bigger texture to create a texture atlas. Internally, holds references
+     *  to textures held inside the TextureAtlas class. This class implements the logic of adding textures together
+     *  to create a texture atlas, such as for example making sure that two textures do not overlap.
+     */
+
     class TextureAtlas
     {
         public:
@@ -50,10 +56,18 @@ namespace Atlas
 
         private:
             void addTexture(SelectedTexture *selectedTexture);
+
+            // This class needs to talk with other classes if a certain action has been performed, hence the reason for these
+            // pointers to those classes.
+
             GUI::Atlas::AtlasWidget *atlasWidget = nullptr;
-            std::vector<TextureDrawingPosition> textureDrawingPositions;
-            const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> *textures = nullptr;
             TextureLogic::TextureBank *textureBank = nullptr;
+
+            const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> *textures = nullptr;
+            std::vector<TextureDrawingPosition> textureDrawingPositions;
+
+            // The selectedTexture variable is for when a new texture is being added to the atlas; otherwise, a texture already
+            // in the atlas is selected and the selectedExistingTexture variable is used.
 
             SelectedTexture *selectedTexture = nullptr;
             SelectedTexture *selectedExistingTexture = nullptr;
