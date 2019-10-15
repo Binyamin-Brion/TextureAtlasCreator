@@ -41,22 +41,23 @@ namespace Atlas
                 bool checkIntersection(const SurroundingBorder &otherBorder);
                 void draw(QPainter &painter) const;
                 bool getSelectedBorderVisible() const;
+                QPointF getTopLeftCorner() const;
                 void initialize(int textureWidth, int textureHeight);
                 void setSelectedBorderVisible(bool value);
-                void translate(int differenceX, int differenceY);
+                void translate(float differenceX, float differenceY);
 
             private:
 
                 // Entire area used includes the actual texture plus its surrounding border. It is used for
                 // intersection tests.
 
-                QRect entireTextureArea;
+                QRectF entireTextureArea;
 
                 // Rectangles that make up the texture border. These are the rectangles that are drawn if the texture
                 // is selected or if another texture intersects this texture.
 
-                QRect intersectionBorder[NumberBorderValues()];
-                QRect selectedBorder[NumberBorderValues()];
+                QRectF intersectionBorder[NumberBorderValues()];
+                QRectF selectedBorder[NumberBorderValues()];
 
                 int intersectionBorderWidth = 5;
                 int selectedBorderWidth = 2;

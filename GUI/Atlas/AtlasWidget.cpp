@@ -18,10 +18,12 @@ namespace GUI
     namespace Atlas
     {
         AtlasWidget::AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent)
-                                : QWidget{parent}, textureAtlas{std::make_unique<::Atlas::TextureAtlas>(atlasFormat)}, size{atlasSize}
+                                : QWidget{parent}, textureAtlas{std::make_unique<::Atlas::TextureAtlas>(atlasFormat)}
         {
-            setMinimumSize(size);
-            setMaximumSize(size);
+            setMinimumSize(atlasSize);
+            setMaximumSize(atlasSize);
+
+            atlasDisplaySize = QSizeF{static_cast<float>(atlasSize.width()), static_cast<float>(atlasSize.height())};
 
             setFocusPolicy(Qt::StrongFocus);
             setMouseTracking(true);
@@ -36,7 +38,7 @@ namespace GUI
             return textureAtlas->getAtlasFormat();
         }
 
-        void AtlasWidget::keyPressEvent(QKeyEvent *event)
+        void AtlasWidget::keyPressed(QKeyEvent *event)
         {
             if(event->key() == Qt::Key_Escape)
             {
@@ -58,15 +60,15 @@ namespace GUI
 
             int mouseY = event->y();
 
-            // See fn moveCursorToViewPort for a description of what this does
-
-            if(moveCursorToViewPort(mouseX, mouseY))
-            {
-                return;
-            }
-
             if(testPosAgainstAtlasBoundaries.first) // A texture is selected
             {
+                // See fn moveCursorToViewPort for a description of what this does
+
+                if(moveCursorToViewPort(mouseX, mouseY))
+                {
+                    return;
+                }
+
                 setCursor(Qt::BlankCursor);
 
                 bool resetCursorPositionX = false;
@@ -150,7 +152,7 @@ namespace GUI
                     QCursor c = cursor();
 
                     c.setPos(mapToGlobal(QPoint{mouseX, mouseY}));
-
+                    printf("In boundaries check \n");
                     setCursor(c);
                 }
 
@@ -188,6 +190,8 @@ namespace GUI
             QPainter painter{this};
 
             textureAtlas->draw(painter);
+
+            painter.drawRect(0,0, width() - 1, height() - 1);
         }
 
         void AtlasWidget::textureButtonPressed(const TextureLogic::Texture &texture)
@@ -204,7 +208,17 @@ namespace GUI
 
         void AtlasWidget::setViewPort(QSize viewPort)
         {
-            this->viewPort = QSize{viewPort.width(), viewPort.height()};
+            this->viewPort = viewPort;
+
+            if(width() < viewPort.width())
+            {
+                this->viewPort.setWidth(width());
+            }
+
+            if(height() < viewPort.height())
+            {
+                this->viewPort.setHeight(height());
+            }
         }
 
         void AtlasWidget::setTextureBankReference(TextureLogic::TextureBank *textureBank)
@@ -224,6 +238,41 @@ namespace GUI
             viewPortOffset.setY(viewPortOffset.y() - dy);
         }
 
+        void AtlasWidget::wheelEvent(QWheelEvent *event)
+        {
+            QWidget::wheelEvent(event);
+
+            if(controlKeyDown)
+            {
+                if(event->angleDelta().y() > 0)
+                {
+                    textureAtlas->zoomIn();
+
+                    QWidget::repaint();
+                }
+                else if(event->angleDelta().y() < 0)
+                {
+                    textureAtlas->zoomOut();
+
+                    QWidget::repaint();
+                }
+            }
+        }
+
+        void AtlasWidget::zoomIn()
+        {
+            textureAtlas->zoomIn();
+
+            QWidget::repaint();
+        }
+
+        void AtlasWidget::zoomOut()
+        {
+            textureAtlas->zoomOut();
+
+            QWidget::repaint();
+        }
+
         AtlasWidget::~AtlasWidget()
         {
 
@@ -234,6 +283,14 @@ namespace GUI
             textureAtlas->removeTexture(texture);
 
             QWidget::repaint();
+        }
+
+        void AtlasWidget::resizeAtlasFactor(float factor)
+        {
+            atlasDisplaySize *= factor;
+
+            setMinimumSize(atlasDisplaySize.width(), atlasDisplaySize.height());
+            setMaximumSize(atlasDisplaySize.width(), atlasDisplaySize.height());
         }
 
         void AtlasWidget::resizeEvent(QResizeEvent *event)
@@ -285,7 +342,7 @@ namespace GUI
             QCursor c = cursor();
 
             if(mouseX < viewPortOffset.x()) // Trying to move cursor off the atlas widget to the left
-            {
+            { printf("Checking left view port \n");
                 previousMouseCoords.setX(viewPortOffset.x());
 
                 mouseX = previousMouseCoords.x();
@@ -294,7 +351,7 @@ namespace GUI
             }
 
             if(mouseX >= viewPortOffset.x() + viewPort.width()) // Trying to move cursor off the atlas widget to the right
-            {
+            {printf("Checking right view port \n");
                 previousMouseCoords.setX(viewPort.width() + viewPortOffset.x());
 
                 mouseX = previousMouseCoords.x();
@@ -303,7 +360,7 @@ namespace GUI
             }
 
             if(mouseY < viewPortOffset.y()) // Trying to move cursor off the atlas widget upwards
-            {
+            {printf("Checking top view port \n");
                 previousMouseCoords.setY(viewPortOffset.y());
 
                 mouseY = previousMouseCoords.y();
@@ -312,7 +369,7 @@ namespace GUI
             }
 
             if(mouseY >= viewPortOffset.y() + viewPort.height()) // Trying to move cursor off the atlas widget to the bottom
-            {
+            {printf("Checking bottom view port \n");
                 previousMouseCoords.setY(viewPort.height() + viewPortOffset.y());
 
                 mouseY = previousMouseCoords.y();

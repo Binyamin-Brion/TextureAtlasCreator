@@ -149,6 +149,8 @@ namespace Atlas
                     // location, which case it has to be returned to its position at the time of being clicked. This assignment keeps track of that position.
 
                     previousDrawingCoords = selectedExistingTexture->getDrawingCoordinates();
+
+                    return;
                 }
                 else
                 {
@@ -211,7 +213,6 @@ namespace Atlas
                                               i.drawingPosition.y() + i.texture->getImage(currentZoom).height() / 2,
                                               atlasSize);
 
-
                         // The texture that was clicked on was meant to be selected, so visually show it as selected
 
                         selectedExistingTexture->setDrawSelectedSurroundingBorder(true);
@@ -273,10 +274,10 @@ namespace Atlas
 
             if(!ignoreMouseRelease)
             {
-                QPoint drawingCoords = selectedExistingTexture->getDrawingCoordinates();
+                QPointF drawingCoords = selectedExistingTexture->getDrawingCoordinates();
                 auto& currentImage = selectedExistingTexture->getImageForDrawing().getImage(currentZoom);
 
-                newMousePosition = {drawingCoords.x() + currentImage.width() / 2, drawingCoords.y() + currentImage.height() / 2};
+                newMousePosition = QPoint(drawingCoords.x() + currentImage.width() / 2, drawingCoords.y() + currentImage.height() / 2);
 
                 atlasWidget->moveMouseTo(newMousePosition.x(), newMousePosition.y());
 
@@ -465,6 +466,92 @@ namespace Atlas
         }
     }
 
+    void TextureAtlas::zoomIn()
+    {
+        bool zoomChanged = false;
+
+        switch(currentZoom)
+        {
+            case TextureLogic::Zoom::Out25:
+                currentZoom = TextureLogic::Zoom::Out50;
+                zoomChanged = true;
+                break;
+
+            case TextureLogic::Zoom::Out50:
+                currentZoom = TextureLogic::Zoom::Normal;
+                zoomChanged = true;
+                break;
+
+            case TextureLogic::Zoom::Normal:
+                currentZoom = TextureLogic::Zoom::In200;
+                zoomChanged = true;
+                break;
+
+            case TextureLogic::Zoom::In200:
+                currentZoom = TextureLogic::Zoom::In400;
+                zoomChanged = true;
+                break;
+
+            case TextureLogic::Zoom::In400:
+                break;
+
+            case TextureLogic::Zoom::ALWAYS_AT_EMD:
+                break;
+        }
+
+        if(zoomChanged)
+        {
+            updateTextureDrawingPositions(2.0f);
+            currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
+            updateSelectedTexturesZoom(currentZoom, 2.0f);
+
+            atlasWidget->resizeAtlasFactor(2.0f);
+        }
+    }
+
+    void TextureAtlas::zoomOut()
+    {
+        bool zoomChanged = false;
+
+        switch(currentZoom)
+        {
+            case TextureLogic::Zoom::Out50:
+                currentZoom = TextureLogic::Zoom::Out25;
+                zoomChanged = true;
+                break;
+
+            case TextureLogic::Zoom::Normal:
+                currentZoom = TextureLogic::Zoom::Out50;
+                zoomChanged = true;
+                break;
+
+            case TextureLogic::Zoom::In200:
+                currentZoom = TextureLogic::Zoom::Normal;
+                zoomChanged = true;
+                break;
+
+            case TextureLogic::Zoom::In400:
+                currentZoom = TextureLogic::Zoom::In200;
+                zoomChanged = true;
+                break;
+
+            case TextureLogic::Zoom::Out25:
+                break;
+
+            case TextureLogic::Zoom::ALWAYS_AT_EMD:
+                break;
+        }
+
+        if(zoomChanged)
+        {
+            updateTextureDrawingPositions(0.5f);
+            currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
+            updateSelectedTexturesZoom(currentZoom, 0.5f);
+
+            atlasWidget->resizeAtlasFactor(0.5f);
+        }
+    }
+
     void TextureAtlas::addTexture(SelectedTexture *selectedTexture)
     {
         if(intersectionOccured)
@@ -503,6 +590,30 @@ namespace Atlas
             if(textureDrawingPositions.back().index == -1)
             {
                 Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Selected texture has a location not found in texture bank!");
+            }
+        }
+    }
+
+    void TextureAtlas::updateSelectedTexturesZoom(TextureLogic::Zoom newZoom, float zoomFactor)
+    {
+        selectedTexture->setZoom(newZoom, zoomFactor);
+
+        selectedExistingTexture->setZoom(newZoom, zoomFactor);
+    }
+
+    void TextureAtlas::updateTextureDrawingPositions(float factor)
+    {
+        for(auto &i : textureDrawingPositions)
+        {
+            QPointF oldDrawingCoordinates = i.drawingPosition;
+
+            i.drawingPosition *= factor;
+
+            QPointF translation = i.drawingPosition - oldDrawingCoordinates;
+
+            for(auto &j: i.surroundingBorder)
+            {
+                j.translate(translation.x(), translation.y());
             }
         }
     }

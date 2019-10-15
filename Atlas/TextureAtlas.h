@@ -53,9 +53,13 @@ namespace Atlas
             void setSelectedTexture(const TextureLogic::Texture &texture);
             void setTextureBankReference(TextureLogic::TextureBank *textureBank);
             void textureLoaded(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
+            void zoomIn();
+            void zoomOut();
 
         private:
             void addTexture(SelectedTexture *selectedTexture);
+            void updateSelectedTexturesZoom(TextureLogic::Zoom newZoom, float zoomFactor);
+            void updateTextureDrawingPositions(float factor);
 
             // This class needs to talk with other classes if a certain action has been performed, hence the reason for these
             // pointers to those classes.
@@ -71,7 +75,7 @@ namespace Atlas
 
             SelectedTexture *selectedTexture = nullptr;
             SelectedTexture *selectedExistingTexture = nullptr;
-            QPoint previousDrawingCoords;
+            QPointF previousDrawingCoords;
 
             TextureLogic::Zoom currentZoom;
             unsigned int currentZoomIndex;

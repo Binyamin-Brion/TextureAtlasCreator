@@ -26,7 +26,7 @@ namespace Atlas
     {
         const TextureLogic::Texture *texture = nullptr;
         int index = -1;
-        QPoint drawingPosition;
+        QPointF drawingPosition;
         std::array<TextureBorder::SurroundingBorder, ::TextureLogic::NumberZoomElements()> surroundingBorder;
 
     };

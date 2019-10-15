@@ -30,18 +30,22 @@ namespace GUI
             public:
                 explicit AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
                 QImage::Format getAtlasFormat() const;
-                void keyPressEvent(QKeyEvent *event) override;
+                void keyPressed(QKeyEvent *event);
                 void mouseMoveEvent(QMouseEvent *event) override;
                 void mousePressEvent(QMouseEvent *event) override;
                 void mouseReleaseEvent(QMouseEvent *event) override;
                 void moveMouseTo(int x, int y);
                 void paintEvent(QPaintEvent *event) override;
                 void removeTexture(const TextureLogic::Texture *texture);
+                void resizeAtlasFactor(float factor);
                 void resizeEvent(QResizeEvent *event) override;
                 void setViewPort(QSize viewPort);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
                 void translateViewPort(int dx, int dy);
+                void wheelEvent(QWheelEvent *event) override;
+                void zoomIn();
+                void zoomOut();
                 ~AtlasWidget();
 
             public slots:
@@ -51,11 +55,14 @@ namespace GUI
                 bool moveCursorToViewPort(int &mouseX, int &mouseY);
 
                 std::unique_ptr<::Atlas::TextureAtlas> textureAtlas;
-                QSize size;
                 QSize viewPort;
                 QPoint viewPortOffset;
 
                 QPoint previousMouseCoords;
+
+                bool controlKeyDown = false;
+
+                QSizeF atlasDisplaySize;
         };
     }
 }

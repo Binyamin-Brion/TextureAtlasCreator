@@ -42,7 +42,7 @@ namespace Atlas
 
             if(drawIntersectionBorder)
             {
-                for(const QRect &rect : intersectionBorder)
+                for(const QRectF &rect : intersectionBorder)
                 {
                     QPainterPath painterPath;
 
@@ -55,7 +55,7 @@ namespace Atlas
             }
             else if(drawSelectionBorder)
             {
-                for(const QRect &rect : selectedBorder)
+                for(const QRectF &rect : selectedBorder)
                 {
                     QPainterPath painterPath;
 
@@ -73,6 +73,11 @@ namespace Atlas
         bool SurroundingBorder::getSelectedBorderVisible() const
         {
             return drawSelectionBorder;
+        }
+
+        QPointF SurroundingBorder::getTopLeftCorner() const
+        {
+            return entireTextureArea.topLeft();
         }
 
         /*
@@ -148,14 +153,14 @@ namespace Atlas
             drawSelectionBorder = value;
         }
 
-        void SurroundingBorder::translate(int differenceX, int differenceY)
+        void SurroundingBorder::translate(float differenceX, float differenceY)
         {
-            for(QRect &rect : intersectionBorder)
+            for(QRectF &rect : intersectionBorder)
             {
                 rect.translate(differenceX, differenceY);
             }
 
-            for(QRect &rect : selectedBorder)
+            for(QRectF &rect : selectedBorder)
             {
                 rect.translate(differenceX, differenceY);
             }

@@ -9,7 +9,7 @@
 
 namespace Atlas
 {
-    QPoint SelectedTexture::getDrawingCoordinates() const
+    QPointF SelectedTexture::getDrawingCoordinates() const
     {
         return drawingCoordinates;
     }
@@ -76,7 +76,7 @@ namespace Atlas
 
     void SelectedTexture::move(int mouseX, int mouseY, QSize boundaries)
     {
-        QPoint previousDrawingCoords = drawingCoordinates;
+        QPointF previousDrawingCoords = drawingCoordinates;
 
         auto currentZoomImage = selectedTexture->getImage(currentZoom);
 
@@ -126,7 +126,10 @@ namespace Atlas
 
     void SelectedTexture::setDrawSelectedSurroundingBorder(bool value)
     {
-        surroundingBorder[::TextureLogic::GetZoomIndex(currentZoom)].setSelectedBorderVisible(value);
+        for(auto &i : TextureLogic::AllZoomValues)
+        {
+            surroundingBorder[::TextureLogic::GetZoomIndex(i)].setSelectedBorderVisible(value);
+        }
     }
 
     // This function (re)initializes an instance of this class to represent the texture passed in
@@ -163,9 +166,19 @@ namespace Atlas
         this->selectedTexture = &selectedTexture;
     }
 
-    void SelectedTexture::setZoom(TextureLogic::Zoom zoom)
+    void SelectedTexture::setZoom(TextureLogic::Zoom zoom, float zoomFactor)
     {
         currentZoom = zoom;
-    }
 
+        QPointF oldDrawingCoordinates = drawingCoordinates;
+
+        drawingCoordinates *= zoomFactor;
+
+        QPointF translation = drawingCoordinates - oldDrawingCoordinates;
+
+        for(auto &i : surroundingBorder)
+        {
+            i.translate(translation.x(), translation.y());
+        }
+   }
 }

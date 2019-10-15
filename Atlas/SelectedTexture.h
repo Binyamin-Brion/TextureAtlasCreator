@@ -34,7 +34,7 @@ namespace Atlas
 
         public:
 
-            QPoint getDrawingCoordinates() const;
+            QPointF getDrawingCoordinates() const;
             int getTextureIndex() const;
             const TextureLogic::Texture& getImage();
             const TextureLogic::Texture& getImageForDrawing() const;
@@ -47,7 +47,7 @@ namespace Atlas
             void setDrawSelectedSurroundingBorder(bool value);
             void setTexture(const TextureLogic::Texture &selectedTexture, int index = -1);
             void setTextureReference(const TextureLogic::Texture &selectedTexture);
-            void setZoom(TextureLogic::Zoom zoom);
+            void setZoom(TextureLogic::Zoom zoom, float zoomFactor);
 
         private:
             const TextureLogic::Texture* selectedTexture = nullptr;
@@ -58,7 +58,7 @@ namespace Atlas
             int textureIndex = -1;
 
             TextureLogic::Zoom currentZoom = TextureLogic::Zoom::Normal;
-            QPoint drawingCoordinates;
+            QPointF drawingCoordinates;
             bool _isOpen = false;
             SurroundingBorder surroundingBorder;
     };
