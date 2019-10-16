@@ -6,6 +6,7 @@
 #define TEXTUREATLASCREATOR_CURRENTBRUSHSETTINGS_H
 
 #include <QtWidgets/QWidget>
+#include <TextureLogic/Zoom.h>
 
 class QLabel;
 class QHBoxLayout;
@@ -32,6 +33,7 @@ namespace GUI
             public slots:
                 void showDifferentBrush(const PaintFunctions::Brush &brush);
                 void updateSelectedTextureSize(QSize size, QSize brushSize);
+                void zoomChanged(TextureLogic::Zoom newZoom);
 
             private slots:
                 void handleColourButtonPressed();
@@ -52,6 +54,8 @@ namespace GUI
 
                 PaintFunctions::Brush *brush = nullptr;
                 QSize selectedTextureSize;
+
+                TextureLogic::Zoom currentZoom;
         };
     }
 }

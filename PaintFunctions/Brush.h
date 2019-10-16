@@ -8,6 +8,7 @@
 #include <QtCore/QRect>
 #include <QtGui/QColor>
 #include <QtGui/QImage>
+#include "TextureLogic/Zoom.h"
 
 namespace PaintFunctions
 {
@@ -16,12 +17,12 @@ namespace PaintFunctions
         public:
             Brush();
 
-            const QImage& getPaintImage() const;
-            void setPaintTypeSolid(QSize drawAreaSize, QColor colour);
+            const QImage& getPaintImage(TextureLogic::Zoom zoom) const;
+            void setPaintTypeSolid(TextureLogic::Zoom zoom, QSize drawAreaSize, QColor colour);
 
         private:
 
-            QImage paintImage;
+            std::array<QImage, TextureLogic::NumberZoomElements()> paintImages;
     };
 }
 

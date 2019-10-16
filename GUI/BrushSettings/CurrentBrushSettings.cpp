@@ -20,6 +20,7 @@ namespace GUI
         {
             layout = new QHBoxLayout{this};
 
+            currentZoom = TextureLogic::Zoom::Normal;
 
             currentBrushColourLabel = new QLabel{this};
             currentBrushColourLabel->setText("Current Colour: ");
@@ -49,7 +50,7 @@ namespace GUI
             {
                 currentBrushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(selectedColour));
 
-                brush->setPaintTypeSolid( brush->getPaintImage().size(), selectedColour);
+                brush->setPaintTypeSolid(currentZoom, brush->getPaintImage(currentZoom).size(), selectedColour);
             });
 
             connect(currentBrushWidthLineEdit, &QLineEdit::returnPressed, [this]()
@@ -64,13 +65,13 @@ namespace GUI
                                         "The width must be greater than 0 and not greater than either the selected texture width or height!"),
                                          QMessageBox::Ok);
 
-                    currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush->getPaintImage().size().width())));
+                    currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush->getPaintImage(currentZoom).size().width())));
                 }
                 else
                 {
-                    QColor brushColour = brush->getPaintImage().pixelColor(0, 0);
+                    QColor brushColour = brush->getPaintImage(currentZoom).pixelColor(0, 0);
 
-                    brush->setPaintTypeSolid(QSize{enteredWidth, enteredWidth}, brushColour);
+                    brush->setPaintTypeSolid(currentZoom, QSize{enteredWidth, enteredWidth}, brushColour);
                 }
             });
         }
@@ -79,11 +80,18 @@ namespace GUI
         {
             this->brush = const_cast<PaintFunctions::Brush*>(&brush);
 
-            QColor brushColour = brush.getPaintImage().pixelColor(0, 0);
+            QColor brushColour = brush.getPaintImage(currentZoom).pixelColor(0, 0);
 
             currentBrushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(brushColour));
 
-            currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush.getPaintImage().size().width())));
+            currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush.getPaintImage(currentZoom).size().width())));
+        }
+
+        void CurrentBrushSettings::zoomChanged(TextureLogic::Zoom newZoom)
+        {
+            currentZoom = newZoom;
+
+            currentBrushWidthLineEdit->setText(QString::number(brush->getPaintImage(currentZoom).width()));
         }
 
         void CurrentBrushSettings::updateSelectedTextureSize(QSize size, QSize brushSize)

@@ -468,38 +468,11 @@ namespace Atlas
 
     void TextureAtlas::zoomIn()
     {
-        bool zoomChanged = false;
+        TextureLogic::Zoom oldZoom = currentZoom;
 
-        switch(currentZoom)
-        {
-            case TextureLogic::Zoom::Out25:
-                currentZoom = TextureLogic::Zoom::Out50;
-                zoomChanged = true;
-                break;
+        currentZoom = TextureLogic::zoomIn(currentZoom);
 
-            case TextureLogic::Zoom::Out50:
-                currentZoom = TextureLogic::Zoom::Normal;
-                zoomChanged = true;
-                break;
-
-            case TextureLogic::Zoom::Normal:
-                currentZoom = TextureLogic::Zoom::In200;
-                zoomChanged = true;
-                break;
-
-            case TextureLogic::Zoom::In200:
-                currentZoom = TextureLogic::Zoom::In400;
-                zoomChanged = true;
-                break;
-
-            case TextureLogic::Zoom::In400:
-                break;
-
-            case TextureLogic::Zoom::ALWAYS_AT_EMD:
-                break;
-        }
-
-        if(zoomChanged)
+        if(oldZoom != currentZoom)
         {
             updateTextureDrawingPositions(2.0f);
             currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
@@ -511,38 +484,11 @@ namespace Atlas
 
     void TextureAtlas::zoomOut()
     {
-        bool zoomChanged = false;
+        TextureLogic::Zoom oldZoom = currentZoom;
 
-        switch(currentZoom)
-        {
-            case TextureLogic::Zoom::Out50:
-                currentZoom = TextureLogic::Zoom::Out25;
-                zoomChanged = true;
-                break;
+        currentZoom = TextureLogic::zoomOut(currentZoom);
 
-            case TextureLogic::Zoom::Normal:
-                currentZoom = TextureLogic::Zoom::Out50;
-                zoomChanged = true;
-                break;
-
-            case TextureLogic::Zoom::In200:
-                currentZoom = TextureLogic::Zoom::Normal;
-                zoomChanged = true;
-                break;
-
-            case TextureLogic::Zoom::In400:
-                currentZoom = TextureLogic::Zoom::In200;
-                zoomChanged = true;
-                break;
-
-            case TextureLogic::Zoom::Out25:
-                break;
-
-            case TextureLogic::Zoom::ALWAYS_AT_EMD:
-                break;
-        }
-
-        if(zoomChanged)
+        if(oldZoom != currentZoom)
         {
             updateTextureDrawingPositions(0.5f);
             currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);

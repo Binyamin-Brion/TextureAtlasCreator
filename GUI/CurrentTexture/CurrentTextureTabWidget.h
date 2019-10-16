@@ -36,6 +36,7 @@ namespace GUI
                 void changedRenderArea(const PaintFunctions::Brush&);
                 void repaintSelectedTexture();
                 void selectedTextureChanged(QSize, QSize);
+                void zoomChanged(TextureLogic::Zoom);
 
             private:
                 std::array<std::pair<QString, ScrollArea*>, 2> currentTexture;

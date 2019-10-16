@@ -58,6 +58,10 @@ namespace TextureLogic
     {
         return static_cast<float>((static_cast<unsigned int>(zoom) & 0xFFFu) / 100.0f);
     }
+
+    Zoom zoomIn(Zoom currentZoom);
+
+    Zoom zoomOut(Zoom currentZoom);
 }
 
 #endif //TEXTUREATLAS_ZOOM_H

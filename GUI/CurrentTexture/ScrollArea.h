@@ -7,6 +7,7 @@
 
 #include <QtWidgets/QScrollArea>
 #include "CurrentTextureImage.h"
+#include "TextureLogic/Zoom.h"
 
 namespace PaintFunctions
 {
@@ -30,16 +31,24 @@ namespace GUI
 
             public:
                 ScrollArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
+                void enterEvent(QEvent *event) override;
                 const PaintFunctions::Brush& getBrush() const;
                 QImage::Format getCurrentTextureFormat() const;
+                TextureLogic::Zoom getZoom() const;
+                void keyPressEvent(QKeyEvent *event) override;
+                void keyReleaseEvent(QKeyEvent *event) override;
+                void leaveEvent(QEvent *event) override;
                 void setTexture(TextureLogic::Texture *texture);
+                void wheelEvent(QWheelEvent *event) override;
 
             signals:
                 void paintedSelectedTexture();
                 void repaintSelectedTexture();
+                void zoomChanged(TextureLogic::Zoom);
 
             private:
                 RenderArea *renderArea = nullptr;
+                bool controlKeyDown = false;
         };
     }
 }

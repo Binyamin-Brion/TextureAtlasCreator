@@ -32,6 +32,7 @@ namespace GUI
 
         connect(ui->currentTexture, SIGNAL(changedRenderArea(const PaintFunctions::Brush&)), ui->brushSettings, SLOT(showDifferentBrush(const PaintFunctions::Brush&)));
         connect(ui->currentTexture, SIGNAL(selectedTextureChanged(QSize, QSize)), ui->brushSettings, (SLOT(updateSelectedTextureSize(QSize, QSize))));
+        connect(ui->currentTexture, SIGNAL(zoomChanged(TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChanged(TextureLogic::Zoom)));
 
         ui->currentTexture->setCurrentIndex(1);
         ui->currentTexture->setCurrentIndex(0);

@@ -9,18 +9,25 @@ namespace PaintFunctions
 {
     Brush::Brush()
     {
-        paintImage = QPixmap{QSize{1, 1}}.toImage();
+        for(auto &paintImage : paintImages)
+        {
+            paintImage = QPixmap{QSize{static_cast<int>(exp2f(TextureLogic::NumberZoomElements())), static_cast<int>(exp2f(TextureLogic::NumberZoomElements()))}}.toImage();
+        }
     }
 
-    const QImage& Brush::getPaintImage() const
+    const QImage& Brush::getPaintImage(TextureLogic::Zoom zoom) const
     {
-        return paintImage;
+        return paintImages[TextureLogic::GetZoomIndex(zoom)];
     }
 
-    void Brush::setPaintTypeSolid(QSize drawAreaSize, QColor colour)
+    void Brush::setPaintTypeSolid(TextureLogic::Zoom zoom, QSize drawAreaSize, QColor colour)
     {
-        paintImage = paintImage.scaled(drawAreaSize);
-        paintImage.fill(colour);
+          for(auto currentZoom : TextureLogic::AllZoomValues)
+          {
+              float zoomFactor = TextureLogic::GetZoomValue(currentZoom) / TextureLogic::GetZoomValue(zoom);
 
+              paintImages[TextureLogic::GetZoomIndex(currentZoom)] = paintImages[TextureLogic::GetZoomIndex(zoom)].scaled(drawAreaSize * zoomFactor);
+              paintImages[TextureLogic::GetZoomIndex(currentZoom)].fill(colour);
+          }
     }
 }

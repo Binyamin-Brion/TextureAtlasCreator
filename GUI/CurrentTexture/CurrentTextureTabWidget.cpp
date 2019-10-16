@@ -27,6 +27,11 @@ namespace GUI
             for(auto &i : currentTexture)
             {
                 addTab(i.second, i.first);
+
+                connect(i.second, &ScrollArea::zoomChanged, [this](TextureLogic::Zoom newZoom)
+                {
+                    emit zoomChanged(newZoom);
+                });
             }
 
             connect(currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second, &ScrollArea::repaintSelectedTexture, [this]()
@@ -78,11 +83,15 @@ namespace GUI
 
                 selectedTextureSize = texture->getImage(TextureLogic::Zoom::Normal).size();
 
-                emit selectedTextureChanged(texture->getImage(TextureLogic::Zoom::Normal).size(), currentTexture[currentIndex()].second->getBrush().getPaintImage().size());
+                const ScrollArea *currentScrollArea = currentTexture[currentIndex()].second;
+
+                emit selectedTextureChanged(texture->getImage(TextureLogic::Zoom::Normal).size(), currentScrollArea->getBrush().getPaintImage(currentScrollArea->getZoom()).size());
             }
             else
             {
-                emit selectedTextureChanged(QSize{-1, -1}, currentTexture[currentIndex()].second->getBrush().getPaintImage().size());
+                const ScrollArea *currentScrollArea = currentTexture[currentIndex()].second;
+
+                emit selectedTextureChanged(QSize{-1, -1}, currentTexture[currentIndex()].second->getBrush().getPaintImage(currentScrollArea->getZoom()).size());
             }
 
             currentTextureIndex = index;

@@ -34,11 +34,14 @@ namespace GUI
                 explicit RenderArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
                 const PaintFunctions::Brush& getBrush() const;
                 QImage::Format getCurrentTextureFormat() const;
+                TextureLogic::Zoom getZoom() const;
                 void mouseMoveEvent(QMouseEvent *event) override;
                 void mousePressEvent(QMouseEvent *event) override;
                 void mouseReleaseEvent(QMouseEvent *event) override;
                 void paintEvent(QPaintEvent *event) override;
                 void setTexture(TextureLogic::Texture *texture);
+                void zoomIn();
+                void zoomOut();
 
             signals:
                 void paintedSelectedTexture();
@@ -48,9 +51,9 @@ namespace GUI
                 void undoPaintOperation();
 
             private:
-                const QImage& getReferredToImage() const;
-                PaintFunctions::PaintHistoryCommand* getReferredToImageHistory() const;
-                void paintTexture(QPoint mousePosition, const QImage &applyImage, QImage &targetImage, bool undoOperation);
+                const QImage& getReferredToImage(TextureLogic::Zoom zoom) const;
+                PaintFunctions::PaintHistoryCommand* getReferredToImageHistory(TextureLogic::Zoom zoom) const;
+                void paintTexture(TextureLogic::Zoom zoom, QPoint mousePosition, const QImage &applyImage, QImage &targetImage, bool undoOperation);
                 void storePaintHistory();
 
                 TextureLogic::Texture *texture = nullptr;
@@ -58,7 +61,7 @@ namespace GUI
                 TextureLogic::Zoom currentZoom;
 
                 PaintFunctions::Brush brush;
-                std::stack<PaintFunctions::PaintedArea> appliedBrushAreas;
+                std::array<std::stack<PaintFunctions::PaintedArea>, TextureLogic::NumberZoomElements()> appliedBrushAreas;
 
                 QPoint previousMousePosition;
                 bool leftMouseButtonDown = false;

@@ -21,7 +21,7 @@ namespace GUI
             setFocusPolicy(Qt::StrongFocus);
             setMouseTracking(true);
 
-            brush.setPaintTypeSolid(QSize{25, 25}, QColor{255, 255, 255});
+            brush.setPaintTypeSolid(currentZoom, QSize{25, 25}, QColor{255, 255, 255});
 
             new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z), this, SLOT(undoPaintOperation()));
         }
@@ -41,13 +41,23 @@ namespace GUI
             return textureFormat;
         }
 
+        TextureLogic::Zoom RenderArea::getZoom() const
+        {
+            return currentZoom;
+        }
+
         void RenderArea::mouseMoveEvent(QMouseEvent *event)
         {
             if(texture != nullptr)
             {
                 if(leftMouseButtonDown)
                 {
-                    paintTexture(event->pos(), brush.getPaintImage(), const_cast<QImage &>(getReferredToImage()), false);
+                    for(auto zoom : TextureLogic::AllZoomValues)
+                    {
+                        float zoomFactor = TextureLogic::GetZoomValue(zoom) / TextureLogic::GetZoomValue(currentZoom);
+
+                        paintTexture(zoom, event->pos() * zoomFactor, brush.getPaintImage(zoom), const_cast<QImage &>(getReferredToImage(zoom)), false);
+                    }
                 }
 
                 previousMousePosition = event->pos();
@@ -62,7 +72,12 @@ namespace GUI
             {
                 if(texture != nullptr)
                 {
-                    paintTexture(event->pos(), brush.getPaintImage(), const_cast<QImage&>(getReferredToImage()), false);
+                    for(auto zoom : TextureLogic::AllZoomValues)
+                    {
+                        float zoomFactor = TextureLogic::GetZoomValue(zoom) / TextureLogic::GetZoomValue(currentZoom);
+
+                        paintTexture(zoom, event->pos() * zoomFactor, brush.getPaintImage(zoom), const_cast<QImage &>(getReferredToImage(zoom)), false);
+                    }
 
                     QWidget::repaint();
 
@@ -107,7 +122,8 @@ namespace GUI
 
                 if(previousMousePosition.x() != -1 && previousMousePosition.y() != -1)
                 {
-                    painter.drawImage(previousMousePosition.x() - brush.getPaintImage().width() / 2, previousMousePosition.y() - brush.getPaintImage().height() / 2, brush.getPaintImage());
+                    painter.drawImage(previousMousePosition.x() - brush.getPaintImage(currentZoom).width() / 2,
+                            previousMousePosition.y() - brush.getPaintImage(currentZoom).height() / 2, brush.getPaintImage(currentZoom));
                 }
             }
         }
@@ -119,11 +135,48 @@ namespace GUI
             if(texture != nullptr)
             {
                 setMinimumSize(texture->getImage(TextureLogic::Zoom::Normal).size());
+                setMaximumSize(texture->getImage(TextureLogic::Zoom::Normal).size());
 
                 textureFormat = texture->getImage(TextureLogic::Zoom::Normal).format();
             }
 
             QWidget::repaint();
+        }
+
+        void RenderArea::zoomIn()
+        {
+            TextureLogic::Zoom oldZoom = currentZoom;
+
+            currentZoom = TextureLogic::zoomIn(currentZoom);
+
+            if(oldZoom != currentZoom)
+            {
+                if(texture != nullptr)
+                {
+                    setMinimumSize(texture->getImage(currentZoom).size());
+                    setMaximumSize(texture->getImage(currentZoom).size());
+
+                    QWidget::repaint();
+                }
+            }
+        }
+
+        void RenderArea::zoomOut()
+        {
+            TextureLogic::Zoom oldZoom = currentZoom;
+
+            currentZoom = TextureLogic::zoomOut(currentZoom);
+
+            if(oldZoom != currentZoom)
+            {
+                if(texture != nullptr)
+                {
+                    setMinimumSize(texture->getImage(currentZoom).size());
+                    setMaximumSize(texture->getImage(currentZoom).size());
+
+                    QWidget::repaint();
+                }
+            }
         }
 
         void RenderArea::undoPaintOperation()
@@ -139,31 +192,34 @@ namespace GUI
                 return;
             }
 
-            auto mostRecentPaintHistory = getReferredToImageHistory();
-
-            if(mostRecentPaintHistory == nullptr)
+            for(auto zoom : TextureLogic::AllZoomValues)
             {
-                return;
+                auto mostRecentPaintHistory = getReferredToImageHistory(zoom);
+
+                if(mostRecentPaintHistory == nullptr)
+                {
+                    return;
+                }
+
+                // Remember that a paint history could compromise of more than one paint action if the mouse was dragged
+                // while the left button was done, for example.
+
+                while(!mostRecentPaintHistory->getAppliedAreas().empty())
+                {
+                    PaintFunctions::PaintedArea *paintedArea = &mostRecentPaintHistory->getAppliedAreas().top();
+
+                    paintTexture(TextureLogic::Zoom::ALWAYS_AT_EMD, paintedArea->appliedArea, paintedArea->previousColour, const_cast<QImage&>(getReferredToImage(zoom)), true);
+
+                    mostRecentPaintHistory->getAppliedAreas().pop();
+                }
+
+                // Since the resource held by this pointer is only referred to by this pointer now (as another pointer to it
+                // in the texture class was removed after the call to getReferredToimageHistoy) it must be deleted now or else a memory leak will occur
+
+                // Reminder: This is a raw pointer as when using std::unique_ptr, compilation issues kept arising that could not be solved (error: use of deleted function)
+
+                delete mostRecentPaintHistory;
             }
-
-            // Remember that a paint history could compromise of more than one paint action if the mouse was dragged
-            // while the left button was done, for example.
-
-            while(!mostRecentPaintHistory->getAppliedAreas().empty())
-            {
-                PaintFunctions::PaintedArea *paintedArea = &mostRecentPaintHistory->getAppliedAreas().top();
-
-                paintTexture(paintedArea->appliedArea, paintedArea->previousColour,const_cast<QImage&>(getReferredToImage()), true);
-
-                mostRecentPaintHistory->getAppliedAreas().pop();
-            }
-
-            // Since the resource held by this pointer is only referred to by this pointer now (as another pointer to it
-            // in the texture class was removed after the call to getReferredToimageHistoy) it must be deleted now or else a memory leak will occur
-
-            // Reminder: This is a raw pointer as when using std::unique_ptr, compilation issues kept arising that could not be solved (error: use of deleted function)
-
-            delete mostRecentPaintHistory;
 
             QWidget::repaint();
         }
@@ -176,31 +232,31 @@ namespace GUI
          *  the amount of changes needed and reduces the change of error.
          */
 
-        const QImage& RenderArea::getReferredToImage() const
+        const QImage& RenderArea::getReferredToImage(TextureLogic::Zoom zoom) const
         {
             switch(currentTextureImage)
             {
                 case CurrentTextureImage::SelectedTexture:
-                    return texture->getImage(currentZoom);
+                    return texture->getImage(zoom);
 
                 case CurrentTextureImage::SpecularTexture:
-                    return texture->getSpecularTexture(currentZoom, {});
+                    return texture->getSpecularTexture(zoom, {});
             }
         }
 
-        PaintFunctions::PaintHistoryCommand* RenderArea::getReferredToImageHistory() const
+        PaintFunctions::PaintHistoryCommand* RenderArea::getReferredToImageHistory(TextureLogic::Zoom zoom) const
         {
             switch(currentTextureImage)
             {
                 case CurrentTextureImage::SelectedTexture:
-                    return texture->removeRecentPaintHistoryTexture({});
+                    return texture->removeRecentPaintHistoryTexture(zoom, {});
 
                 case CurrentTextureImage::SpecularTexture:
-                    return texture->removeRecentPaintHistorySpecular({});
+                    return texture->removeRecentPaintHistorySpecular(zoom, {});
             }
         }
 
-        void RenderArea::paintTexture(QPoint mousePosition, const QImage &applyImage, QImage &targetImage, bool undoOperation)
+        void RenderArea::paintTexture(TextureLogic::Zoom zoom, QPoint mousePosition, const QImage &applyImage, QImage &targetImage, bool undoOperation)
         {
             /*
              * When painting a texture, the area that is to be painted is centred around the input given to this function.
@@ -229,7 +285,7 @@ namespace GUI
             if(!undoOperation)
             {
                 paintedArea.appliedArea = mousePosition;
-                paintedArea.previousColour = paintedArea.previousColour.scaled(brush.getPaintImage().width(), brush.getPaintImage().height());
+                paintedArea.previousColour = paintedArea.previousColour.scaled(brush.getPaintImage(zoom).width(), brush.getPaintImage(zoom).height());
             }
 
             for(int i = -halfTextureWidth; i < halfTextureWidth; ++i)
@@ -263,7 +319,7 @@ namespace GUI
 
                     adjustedPixelY = j + halfTextureHeight;
 
-                    // If this function is called to undo a paint operation, it makes no sense to keep track where this paint operation occured
+                    // If this function is called to undo a paint operation, it makes no sense to keep track where this paint operation occurred
                     // as that implies a new paint operation is done
 
                     if(!undoOperation)
@@ -271,7 +327,7 @@ namespace GUI
                         paintedArea.previousColour.setPixelColor(adjustedPixelX, adjustedPixelY, targetImage.pixelColor(adjustedMouseX, adjustedMouseY));
                     }
 
-                    // Finally, time tp update (one) pixcel in the target texture!
+                    // Finally, time to update (one) pixel in the target texture!
 
                     targetImage.setPixelColor(adjustedMouseX, adjustedMouseY, applyImage.pixelColor(adjustedPixelX, adjustedPixelY));
                 }
@@ -281,7 +337,7 @@ namespace GUI
 
             if(!undoOperation)
             {
-                appliedBrushAreas.push(paintedArea);
+                appliedBrushAreas[TextureLogic::GetZoomIndex(zoom)].push(paintedArea);
             }
         }
 
@@ -291,22 +347,25 @@ namespace GUI
             // to be called even when no painting was done. It should not matter if an empty stack history is passed,
             // but ideally, it should not happen and it is more easy to reason about if no empty stack histories are passed
 
-            if(appliedBrushAreas.empty())
+            if(appliedBrushAreas[0].empty())
             {
                 return;
             }
 
-            auto paintHistoryCommand = new PaintFunctions::PaintHistoryCommand{ appliedBrushAreas};
-
-            switch(currentTextureImage)
+            for(auto zoom : TextureLogic::AllZoomValues)
             {
-                case CurrentTextureImage::SelectedTexture:
-                    texture->addPaintHistoryTexture(paintHistoryCommand, {});
-                    break;
+                auto paintHistoryCommand = new PaintFunctions::PaintHistoryCommand{ appliedBrushAreas[TextureLogic::GetZoomIndex(zoom)]};
 
-                case CurrentTextureImage::SpecularTexture:
-                    texture->addPaintHistorySpecular(paintHistoryCommand, {});
-                    break;
+                switch(currentTextureImage)
+                {
+                    case CurrentTextureImage::SelectedTexture:
+                        texture->addPaintHistoryTexture(zoom, paintHistoryCommand, {});
+                        break;
+
+                    case CurrentTextureImage::SpecularTexture:
+                        texture->addPaintHistorySpecular(zoom, paintHistoryCommand, {});
+                        break;
+                }
             }
 
             emit paintedSelectedTexture();
