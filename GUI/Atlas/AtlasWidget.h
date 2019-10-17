@@ -40,9 +40,10 @@ namespace GUI
                 void resizeAtlasFactor(float factor);
                 void resizeEvent(QResizeEvent *event) override;
                 void setViewPort(QSize viewPort);
+                void setViewPortOffsetX(int value);
+                void setViewPortOffsetY(int value);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
-                void translateViewPort(int dx, int dy);
                 void wheelEvent(QWheelEvent *event) override;
                 void zoomIn();
                 void zoomOut();

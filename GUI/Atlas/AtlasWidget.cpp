@@ -209,16 +209,16 @@ namespace GUI
         void AtlasWidget::setViewPort(QSize viewPort)
         {
             this->viewPort = viewPort;
+        }
 
-            if(width() < viewPort.width())
-            {
-                this->viewPort.setWidth(width());
-            }
+        void AtlasWidget::setViewPortOffsetX(int value)
+        {
+            viewPortOffset.setX(value);
+        }
 
-            if(height() < viewPort.height())
-            {
-                this->viewPort.setHeight(height());
-            }
+        void AtlasWidget::setViewPortOffsetY(int value)
+        {
+            viewPortOffset.setY(value);
         }
 
         void AtlasWidget::setTextureBankReference(TextureLogic::TextureBank *textureBank)
@@ -229,13 +229,6 @@ namespace GUI
         void AtlasWidget::updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures)
         {
             textureAtlas->textureLoaded(textures);
-        }
-
-        void AtlasWidget::translateViewPort(int dx, int dy)
-        {
-            viewPortOffset.setX(viewPortOffset.x() - dx);
-
-            viewPortOffset.setY(viewPortOffset.y() - dy);
         }
 
         void AtlasWidget::wheelEvent(QWheelEvent *event)

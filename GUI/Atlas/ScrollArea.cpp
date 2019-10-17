@@ -7,7 +7,8 @@
 
 #include "AtlasWidget.h"
 #include <QKeyEvent>
-
+#include <QtWidgets/QShortcut>
+#include <QScrollBar>
 namespace GUI
 {
     namespace Atlas
@@ -18,6 +19,24 @@ namespace GUI
             setLayout(new QHBoxLayout{this});
 
             setWidget(atlasWidget);
+
+            new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Equal), this, SLOT(zoomIn()));
+
+            new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Minus), this, SLOT(zoomOut()));
+
+            connect(horizontalScrollBar(), &QScrollBar::valueChanged, [this](int newValue)
+            {
+                printf("Setting X to: %d \n", newValue);
+
+                atlasWidget->setViewPortOffsetX(newValue);
+            });
+
+            connect(verticalScrollBar(), &QScrollBar::valueChanged, [this](int newValue)
+            {
+                printf("Setting Y to: %d \n", newValue);
+
+                atlasWidget->setViewPortOffsetY(newValue);
+            });
         }
 
         void ScrollArea::addTexture(const TextureLogic::Texture &texture)
@@ -66,8 +85,6 @@ namespace GUI
             }
 
             QScrollArea::scrollContentsBy(dx, dy);
-
-            atlasWidget->translateViewPort(dx, dy);
         }
 
         void ScrollArea::removeTexture(const TextureLogic::Texture *texture)
@@ -118,6 +135,16 @@ namespace GUI
             {
                 QScrollArea::wheelEvent(event);
             }
+        }
+
+        void ScrollArea::zoomIn()
+        {
+            atlasWidget->zoomIn();
+        }
+
+        void ScrollArea::zoomOut()
+        {
+            atlasWidget->zoomOut();
         }
     }
 }

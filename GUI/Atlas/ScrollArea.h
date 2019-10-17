@@ -2,8 +2,8 @@
 // Created by BinyBrion on 2019-09-17.
 //
 
-#ifndef TEXTUREATLASCREATOR_SCROLLAREA_H
-#define TEXTUREATLASCREATOR_SCROLLAREA_H
+#ifndef TEXTUREATLASCREATOR_ATLAS_SCROLLAREA_H
+#define TEXTUREATLASCREATOR_ATLAS_SCROLLAREA_H
 
 #include <QtWidgets/QScrollArea>
 
@@ -21,6 +21,8 @@ namespace GUI
 
         class ScrollArea : public QScrollArea
         {
+            Q_OBJECT
+
             public:
                 ScrollArea(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
                 void addTexture(const TextureLogic::Texture &texture);
@@ -36,6 +38,10 @@ namespace GUI
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
                 void wheelEvent(QWheelEvent *event) override;
+
+            private slots:
+                void zoomIn();
+                void zoomOut();
 
             private:
                 AtlasWidget *atlasWidget = nullptr;
