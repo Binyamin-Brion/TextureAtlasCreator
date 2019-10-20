@@ -97,6 +97,27 @@ namespace Atlas
         return textureDrawingPositions.size() + selectedExistingTexture->isOpen();
     }
 
+    unsigned int TextureAtlas::getPercentageAtlasUsed() const
+    {
+        unsigned int pixelsCovered = 0;
+
+        for(const auto &i : textureDrawingPositions)
+        {
+            const QImage& referredToImage = i.texture->getImage(TextureLogic::Zoom::Normal);
+
+            pixelsCovered += (referredToImage.width() * referredToImage.height());
+        }
+
+        if(selectedExistingTexture->isOpen())
+        {
+            const QImage& referredToImage = selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal);
+
+            pixelsCovered += (referredToImage.width() * referredToImage.height());
+        }
+
+        return 100.0f * pixelsCovered / (atlasSize.width() * atlasSize.height());
+    }
+
     QSize TextureAtlas::getSelectedTextureSize() const
     {
         // Same idea for using pair and checking if a texture is selected as fn getAtlasSize

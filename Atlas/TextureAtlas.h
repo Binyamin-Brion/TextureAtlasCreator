@@ -43,6 +43,7 @@ namespace Atlas
             QImage::Format getAtlasFormat() const;
             QSize getAtlasSize() const;
             unsigned int getNumberTextures();
+            unsigned int getPercentageAtlasUsed() const;
             QSize getSelectedTextureSize() const;
             void keyPressed(int keyID);
             void mouseClicked(int mouseX, int mouseY, int mouseButton);

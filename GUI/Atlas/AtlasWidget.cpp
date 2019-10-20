@@ -38,14 +38,9 @@ namespace GUI
             return textureAtlas->getAtlasFormat();
         }
 
-        unsigned int AtlasWidget::getNumberTextures() const
+        ::Atlas::AtlasInformationBundle AtlasWidget::getAtlasInformation() const
         {
-            return textureAtlas->getNumberTextures();
-        }
-
-        QSize AtlasWidget::getAtlasSize() const
-        {
-            return textureAtlas->getAtlasSize();
+            return ::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()};
         }
 
         void AtlasWidget::keyPressed(QKeyEvent *event)
@@ -59,6 +54,8 @@ namespace GUI
                 textureAtlas->keyPressed(Qt::Key_Delete);
 
                 QWidget::repaint();
+
+                emit currentAtlasInformationChanged(::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()});
             }
         }
 
@@ -189,6 +186,8 @@ namespace GUI
             setCursor(Qt::CrossCursor);
 
             textureAtlas->mouseReleased(event->x(), event->y(), event->button());
+
+            emit currentAtlasInformationChanged(::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()});
 
             QWidget::repaint();
         }

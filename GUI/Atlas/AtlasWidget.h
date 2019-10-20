@@ -8,6 +8,8 @@
 #include <QtWidgets/QWidget>
 #include <memory>
 
+#include "Atlas/AtlasInformationBundle.h"
+
 namespace Atlas
 {
     class TextureAtlas;
@@ -30,8 +32,7 @@ namespace GUI
             public:
                 explicit AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
                 QImage::Format getAtlasFormat() const;
-                unsigned int getNumberTextures() const;
-                QSize getAtlasSize() const;
+                ::Atlas::AtlasInformationBundle getAtlasInformation() const;
                 void keyPressed(QKeyEvent *event);
                 void mouseMoveEvent(QMouseEvent *event) override;
                 void mousePressEvent(QMouseEvent *event) override;
@@ -51,6 +52,9 @@ namespace GUI
                 void zoomIn();
                 void zoomOut();
                 ~AtlasWidget();
+
+            signals:
+                void currentAtlasInformationChanged(::Atlas::AtlasInformationBundle);
 
             public slots:
                 void textureButtonPressed(const TextureLogic::Texture &texture);

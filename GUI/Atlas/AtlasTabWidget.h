@@ -8,6 +8,7 @@
 #include <QtWidgets/QTabWidget>
 #include "AccessRestriction/PassKey.h"
 #include "Atlas/TextureAtlas.h"
+#include "Atlas/AtlasInformationBundle.h"
 
 namespace TextureLogic
 {
@@ -40,7 +41,7 @@ namespace GUI
                 void updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>);
 
             signals:
-                void currentAtlasInformationChanged(QString, unsigned int, unsigned int, unsigned int);
+                void currentAtlasInformationChanged(::Atlas::AtlasInformationBundle);
 
             private slots:
                 void repaintSelectedTexture();

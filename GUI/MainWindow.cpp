@@ -34,7 +34,12 @@ namespace GUI
         connect(ui->currentTexture, SIGNAL(selectedTextureChanged(QSize, QSize)), ui->brushSettings, (SLOT(updateSelectedTextureSize(QSize, QSize))));
         connect(ui->currentTexture, SIGNAL(zoomChanged(TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChanged(TextureLogic::Zoom)));
 
-
+        connect(ui->atlasWidget, &Atlas::AtlasTabWidget::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle atlasInformation)
+        {
+            ui->atlasFormatLabel->setText("Atlas Format: " + TextureHelperFunctions::convertToString(atlasInformation.textureFormat));
+            ui->numberTexturesLabel->setText("Number of Textures in Atlas: " + QString::number(atlasInformation.numberTexturesUsed));
+            ui->percentageAtlasUsed->setText("Percentage Atlas Used: " + QString::number(atlasInformation.percentageAtlasUsed));
+        });
 
         ui->currentTexture->setCurrentIndex(1);
         ui->currentTexture->setCurrentIndex(0);

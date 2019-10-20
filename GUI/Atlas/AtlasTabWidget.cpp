@@ -38,11 +38,9 @@ namespace GUI
 
             connect(this, &QTabWidget::currentChanged, [this](int index)
             {
-//                const ScrollArea *const scrollArea = currentTabs[index].first;
-//
-//                QString atlasFormat = TextureHelperFunctions::convertToString(scrollArea->getAtlasFormat());
-//
-//                emit currentAtlasInformationChanged(atlasFormat, scrollArea->getNumberTextures(), )
+                const ScrollArea *const scrollArea = currentTabs[index].first;
+
+                emit currentAtlasInformationChanged(scrollArea->getAtlasInformation());
             });
         }
 
@@ -144,6 +142,11 @@ namespace GUI
             currentTabs.emplace_back(tabScrollArea, tabName);
 
             addTab(currentTabs.back().first, currentTabs.back().second);
+
+            connect(tabScrollArea, &ScrollArea::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle atlasInformation)
+            {
+                emit currentAtlasInformationChanged(atlasInformation);
+            });
         }
     }
 }

@@ -37,6 +37,11 @@ namespace GUI
 
                 atlasWidget->setViewPortOffsetY(newValue);
             });
+
+            connect(atlasWidget, &AtlasWidget::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle information)
+            {
+                emit currentAtlasInformationChanged(information);
+            });
         }
 
         void ScrollArea::addTexture(const TextureLogic::Texture &texture)
@@ -52,16 +57,6 @@ namespace GUI
         QImage::Format ScrollArea::getAtlasFormat() const
         {
             return atlasWidget->getAtlasFormat();
-        }
-
-        unsigned int ScrollArea::getNumberTextures() const
-        {
-            return atlasWidget->getNumberTextures();
-        }
-
-        QSize ScrollArea::getAtlasSize() const
-        {
-            return atlasWidget->getAtlasSize();
         }
 
         void ScrollArea::keyPressEvent(QKeyEvent *event)
@@ -85,6 +80,11 @@ namespace GUI
         void ScrollArea::leaveEvent(QEvent *event)
         {
             QWidget::releaseKeyboard();
+        }
+
+        ::Atlas::AtlasInformationBundle ScrollArea::getAtlasInformation() const
+        {
+            return atlasWidget->getAtlasInformation();
         }
 
         void ScrollArea::scrollContentsBy(int dx, int dy)
