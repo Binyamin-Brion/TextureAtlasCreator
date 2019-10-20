@@ -27,16 +27,23 @@ namespace TextureLogic
             void addPaintHistoryTexture(PaintFunctions::PaintHistoryCommand *paintHistoryCommand);
             void convertToFormat(QImage::Format newFormat);
             const QImage& getImage() const;
+            unsigned int getIntersectionBorderWidth() const;
+            unsigned int getSelectionBorderWidth() const;
             QImage& getSpecularTexture();
-            void initialize(const QString &textureLocation, Zoom zoom);
+            void initialize(const QString &textureLocation, Zoom zoom, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
             PaintFunctions::PaintHistoryCommand* removePaintHistorySpecular();
             PaintFunctions::PaintHistoryCommand* removePaintHistoryTexture();
+            void setIntersectionWidth(unsigned int borderWidth);
+            void setSelectionBorderWidth(unsigned int borderWidth);
 
         private:
             QImage image;
             QImage specularTexture;
             std::stack<PaintFunctions::PaintHistoryCommand*> specularPaintHistory;
             std::stack<PaintFunctions::PaintHistoryCommand*> texturePaintHistory;
+
+            unsigned int intersectionBorderWidth;
+            unsigned int selectionBorderWidth;
     };
 }
 

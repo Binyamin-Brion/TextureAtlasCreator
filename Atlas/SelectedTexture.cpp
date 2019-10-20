@@ -119,9 +119,16 @@ namespace Atlas
         }
     }
 
-    void SelectedTexture::setDrawingCoordinates(QPoint drawingCoords)
+    void SelectedTexture::setDrawingCoordinates(QPointF drawingCoords)
     {
+        QPointF previousDrawingCoords = drawingCoordinates;
+
         drawingCoordinates = drawingCoords;
+
+        for(auto &i : surroundingBorder)
+        {
+            i.translate(drawingCoordinates.x() - previousDrawingCoords.x(), drawingCoordinates.y() - previousDrawingCoords.y());
+        }
     }
 
     void SelectedTexture::setDrawSelectedSurroundingBorder(bool value)
@@ -151,7 +158,8 @@ namespace Atlas
 
         for(auto &i : ::TextureLogic::AllZoomValues)
         {
-            surroundingBorder[loopCounter].initialize(selectedTexture.getImage(i).width(), selectedTexture.getImage(i).height());
+            surroundingBorder[loopCounter].initialize(selectedTexture.getImage(i).width(), selectedTexture.getImage(i).height(),
+                    selectedTexture.getIntersectionBorderWidth(i), selectedTexture.getSelectedBorderWidth(i));
 
             loopCounter += 1;
         }

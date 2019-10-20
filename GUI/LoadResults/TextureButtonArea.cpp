@@ -71,7 +71,7 @@ namespace GUI
             connect(optionsMenu, SIGNAL(deleteActionTriggered()), this, SLOT(deleteTextureButton()));
         }
 
-        void TextureButtonArea::addTextureButton(const QString &textureLocation)
+        void TextureButtonArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
         {
             for(const auto &i : textureButtons)
             {
@@ -92,14 +92,15 @@ namespace GUI
             // Try loading the image first; if that operation fails, then there is no point continuing to create
             // a texture pushbutton for that image
 
-            textureBank->storeNewTexture(textureLocation, {});
+            textureBank->storeNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
 
             // Swap the place holder widget with the newly created plcae holder; see the description at the top of
             // this file for more information.
 
-            textureButtons.push_back(new TextureButton{textureLocation});
+            textureButtons.push_back(new TextureButton{textureLocation, intersectionBorderWidth, selectionBorderWidth});
 
-            connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&)), this, SLOT(textureButtonClicked(const QString&)));
+            connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&, unsigned int, unsigned int)),
+                    this, SLOT(textureButtonClicked(const QString&, unsigned int, unsigned int)));
 
             placeTextureButton(textureButtons.back());
         }
@@ -181,9 +182,9 @@ namespace GUI
             optionsMenu->exec(mapToGlobal(pos));
         }
 
-        void TextureButtonArea::textureButtonClicked(const QString &textureLocation)
+        void TextureButtonArea::textureButtonClicked(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
         {
-            textureBank->textureButtonPressed(textureLocation, {});
+            textureBank->textureButtonPressed(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
         }
 
         void TextureButtonArea::addTextureButtonPlaceHolders(int addRows)

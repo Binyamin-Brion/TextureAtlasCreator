@@ -54,14 +54,16 @@ namespace TextureLogic
             void selectedTextureChanged();
             void setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget);
             void setCurrentTextureTabWidgetReference(GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget);
+            bool setIntersectionBorderWidth(Texture *texture, Zoom zoom, unsigned int newBorderWidth);
+            void setSelectionBorderWidth(Texture *texture, Zoom zoom, unsigned int newBorderWidth);
             void setTextureInfoScrollAreaReference(GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea);
-            void storeNewTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
-            void reuploadTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
-            void textureButtonPressed(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
+            void storeNewTexture(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
+            void reuploadTexture(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
+            void textureButtonPressed(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
             void textureSelected(const Texture *texture);
 
         private:
-            void loadNewTexture(const QString &textureLocation);
+            void loadNewTexture(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
             void resetTextureReference();
 
             GUI::Atlas::AtlasTabWidget *atlasTabWidget = nullptr;

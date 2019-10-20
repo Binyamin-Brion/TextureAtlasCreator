@@ -34,6 +34,8 @@ namespace GUI
         connect(ui->currentTexture, SIGNAL(selectedTextureChanged(QSize, QSize)), ui->brushSettings, (SLOT(updateSelectedTextureSize(QSize, QSize))));
         connect(ui->currentTexture, SIGNAL(zoomChanged(TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChanged(TextureLogic::Zoom)));
 
+
+
         ui->currentTexture->setCurrentIndex(1);
         ui->currentTexture->setCurrentIndex(0);
         ui->brushSettings->updateSelectedTextureSize(QSize{-1, 1}, QSize{25, 25});

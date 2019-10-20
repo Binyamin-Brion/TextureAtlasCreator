@@ -6,6 +6,7 @@
 #define TEXTUREATLASCREATOR_SELECTEDTEXTUREINFORMATION_H
 
 #include <QtWidgets/QWidget>
+#include <TextureLogic/Zoom.h>
 #include "ui_selectedTextureInformation.h"
 #include "GUI/TextureHelperFunctions/TextureFormats.h"
 
@@ -25,13 +26,18 @@ namespace GUI
             public:
                 explicit SelectedTextureInformation(QWidget *parent = nullptr);
                 QImage::Format getSelectedTextureFormat() const;
+                void setIntersectionWidthLineEdit(unsigned int previousBorderWidth);
                 void selectedTextureModified();
                 void setTexture(const TextureLogic::Texture *texture);
 
             signals:
-                void reuploadTexture(const QString&, const TextureLogic::Texture*);
+                void newIntersectionBorderWidth(TextureLogic::Texture*, TextureLogic::Zoom , unsigned int);
+                void newSelectionBorderWidth(TextureLogic::Texture*, TextureLogic::Zoom, unsigned int);
+                void reuploadTexture(const QString&, const TextureLogic::Texture*, unsigned int interesectionBorderWidth, unsigned int selectionWidth);
 
             private:
+                int checkValidBorderWidth(QLineEdit *lineEdit, int maxValue);
+                float normalZoomFactorValue(TextureLogic::Zoom zoom) const;
                 void resetDefaultLabels();
                 void saveImage(const QString &newFileLocation);
 
@@ -42,6 +48,8 @@ namespace GUI
                 std::vector<QString> imageExtensions;
 
                 QImage::Format selectedTextureFormat;
+
+                std::vector<TextureLogic::ZoomPair> zoomPairs;
         };
     }
 }

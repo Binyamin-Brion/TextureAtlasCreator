@@ -49,6 +49,21 @@ namespace GUI
             QWidget::grabKeyboard();
         }
 
+        QImage::Format ScrollArea::getAtlasFormat() const
+        {
+            return atlasWidget->getAtlasFormat();
+        }
+
+        unsigned int ScrollArea::getNumberTextures() const
+        {
+            return atlasWidget->getNumberTextures();
+        }
+
+        QSize ScrollArea::getAtlasSize() const
+        {
+            return atlasWidget->getAtlasSize();
+        }
+
         void ScrollArea::keyPressEvent(QKeyEvent *event)
         {
             if(event->key() == Qt::Key_Control)
@@ -70,11 +85,6 @@ namespace GUI
         void ScrollArea::leaveEvent(QEvent *event)
         {
             QWidget::releaseKeyboard();
-        }
-
-        QImage::Format ScrollArea::getAtlasFormat() const
-        {
-            return atlasWidget->getAtlasFormat();
         }
 
         void ScrollArea::scrollContentsBy(int dx, int dy)
@@ -102,6 +112,11 @@ namespace GUI
             QScrollArea::resizeEvent(event);
 
             atlasWidget->setViewPort(QSize{viewport()->width(), viewport()->height()});
+        }
+
+        bool ScrollArea::setIntersectionWidth(TextureLogic::Texture *texture)
+        {
+            return atlasWidget->setIntersectionBorderWidth(texture);
         }
 
         void ScrollArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)

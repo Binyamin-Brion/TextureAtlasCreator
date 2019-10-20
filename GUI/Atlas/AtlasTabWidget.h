@@ -35,8 +35,12 @@ namespace GUI
                 void addTextureToCurrentAtlas(const TextureLogic::Texture &texture);
                 QImage::Format getCurrentAtlasFormat() const;
                 void removeTexture(const TextureLogic::Texture *texture);
+                bool setIntersectionWidth(TextureLogic::Texture *texture);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>);
+
+            signals:
+                void currentAtlasInformationChanged(QString, unsigned int, unsigned int, unsigned int);
 
             private slots:
                 void repaintSelectedTexture();

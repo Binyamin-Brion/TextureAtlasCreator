@@ -65,4 +65,17 @@ namespace TextureLogic
 
         return currentZoom;
     }
+
+    std::vector<ZoomPair> getZoomPairs()
+    {
+        std::vector<ZoomPair> zoomPairs;
+
+        zoomPairs.push_back(ZoomPair{Zoom::In400, "400%"});
+        zoomPairs.push_back(ZoomPair{Zoom::In200, "200%"});
+        zoomPairs.push_back(ZoomPair{Zoom::Normal, "100%"});
+        zoomPairs.push_back(ZoomPair{Zoom::Out50, "50%"});
+        zoomPairs.push_back(ZoomPair{Zoom::Out25, "25%"});
+
+        return zoomPairs;
+    }
 }

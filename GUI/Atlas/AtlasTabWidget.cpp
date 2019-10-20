@@ -2,6 +2,7 @@
 // Created by BinyBrion on 2019-09-16.
 //
 
+#include <QtWidgets/QMessageBox>
 #include "AtlasTabWidget.h"
 #include "TextureLogic/TextureBank.h"
 #include "ScrollArea.h"
@@ -34,6 +35,15 @@ namespace GUI
             {
                 addAtlasWidget(newTabName, QSize{requestedWidth, requestedHeight}, atlasFormat);
             });
+
+            connect(this, &QTabWidget::currentChanged, [this](int index)
+            {
+//                const ScrollArea *const scrollArea = currentTabs[index].first;
+//
+//                QString atlasFormat = TextureHelperFunctions::convertToString(scrollArea->getAtlasFormat());
+//
+//                emit currentAtlasInformationChanged(atlasFormat, scrollArea->getNumberTextures(), )
+            });
         }
 
         void AtlasTabWidget::addTextureToCurrentAtlas(const TextureLogic::Texture &texture)
@@ -52,6 +62,41 @@ namespace GUI
             {
                 i.first->removeTexture(texture);
             }
+        }
+
+        bool AtlasTabWidget::setIntersectionWidth(TextureLogic::Texture *texture)
+        {
+            std::vector<QString> atlasNames;
+
+            bool borderWidthChangeFailed = false;
+
+            for(auto &i : currentTabs)
+            {
+                bool result = i.first->setIntersectionWidth(texture);
+
+                if(result)
+                {
+                    atlasNames.push_back(i.second);
+                }
+
+                borderWidthChangeFailed |= result;
+            }
+
+            if(!atlasNames.empty())
+            {
+               QString errorMessage{"The new border width leads to intersection in the follows atlases: "};
+
+               for(const auto &i : atlasNames)
+               {
+                   errorMessage += i + ", ";
+               }
+
+               errorMessage.chop(1);
+
+               QMessageBox::warning(this, tr("Error: Invalid New Intersection Border Wdith"), errorMessage.toStdString().c_str(), QMessageBox::Ok);
+            }
+
+            return borderWidthChangeFailed;
         }
 
         void AtlasTabWidget::setTextureBankReference(TextureLogic::TextureBank *textureBank)

@@ -19,6 +19,31 @@
      <widget class="GUI::Atlas::AtlasTabWidget" name="atlasWidget"/>
     </item>
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="atlasFormatLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="numberTexturesLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="percentageAtlasUsed">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="GUI::LoadResults::LoadedTextures" name="loadedTextures"/>
@@ -44,7 +69,7 @@
            <x>0</x>
            <y>0</y>
            <width>252</width>
-           <height>256</height>
+           <height>243</height>
           </rect>
          </property>
         </widget>

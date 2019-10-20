@@ -111,6 +111,35 @@ namespace TextureLogic
         }
     }
 
+    bool TextureBank::setIntersectionBorderWidth(Texture *texture, Zoom zoom, unsigned int newBorderWidth)
+    {
+       // unsigned int formatIndex = GUI::TextureHelperFunctions::indexFormatString(texture->textureFormat(), true);
+
+        bool foundTexture = false;
+
+        unsigned int previousIntersectionWidth = texture->getIntersectionBorderWidth(Zoom::Normal);
+
+        texture->setIntersectionBorderWidth(newBorderWidth, zoom, {});
+
+        if(atlasTabWidget->setIntersectionWidth(texture))
+        {
+            texture->setIntersectionBorderWidth(previousIntersectionWidth, Zoom::Normal, {});
+
+            atlasTabWidget->setIntersectionWidth(texture);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    void TextureBank::setSelectionBorderWidth(TextureLogic::Texture *texture, TextureLogic::Zoom zoom, unsigned int newBorderWidth)
+    {
+        texture->setSelectionBorderWidth(newBorderWidth, zoom, {});
+
+        atlasTabWidget->setIntersectionWidth(texture);
+    }
+
     void TextureBank::setTextureInfoScrollAreaReference(GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea)
     {
         if(this->textureInfoScrollArea == nullptr)
@@ -119,19 +148,19 @@ namespace TextureLogic
         }
     }
 
-    void TextureBank::storeNewTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
+    void TextureBank::storeNewTexture(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
     {
-        loadNewTexture(textureLocation);
+        loadNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth);
     }
 
     // Note that fn reuploadTexture is called when a texture is saved. See the TextureInfo classes in GUI for more info
 
-    void TextureBank::reuploadTexture(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>)
+    void TextureBank::reuploadTexture(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>)
     {
-        loadNewTexture(textureLocation);
+        loadNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth);
     }
 
-    void TextureBank::textureButtonPressed(const QString &textureLocation, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
+    void TextureBank::textureButtonPressed(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
     {
         if(originalTextureUploadLocation.find(textureLocation.toStdString()) == originalTextureUploadLocation.end())
         {
@@ -167,7 +196,7 @@ namespace TextureLogic
         {
             if(textures[formatIndex].second.empty())
             {
-                textures[formatIndex].first.push_back(Texture{textureLocation});
+                textures[formatIndex].first.push_back(Texture{textureLocation, intersectionBorderWidth, selectionBorderWidth});
 
                 textures[formatIndex].first.back().convertToFormat(atlasTabWidget->getCurrentAtlasFormat());
 
@@ -182,7 +211,7 @@ namespace TextureLogic
             {
                 // Note: Since the size of the vector is not changed in this vector, fn resetTextureReference do not need to be called
 
-                textures[formatIndex].first[textures[formatIndex].second.front()] = Texture{textureLocation};
+                textures[formatIndex].first[textures[formatIndex].second.front()] = Texture{textureLocation, intersectionBorderWidth, selectionBorderWidth};
 
                 textures[formatIndex].first[textures[formatIndex].second.front()].convertToFormat(atlasTabWidget->getCurrentAtlasFormat());
 
@@ -203,7 +232,7 @@ namespace TextureLogic
         textureInfoScrollArea->setTexture(texture, {});
     }
 
-    void TextureBank::loadNewTexture(const QString &textureLocation)
+    void TextureBank::loadNewTexture(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
     {
         // Stop a texture from being loaded twice- this wastes resources
 
@@ -225,7 +254,7 @@ namespace TextureLogic
 
         if(textures[RGB32_Index].second.empty())
         {
-            textures[RGB32_Index].first.push_back(Texture{textureLocation});
+            textures[RGB32_Index].first.push_back(Texture{textureLocation, intersectionBorderWidth, selectionBorderWidth});
 
             QImage::Format loadedTextureFormat = textures[RGB32_Index].first.back().getImage(Zoom::Normal).format();
 
@@ -240,13 +269,13 @@ namespace TextureLogic
 
                 if(textures[newTextureVectorIndex].second.empty())
                 {
-                    textures[newTextureVectorIndex].first.push_back(Texture{textureLocation});
+                    textures[newTextureVectorIndex].first.push_back(Texture{textureLocation, intersectionBorderWidth, selectionBorderWidth});
 
                     textures[RGB32_Index].first.pop_back();
                 }
                 else
                 {
-                    textures[newTextureVectorIndex].first[textures[newTextureVectorIndex].second.front()] = Texture{textureLocation};
+                    textures[newTextureVectorIndex].first[textures[newTextureVectorIndex].second.front()] = Texture{textureLocation, intersectionBorderWidth, selectionBorderWidth};
 
                     textures[newTextureVectorIndex].second.erase(textures[newTextureVectorIndex].second.begin());
                 }
@@ -260,7 +289,7 @@ namespace TextureLogic
         }
         else // Same logic as the above branch; the only difference is that the original texture is not loaded into the back of the RGB32 format vector
         {
-            textures[RGB32_Index].first[textures[RGB32_Index].second.front()] = Texture{textureLocation};
+            textures[RGB32_Index].first[textures[RGB32_Index].second.front()] = Texture{textureLocation, intersectionBorderWidth, selectionBorderWidth};
 
             QImage::Format loadedTextureFormat = textures[RGB32_Index].first[textures[RGB32_Index].second.front()].getImage(Zoom::Normal).format();
 
@@ -270,11 +299,11 @@ namespace TextureLogic
 
                 if(textures[newTextureVectorIndex].second.empty())
                 {
-                    textures[newTextureVectorIndex].first.push_back(Texture{textureLocation});
+                    textures[newTextureVectorIndex].first.push_back(Texture{textureLocation, intersectionBorderWidth, selectionBorderWidth});
                 }
                 else
                 {
-                    textures[newTextureVectorIndex].first[textures[newTextureVectorIndex].second.front()] = Texture{textureLocation};
+                    textures[newTextureVectorIndex].first[textures[newTextureVectorIndex].second.front()] = Texture{textureLocation, intersectionBorderWidth, selectionBorderWidth};
 
                     textures[newTextureVectorIndex].second.erase(textures[newTextureVectorIndex].second.begin());
                 }

@@ -25,9 +25,9 @@ namespace GUI
             setWidget(textureButtonArea);
         }
 
-        void ScrollArea::addTextureButton(const QString &textureLocation)
+        void ScrollArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
         {
-            textureButtonArea->addTextureButton(textureLocation);
+            textureButtonArea->addTextureButton(textureLocation, intersectionBorderWidth, selectionBorderWidth);
         }
 
         const TextureButtonArea* ScrollArea::getTextureArea() const

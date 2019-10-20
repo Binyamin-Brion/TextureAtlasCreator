@@ -30,6 +30,8 @@ namespace GUI
             public:
                 explicit AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
                 QImage::Format getAtlasFormat() const;
+                unsigned int getNumberTextures() const;
+                QSize getAtlasSize() const;
                 void keyPressed(QKeyEvent *event);
                 void mouseMoveEvent(QMouseEvent *event) override;
                 void mousePressEvent(QMouseEvent *event) override;
@@ -39,6 +41,7 @@ namespace GUI
                 void removeTexture(const TextureLogic::Texture *texture);
                 void resizeAtlasFactor(float factor);
                 void resizeEvent(QResizeEvent *event) override;
+                bool setIntersectionBorderWidth(TextureLogic::Texture *texture);
                 void setViewPort(QSize viewPort);
                 void setViewPortOffsetX(int value);
                 void setViewPortOffsetY(int value);

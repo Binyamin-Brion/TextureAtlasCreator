@@ -28,20 +28,26 @@ class QPainter;
 
 namespace TextureLogic
 {
+    class TextureBank;
+
     class Texture
     {
         using TextureImages = std::array<ScaledTexture, NumberZoomElements()>;
 
         public:
-            explicit Texture(const QString &texturePath);
+            Texture(const QString &texturePath, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
             void addPaintHistorySpecular(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             void addPaintHistoryTexture(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             void convertToFormat(QImage::Format newFormat);
             const QImage& getImage(TextureLogic::Zoom zoom) const;
+            unsigned int getIntersectionBorderWidth(Zoom zoom) const;
+            unsigned int getSelectedBorderWidth(Zoom zoom) const;
             QImage& getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             const QString& getTextureDescription(AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>) const;
             PaintFunctions::PaintHistoryCommand* removeRecentPaintHistorySpecular(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             PaintFunctions::PaintHistoryCommand* removeRecentPaintHistoryTexture(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
+            void setIntersectionBorderWidth(unsigned int newWidth, Zoom zoom, AccessRestriction::PassKey<TextureBank>);
+            void setSelectionBorderWidth(unsigned int newWidth, Zoom zoom, AccessRestriction::PassKey<TextureBank>);
             void setTextureDescription(const QString &description, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
             void setTextureLocation(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
             void setTextureName(const QString &textureName, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);

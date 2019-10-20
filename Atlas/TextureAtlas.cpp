@@ -29,7 +29,6 @@ namespace Atlas
     {
         // A texture can only intersect with other textures if it's moving, in which case a texture must have
         // been selected (does not matter which one, as long as there is one selected)
-
         if(!selectedTexture->isOpen() && !selectedExistingTexture->isOpen())
         {
             return false;
@@ -48,6 +47,8 @@ namespace Atlas
                 intersectionOccured |= i.surroundingBorder[currentZoomIndex].checkIntersection(selectedExistingTexture->getSurroundingBorderForDrawing()[currentZoomIndex]);
             }
         }
+
+        return intersectionOccured;
     }
 
     void TextureAtlas::draw(QPainter &painter)
@@ -67,6 +68,8 @@ namespace Atlas
         if(selectedTexture->isOpen())
         {
             painter.drawImage(selectedTexture->getDrawingCoordinates(), selectedTexture->getImageForDrawing().getImage(currentZoom));
+
+            selectedTexture->getSurroundingBorderForDrawing()[currentZoomIndex].draw(painter);
         }
         if(selectedExistingTexture->isOpen())
         {
@@ -81,39 +84,33 @@ namespace Atlas
         return atlasFormat;
     }
 
-    std::pair<bool, QSize> TextureAtlas::getAtlasSize() const
+    QSize TextureAtlas::getAtlasSize() const
     {
         // The result of this function is intended to be used if a texture is selected, as the result is used to determine
-        // if a texture can further moved in a direction and when to reset cursor (hence true or false as first parameter of pair)
+        // if a texture can further moved in a direction and when to reset cursor (call to textureSelected has to be done first)
 
-        if(selectedTexture->isOpen())
-        {
-            return {true, atlasSize};
-        }
-        else if(selectedExistingTexture->isOpen())
-        {
-            return {leftMouseButtonDown, atlasSize};
-        }
-
-        return {false, QSize{-1, -1}};
+        return atlasSize;
     }
 
-    std::pair<bool, QSize> TextureAtlas::getSelectedTextureSize() const
+    unsigned int TextureAtlas::getNumberTextures()
+    {
+        return textureDrawingPositions.size() + selectedExistingTexture->isOpen();
+    }
+
+    QSize TextureAtlas::getSelectedTextureSize() const
     {
         // Same idea for using pair and checking if a texture is selected as fn getAtlasSize
 
         if(selectedTexture->isOpen())
         {
-            return {true,
-                    QSize{selectedTexture->getImageForDrawing().getImage(currentZoom).width(), selectedTexture->getImageForDrawing().getImage(currentZoom).height()}};
+            return QSize{selectedTexture->getImageForDrawing().getImage(currentZoom).width(), selectedTexture->getImageForDrawing().getImage(currentZoom).height()};
         }
         else if(selectedExistingTexture->isOpen())
         {
-            return {true,
-                    QSize{selectedExistingTexture->getImageForDrawing().getImage(currentZoom).width(), selectedExistingTexture->getImageForDrawing().getImage(currentZoom).height()}};
+            return QSize{selectedExistingTexture->getImageForDrawing().getImage(currentZoom).width(), selectedExistingTexture->getImageForDrawing().getImage(currentZoom).height()};
         }
 
-        return{false, QSize{-1, -1}};
+        return QSize{-1, -1};
     }
 
     void TextureAtlas::keyPressed(int keyID)
@@ -336,6 +333,8 @@ namespace Atlas
                         selectedExistingTexture->setDrawSelectedSurroundingBorder(false);
 
                         addTexture(selectedExistingTexture);
+
+                        textureBank->textureSelected(nullptr);
                     }
                 }
             }
@@ -345,6 +344,39 @@ namespace Atlas
         {
             addTexture(selectedTexture);
         }
+    }
+
+    bool TextureAtlas::resizeIntersectionBorderWidth(TextureLogic::Texture *texture)
+    {
+        unsigned int intersectionBorderWidth = texture->getIntersectionBorderWidth(TextureLogic::Zoom::Normal);
+
+        if(intersectionBorderWidth > atlasSize.width() || intersectionBorderWidth > atlasSize.height())
+        {
+            return true;
+        }
+
+        bool foundTexture = false;
+
+        if(selectedExistingTexture->isOpen())
+        {
+            if(texture == &selectedExistingTexture->getImageForDrawing())
+            {
+                QPointF previousSelectedDrawingCoords = selectedExistingTexture->getDrawingCoordinates();
+
+                selectedExistingTexture->setTexture(*texture, selectedExistingTexture->getTextureIndex());
+
+                selectedExistingTexture->setDrawingCoordinates(previousSelectedDrawingCoords);
+
+                foundTexture = true;
+            }
+
+            if(!foundTexture)
+            {
+                Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Unable to find the selected texture passed into this function!");
+            }
+        }
+
+        return checkIntersection();
     }
 
     void TextureAtlas::removeTexture(const TextureLogic::Texture *texture)
@@ -463,6 +495,18 @@ namespace Atlas
         if(selectedExistingTexture->isOpen())
         {
             selectedExistingTexture->setTextureReference(((*this->textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[selectedExistingTexture->getTextureIndex()]));
+        }
+    }
+
+    bool TextureAtlas::textureSelected() const
+    {
+        if(selectedTexture->isOpen())
+        {
+            return true;
+        }
+        else if(selectedExistingTexture->isOpen())
+        {
+            return leftMouseButtonDown;
         }
     }
 

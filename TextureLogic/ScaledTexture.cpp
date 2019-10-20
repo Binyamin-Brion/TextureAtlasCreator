@@ -29,12 +29,22 @@ namespace TextureLogic
         return image;
     }
 
+    unsigned int ScaledTexture::getIntersectionBorderWidth() const
+    {
+        return intersectionBorderWidth;
+    }
+
+    unsigned int ScaledTexture::getSelectionBorderWidth() const
+    {
+        return selectionBorderWidth;
+    }
+
     QImage& ScaledTexture::getSpecularTexture()
     {
         return specularTexture;
     }
 
-    void ScaledTexture::initialize(const QString &textureLocation, TextureLogic::Zoom zoom)
+    void ScaledTexture::initialize(const QString &textureLocation, TextureLogic::Zoom zoom, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
     {
         if(!image.load(textureLocation))
         {
@@ -51,6 +61,10 @@ namespace TextureLogic
 
         specularTexture = QImage{newImageWidth, newImageHeight, image.format()};
         specularTexture.fill(QColor{0, 0, 0});
+
+        this->intersectionBorderWidth = intersectionBorderWidth * zoomFactorValue;
+
+        this->selectionBorderWidth = selectionBorderWidth * zoomFactorValue;
     }
 
     PaintFunctions::PaintHistoryCommand *ScaledTexture::removePaintHistorySpecular()
@@ -79,5 +93,15 @@ namespace TextureLogic
         texturePaintHistory.pop();
 
         return mostRecentHistory;
+    }
+
+    void ScaledTexture::setIntersectionWidth(unsigned int borderWidth)
+    {
+        intersectionBorderWidth = borderWidth;
+    }
+
+    void ScaledTexture::setSelectionBorderWidth(unsigned int borderWidth)
+    {
+        selectionBorderWidth = borderWidth;
     }
 }

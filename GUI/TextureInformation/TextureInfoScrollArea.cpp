@@ -18,7 +18,26 @@ namespace GUI
 
             setWidgetResizable(true);
 
-            connect(selectedTextureInformation, &SelectedTextureInformation::reuploadTexture, [this](const QString& textureLocation, const TextureLogic::Texture *texture)
+            connect(selectedTextureInformation, &SelectedTextureInformation::newIntersectionBorderWidth, [this]
+                    (TextureLogic::Texture *texture, TextureLogic::Zoom zoom, unsigned int newBorderWidth)
+            {
+
+                unsigned int previousBorderWidth = texture->getIntersectionBorderWidth(zoom);
+
+                if(textureBank->setIntersectionBorderWidth(texture, zoom, newBorderWidth))
+                {
+                    selectedTextureInformation->setIntersectionWidthLineEdit(previousBorderWidth);
+                }
+            });
+
+            connect(selectedTextureInformation, &SelectedTextureInformation::newSelectionBorderWidth, [this]
+                    (TextureLogic::Texture *texture, TextureLogic::Zoom zoom, unsigned int newBorderWidth)
+            {
+                textureBank->setSelectionBorderWidth(texture, zoom, newBorderWidth);
+            });
+
+            connect(selectedTextureInformation, &SelectedTextureInformation::reuploadTexture, [this](const QString& textureLocation, const TextureLogic::Texture *texture,
+                    unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
             {
                 unsigned int formatIndex = TextureHelperFunctions::indexFormat(selectedTextureInformation->getSelectedTextureFormat(), true);
 
@@ -34,7 +53,7 @@ namespace GUI
                     index += 1;
                 }
 
-                textureBank->reuploadTexture(textureLocation, {});
+                textureBank->reuploadTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
 
                 selectedTextureInformation->setTexture(&textureBank->getTexturesTextureInfo({})[formatIndex].first[index]);
             });

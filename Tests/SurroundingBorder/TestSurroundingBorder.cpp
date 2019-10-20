@@ -2,6 +2,7 @@
 // Created by BinyBrion on 2019-09-14.
 //
 
+#include <QtTest/qtestcase.h>
 #include "TestSurroundingBorder.h"
 
 #include "Atlas/TextureBorder/SurroundingBorder.h"
@@ -23,11 +24,11 @@ namespace Tests
         {
             ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
-            surroundingBorder.initialize(10, 10);
+            surroundingBorder.initialize(10, 10, 5, 2);
 
             int intersectionBorderWidth = surroundingBorder.intersectionBorderWidth;
 
-            Q_ASSERT(intersectionBorderWidth == 5);
+            QVERIFY(intersectionBorderWidth == 5);
 
             QRect topBorder{0, -intersectionBorderWidth, 10, intersectionBorderWidth};
             QRect rightBorder{10, 0, intersectionBorderWidth, 10};
@@ -42,28 +43,28 @@ namespace Tests
             QRect entireArea{-intersectionBorderWidth, -intersectionBorderWidth,
                              2 * intersectionBorderWidth + 10, 2 * intersectionBorderWidth + 10};
 
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::Top)] == topBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::Right)] == rightBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::Bottom)] == bottomBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::Left)] == leftBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::Top)] == topBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::Right)] == rightBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::Bottom)] == bottomBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::Left)] == leftBorder);
 
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::TopLeft)] == topLeftBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::TopRight)] == topRightBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::BottomRight)] == bottomRightBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::BottomLeft)] == bottomLeftBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::TopLeft)] == topLeftBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::TopRight)] == topRightBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::BottomRight)] == bottomRightBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::BottomLeft)] == bottomLeftBorder);
 
-            Q_ASSERT(surroundingBorder.entireTextureArea == entireArea);
+            QVERIFY(surroundingBorder.entireTextureArea == entireArea);
         }
 
         void TestSurroundingBorder::testInitializeSelectionBorder()
         {
             ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
-            surroundingBorder.initialize(10, 10);
+            surroundingBorder.initialize(10, 10, 5, 2);
 
             int selectionBorderWidth = surroundingBorder.selectedBorderWidth;
 
-            Q_ASSERT(selectionBorderWidth == 2);
+            QVERIFY(selectionBorderWidth == 2);
 
             QRect topBorder{0, -selectionBorderWidth, 10, selectionBorderWidth};
             QRect rightBorder{10, 0, selectionBorderWidth, 10};
@@ -75,26 +76,26 @@ namespace Tests
             QRect bottomRightBorder{10, 10, selectionBorderWidth, selectionBorderWidth};
             QRect bottomLeftBorder{-selectionBorderWidth, 10, selectionBorderWidth, selectionBorderWidth};
 
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::Top)] == topBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::Right)] == rightBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::Bottom)] == bottomBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::Left)] == leftBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::Top)] == topBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::Right)] == rightBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::Bottom)] == bottomBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::Left)] == leftBorder);
 
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::TopLeft)] == topLeftBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::TopRight)] == topRightBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::BottomRight)] == bottomRightBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::BottomLeft)] == bottomLeftBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::TopLeft)] == topLeftBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::TopRight)] == topRightBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::BottomRight)] == bottomRightBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::BottomLeft)] == bottomLeftBorder);
         }
 
         void TestSurroundingBorder::testTranslateInitializationBorder()
         {
             ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
-            surroundingBorder.initialize(10, 10);
+            surroundingBorder.initialize(10, 10, 5, 2);
 
             int intersectionBorderWidth = surroundingBorder.intersectionBorderWidth;
 
-            Q_ASSERT(intersectionBorderWidth == 5);
+            QVERIFY(intersectionBorderWidth == 5);
 
             int translationAmount = 10;
 
@@ -113,28 +114,28 @@ namespace Tests
             QRect entireArea{-intersectionBorderWidth + translationAmount, -intersectionBorderWidth + translationAmount,
                              2 * intersectionBorderWidth + 10, 2 * intersectionBorderWidth + 10};
 
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::Top)] == topBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::Right)] == rightBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::Bottom)] == bottomBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::Left)] == leftBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::Top)] == topBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::Right)] == rightBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::Bottom)] == bottomBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::Left)] == leftBorder);
 
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::TopLeft)] == topLeftBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::TopRight)] == topRightBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::BottomRight)] == bottomRightBorder);
-            Q_ASSERT(surroundingBorder.intersectionBorder[BorderValue(Border::BottomLeft)] == bottomLeftBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::TopLeft)] == topLeftBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::TopRight)] == topRightBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::BottomRight)] == bottomRightBorder);
+            QVERIFY(surroundingBorder.intersectionBorder[BorderValue(Border::BottomLeft)] == bottomLeftBorder);
 
-            Q_ASSERT(surroundingBorder.entireTextureArea == entireArea);
+            QVERIFY(surroundingBorder.entireTextureArea == entireArea);
         }
 
         void TestSurroundingBorder::testTranslateSelectionBorder()
         {
             ::Atlas::TextureBorder::SurroundingBorder surroundingBorder;
 
-            surroundingBorder.initialize(10, 10);
+            surroundingBorder.initialize(10, 10, 5, 2);
 
             int selectedBorderWidth = surroundingBorder.selectedBorderWidth;
 
-            Q_ASSERT(selectedBorderWidth == 2);
+            QVERIFY(selectedBorderWidth == 2);
 
             int translationAmount = 10;
 
@@ -151,15 +152,15 @@ namespace Tests
             QRect bottomLeftBorder{-selectedBorderWidth + translationAmount, 10 + translationAmount, selectedBorderWidth, selectedBorderWidth};
 
 
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::Top)] == topBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::Right)] == rightBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::Bottom)] == bottomBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::Left)] == leftBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::Top)] == topBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::Right)] == rightBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::Bottom)] == bottomBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::Left)] == leftBorder);
 
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::TopLeft)] == topLeftBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::TopRight)] == topRightBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::BottomRight)] == bottomRightBorder);
-            Q_ASSERT(surroundingBorder.selectedBorder[BorderValue(Border::BottomLeft)] == bottomLeftBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::TopLeft)] == topLeftBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::TopRight)] == topRightBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::BottomRight)] == bottomRightBorder);
+            QVERIFY(surroundingBorder.selectedBorder[BorderValue(Border::BottomLeft)] == bottomLeftBorder);
         }
 
         // Note that intersection tests should give the same result both ways; ie, if A intersects B, then B intersects A
@@ -170,14 +171,14 @@ namespace Tests
 
             ::Atlas::TextureBorder::SurroundingBorder otherSurroundingBorder;
 
-            surroundingBorder.initialize(10, 10);
+            surroundingBorder.initialize(10, 10, 5, 2);
 
-            otherSurroundingBorder.initialize(10, 10);
+            surroundingBorder.initialize(10, 10, 5, 2);
 
             surroundingBorder.translate(500, 500);
 
-            Q_ASSERT(!surroundingBorder.checkIntersection(otherSurroundingBorder));
-            Q_ASSERT(!otherSurroundingBorder.checkIntersection(surroundingBorder));
+            QVERIFY(!surroundingBorder.checkIntersection(otherSurroundingBorder));
+            QVERIFY(!otherSurroundingBorder.checkIntersection(surroundingBorder));
         }
 
         void TestSurroundingBorder::testPartialIntersection()
@@ -186,9 +187,9 @@ namespace Tests
 
             ::Atlas::TextureBorder::SurroundingBorder otherSurroundingBorder;
 
-            surroundingBorder.initialize(10, 10);
+            surroundingBorder.initialize(10, 10, 5, 2);
 
-            otherSurroundingBorder.initialize(10, 10);
+            otherSurroundingBorder.initialize(10, 10, 5, 2);
 
             surroundingBorder.translate(5, 5);
 
@@ -202,14 +203,14 @@ namespace Tests
 
             ::Atlas::TextureBorder::SurroundingBorder otherSurroundingBorder;
 
-            surroundingBorder.initialize(10, 10);
+            surroundingBorder.initialize(10, 10, 5, 2);
 
-            otherSurroundingBorder.initialize(10, 10);
+            otherSurroundingBorder.initialize(10, 10, 5, 2);
 
             surroundingBorder.translate(15, 5);
 
-            Q_ASSERT(surroundingBorder.checkIntersection(otherSurroundingBorder));
-            Q_ASSERT(otherSurroundingBorder.checkIntersection(surroundingBorder));
+            QVERIFY(surroundingBorder.checkIntersection(otherSurroundingBorder));
+            QVERIFY(otherSurroundingBorder.checkIntersection(surroundingBorder));
         }
 
         void TestSurroundingBorder::testEntireIntersection()
@@ -218,12 +219,12 @@ namespace Tests
 
             ::Atlas::TextureBorder::SurroundingBorder otherSurroundingBorder;
 
-            surroundingBorder.initialize(10, 10);
+            surroundingBorder.initialize(10, 10, 5, 2);
 
-            otherSurroundingBorder.initialize(10, 10);
+            otherSurroundingBorder.initialize(10, 10, 5, 2);
 
-            Q_ASSERT(surroundingBorder.checkIntersection(otherSurroundingBorder));
-            Q_ASSERT(otherSurroundingBorder.checkIntersection(surroundingBorder));
+            QVERIFY(surroundingBorder.checkIntersection(otherSurroundingBorder));
+            QVERIFY(otherSurroundingBorder.checkIntersection(surroundingBorder));
         }
     }
 }

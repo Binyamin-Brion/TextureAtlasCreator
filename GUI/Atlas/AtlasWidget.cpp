@@ -38,6 +38,16 @@ namespace GUI
             return textureAtlas->getAtlasFormat();
         }
 
+        unsigned int AtlasWidget::getNumberTextures() const
+        {
+            return textureAtlas->getNumberTextures();
+        }
+
+        QSize AtlasWidget::getAtlasSize() const
+        {
+            return textureAtlas->getAtlasSize();
+        }
+
         void AtlasWidget::keyPressed(QKeyEvent *event)
         {
             if(event->key() == Qt::Key_Escape)
@@ -60,7 +70,7 @@ namespace GUI
 
             int mouseY = event->y();
 
-            if(testPosAgainstAtlasBoundaries.first) // A texture is selected
+            if(textureAtlas->textureSelected()) // A texture is selected
             {
                 // See fn moveCursorToViewPort for a description of what this does
 
@@ -69,7 +79,7 @@ namespace GUI
                     return;
                 }
 
-                setCursor(Qt::BlankCursor);
+               // setCursor(Qt::BlankCursor);
 
                 bool resetCursorPositionX = false;
 
@@ -92,17 +102,17 @@ namespace GUI
                  *  deals with the texture placement behaviour when the borders of the atlas are within the viewport.
                  */
 
-                int lowerBoundX = textureAtlas->getSelectedTextureSize().second.width() / 2 > (viewPort.width() - 5) ? (viewPort.width() - 5) : textureAtlas->getSelectedTextureSize().second.width() / 2;
+                int lowerBoundX = textureAtlas->getSelectedTextureSize().width() / 2 > (viewPort.width() - 5) ? (viewPort.width() - 5) : textureAtlas->getSelectedTextureSize().width() / 2;
 
                 int upperBoundX;
 
-                if(textureAtlas->getSelectedTextureSize().second.width() / 2 > (viewPort.width() - 5))
+                if(textureAtlas->getSelectedTextureSize().width() / 2 > (viewPort.width() - 5))
                 {
                     upperBoundX = (width() + (width() - viewPort.width())) / 2;
                 }
                 else
                 {
-                    upperBoundX = testPosAgainstAtlasBoundaries.second.width() - textureAtlas->getSelectedTextureSize().second.width() / 2;
+                    upperBoundX = testPosAgainstAtlasBoundaries.width() - textureAtlas->getSelectedTextureSize().width() / 2;
                 }
 
                 if(mouseX < lowerBoundX) // Cursor trying to move texture offscreen to the left
@@ -118,17 +128,17 @@ namespace GUI
                     resetCursorPositionX = true;
                 }
 
-                int lowerBoundY = textureAtlas->getSelectedTextureSize().second.height() / 2 > (viewPort.height() - 5) ? (viewPort.height() - 5) : textureAtlas->getSelectedTextureSize().second.height() / 2;
+                int lowerBoundY = textureAtlas->getSelectedTextureSize().height() / 2 > (viewPort.height() - 5) ? (viewPort.height() - 5) : textureAtlas->getSelectedTextureSize().height() / 2;
 
                 int upperBoundY;
 
-                if(textureAtlas->getSelectedTextureSize().second.height() / 2 > (viewPort.height() - 5))
+                if(textureAtlas->getSelectedTextureSize().height() / 2 > (viewPort.height() - 5))
                 {
                     upperBoundY = (height() + (height() - viewPort.height())) / 2;
                 }
                 else
                 {
-                    upperBoundY = testPosAgainstAtlasBoundaries.second.height() - textureAtlas->getSelectedTextureSize().second.height() / 2;
+                    upperBoundY = testPosAgainstAtlasBoundaries.height() - textureAtlas->getSelectedTextureSize().height() / 2;
                 }
 
                 if(mouseY < lowerBoundY) // Cursor trying to move texture offscreen to the top
@@ -204,6 +214,15 @@ namespace GUI
             {
                 QMessageBox::warning(this, tr("Error: Texture Already Loaded"), e.what(), QMessageBox::Ok);
             }
+        }
+
+        bool AtlasWidget::setIntersectionBorderWidth(TextureLogic::Texture *texture)
+        {
+            bool result = textureAtlas->resizeIntersectionBorderWidth(texture);
+
+            QWidget::repaint();
+
+            return result;
         }
 
         void AtlasWidget::setViewPort(QSize viewPort)

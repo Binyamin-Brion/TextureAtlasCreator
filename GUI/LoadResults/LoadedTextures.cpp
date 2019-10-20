@@ -23,7 +23,7 @@ namespace GUI
 
             chooseTexture = new Dialogs::ChooseTexture{this};
 
-            connect(chooseTexture, SIGNAL(textureChosen(QString)), this, SLOT(openTexture(QString)));
+            connect(chooseTexture, SIGNAL(textureChosen(QString, unsigned int, unsigned int)), this, SLOT(openTexture(QString, unsigned int, unsigned int)));
 
             addTextureButtonArea("Default");
 
@@ -71,9 +71,9 @@ namespace GUI
             chooseTexture->show();
         }
 
-        void LoadedTextures::openTexture(QString textureLocation)
+        void LoadedTextures::openTexture(QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
         {
-            currentTabs[currentIndex()].first->addTextureButton(textureLocation);
+            currentTabs[currentIndex()].first->addTextureButton(textureLocation, intersectionBorderWidth, selectionBorderWidth);
         }
 
         void LoadedTextures::moveTabLeft()

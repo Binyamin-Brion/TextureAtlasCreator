@@ -42,7 +42,7 @@ namespace Atlas
                 void draw(QPainter &painter) const;
                 bool getSelectedBorderVisible() const;
                 QPointF getTopLeftCorner() const;
-                void initialize(int textureWidth, int textureHeight);
+                void initialize(int textureWidth, int textureHeight, int intersectionBorderWidth, int selectedBorderWidth);
                 void setSelectedBorderVisible(bool value);
                 void translate(float differenceX, float differenceY);
 
@@ -59,8 +59,10 @@ namespace Atlas
                 QRectF intersectionBorder[NumberBorderValues()];
                 QRectF selectedBorder[NumberBorderValues()];
 
-                int intersectionBorderWidth = 5;
-                int selectedBorderWidth = 2;
+                // These variables exist for testing purposes; otherwise the widths can be obtained through
+                // a respective texture
+                int intersectionBorderWidth;
+                int selectedBorderWidth;
 
                 QColor intersectionColour;
                 QColor selectionColour;

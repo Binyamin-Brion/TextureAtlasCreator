@@ -20,6 +20,8 @@ namespace GUI
 
             imageExtensions = TextureHelperFunctions::listImageExtensions();
 
+            zoomPairs = TextureLogic::getZoomPairs();
+
             ui->setupUi(this);
 
             // Whenever the text of the texture description area changes, then it usually means that the user
@@ -109,6 +111,39 @@ namespace GUI
                }
            });
 
+           connect(ui->intersectionBorderWidthLineEdit, &QLineEdit::returnPressed, [this]()
+           {
+               int chosenWidth = checkValidBorderWidth(ui->intersectionBorderWidthLineEdit, 50.f * normalZoomFactorValue(zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom));
+
+               if(chosenWidth == -1)
+               {
+                   return;
+               }
+
+                emit newIntersectionBorderWidth(texture, zoomPairs[ui->intersectionZoomComboxBox->currentIndex()].zoom, ui->intersectionBorderWidthLineEdit->text().toUInt());
+           });
+
+           connect(ui->selectionBorderWidthLineEdit, &QLineEdit::returnPressed, [this]()
+           {
+                int chosenWidth = checkValidBorderWidth(ui->selectionBorderWidthLineEdit, 10.f * normalZoomFactorValue(zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom));
+
+                if(chosenWidth == -1)
+                {
+                    return;
+                }
+
+                emit newSelectionBorderWidth(texture, zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom, chosenWidth);
+           });
+
+           for(auto &i : zoomPairs)
+           {
+                ui->intersectionZoomComboxBox->addItem(i.zoomStringRepresentation);
+                ui->selectionZoomComboBox->addItem(i.zoomStringRepresentation);
+           }
+
+           ui->intersectionZoomComboxBox->setCurrentIndex(2);
+           ui->selectionZoomComboBox->setCurrentIndex(2);
+
            // When adding the internal format representations, the format "Invalid Format" is a weird option to be able to select.
            // Therefore the user should not be able to select it.
 
@@ -162,6 +197,16 @@ namespace GUI
                 }
             });
 
+            connect(ui->intersectionZoomComboxBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
+            {
+                ui->intersectionBorderWidthLineEdit->setText(QString::number(texture->getIntersectionBorderWidth(zoomPairs[index].zoom)));
+            });
+
+            connect(ui->selectionZoomComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
+            {
+                ui->selectionBorderWidthLineEdit->setText(QString::number(texture->getSelectedBorderWidth(zoomPairs[index].zoom)));
+            });
+
             resetDefaultLabels();
 
             selectedTextureFormat = QImage::Format_Invalid;
@@ -170,6 +215,11 @@ namespace GUI
         QImage::Format SelectedTextureInformation::getSelectedTextureFormat() const
         {
             return selectedTextureFormat;
+        }
+
+        void SelectedTextureInformation::setIntersectionWidthLineEdit(unsigned int previousBorderWidth)
+        {
+            ui->intersectionBorderWidthLineEdit->setText(QString::number(previousBorderWidth));
         }
 
         void SelectedTextureInformation::selectedTextureModified()
@@ -202,7 +252,7 @@ namespace GUI
         {
             this->texture = const_cast<TextureLogic::Texture*>(texture);
 
-            // No texture is selected, in whicase reset to the default state of showing texture information
+            // No texture is selected, in which case reset to the default state of showing texture information
             // (Clear any texture-specific text and disable
 
             if(texture == nullptr)
@@ -220,11 +270,15 @@ namespace GUI
             ui->textureDescription->setEnabled(true);
 
             ui->saveTextureToButton->setEnabled(true);
+            ui->intersectionBorderWidthLineEdit->setEnabled(true);
+            ui->selectionBorderWidthLineEdit->setEnabled(true);
             ui->formatComboBox->setEnabled(true);
             ui->interalFormatComboBox->setEnabled(true);
             ui->textureNameLineEdit->setEnabled(true);
             ui->saveQualityLineEdit->setEnabled(true);
             ui->saveQualitySlider->setEnabled(true);
+            ui->intersectionZoomComboxBox->setEnabled(true);
+            ui->selectionZoomComboBox->setEnabled(true);
 
             // Note that when displaying information about a texture, a sample image is needed from information
             // can be queried from. For everything but the image dimensions, any zoom can be selected, as the
@@ -233,6 +287,8 @@ namespace GUI
 
             const QImage& textureImage = texture->getImage(TextureLogic::Zoom::Normal);
 
+            ui->intersectionBorderWidthLineEdit->setText(QString::number(texture->getIntersectionBorderWidth(zoomPairs[ui->intersectionZoomComboxBox->currentIndex()].zoom)));
+            ui->selectionBorderWidthLineEdit->setText(QString::number(texture->getSelectedBorderWidth(zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom)));
             ui->textureNameLineEdit->setText(texture->textureName());
             ui->textureLocationLabel->setText("Original Texture Location: " + texture->textureLocation());
             ui->textureWidthLabel->setText("Texture Width: " + QString::number(textureImage.width()));
@@ -277,6 +333,29 @@ namespace GUI
             selectedTextureFormat = texture->getImage(TextureLogic::Zoom::Normal).format();
         }
 
+        int SelectedTextureInformation::checkValidBorderWidth(QLineEdit *lineEdit, int maxValue)
+        {
+            bool ok;
+
+            int chosenWidth = lineEdit->text().toInt(&ok);
+
+            if(lineEdit->text().isEmpty() || !ok || chosenWidth < 0 || chosenWidth > maxValue)
+            {
+                lineEdit->setStyleSheet("background-color: rgba(255, 0, 0, 64)");
+
+                return -1;
+            }
+
+            lineEdit->setStyleSheet("");
+
+            return chosenWidth;
+        }
+
+        float SelectedTextureInformation::normalZoomFactorValue(TextureLogic::Zoom zoom) const
+        {
+            return TextureLogic::GetZoomValue(TextureLogic::Zoom::Normal) / TextureLogic::GetZoomValue(zoom);
+        }
+
         void SelectedTextureInformation::resetDefaultLabels()
         {
             // This is called during initialization, which is a subset of the scenario of when this function is called:
@@ -294,11 +373,15 @@ namespace GUI
             ui->textureDescription->setEnabled(false);
 
             ui->saveTextureToButton->setEnabled(false);
+            ui->intersectionBorderWidthLineEdit->setEnabled(false);
+            ui->selectionBorderWidthLineEdit->setEnabled(false);
             ui->formatComboBox->setEnabled(false);
             ui->interalFormatComboBox->setEnabled(false);
             ui->textureNameLineEdit->setEnabled(false);
             ui->saveQualityLineEdit->setEnabled(false);
             ui->saveQualitySlider->setEnabled(false);
+            ui->intersectionZoomComboxBox->setEnabled(false);
+            ui->selectionZoomComboBox->setEnabled(false);
         }
 
         void SelectedTextureInformation::saveImage(const QString &newFileLocation)
@@ -357,7 +440,11 @@ namespace GUI
                 // no texture of that location was loaded will appear. To deal with that, the old texture has to be reuploaded
                 // so that in the texturebank a texture with the old details is present
 
-                emit reuploadTexture(previousTextureLocation, texture);
+                unsigned int intersectionBorderWidth = texture->getIntersectionBorderWidth(TextureLogic::Zoom::Normal);
+
+                unsigned int selectionBorderWidth = texture->getSelectedBorderWidth(TextureLogic::Zoom::Normal);
+
+                emit reuploadTexture(previousTextureLocation, texture, intersectionBorderWidth, selectionBorderWidth);
 
             }
         }

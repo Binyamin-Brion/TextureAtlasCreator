@@ -5,6 +5,10 @@
 #ifndef TEXTUREATLAS_ZOOM_H
 #define TEXTUREATLAS_ZOOM_H
 
+#include <QtCore/QString>
+
+// RIP compile times if this header file is modified
+
 namespace TextureLogic
 {
     /*
@@ -62,6 +66,14 @@ namespace TextureLogic
     Zoom zoomIn(Zoom currentZoom);
 
     Zoom zoomOut(Zoom currentZoom);
+
+    struct ZoomPair
+    {
+        Zoom zoom;
+        QString zoomStringRepresentation;
+    };
+
+    std::vector<ZoomPair> getZoomPairs();
 }
 
 #endif //TEXTUREATLAS_ZOOM_H

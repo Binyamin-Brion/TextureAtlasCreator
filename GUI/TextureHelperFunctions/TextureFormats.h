@@ -18,6 +18,9 @@ namespace GUI
             QString formatStringRepresentation;
         };
 
+        QImage::Format convertToFormat(QString imageFormat);
+        QString convertToString(QImage::Format imageFormat);
+
         std::vector<InternalFormatPair> internalFormatPairRepresentations();
         std::vector<QString> listImageExtensions();
 

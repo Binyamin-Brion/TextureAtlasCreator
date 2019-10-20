@@ -8,9 +8,13 @@ namespace GUI
 {
     namespace LoadResults
     {
-        TextureButton::TextureButton(const QString &textureLocation, QWidget *parent)
+        TextureButton::TextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, QWidget *parent)
                         : QPushButton{parent}, textureLocation{textureLocation}
         {
+
+            this->intersectionBorderWidth = intersectionBorderWidth;
+
+            this->selectionBorderWidth = selectionBorderWidth;
 
             setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
 
@@ -30,7 +34,7 @@ namespace GUI
 
             connect(this, &QPushButton::clicked, [this]()
             {
-                emit buttonClicked(this->textureLocation);
+                emit buttonClicked(this->textureLocation, this->intersectionBorderWidth, this->selectionBorderWidth);
             });
         }
 

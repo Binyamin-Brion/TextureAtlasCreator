@@ -33,7 +33,7 @@ namespace GUI
 
             public:
                 explicit TextureButtonArea(QWidget *parent = nullptr);
-                void addTextureButton(const QString &textureLocation);
+                void addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
                 void mousePressEvent(QMouseEvent *event) override;
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
 
@@ -46,7 +46,7 @@ namespace GUI
             private slots:
                 void deleteTextureButton();
                 void showContextMenu(const QPoint &pos);
-                void textureButtonClicked(const QString &textureLocation);
+                void textureButtonClicked(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
 
             private:
 

@@ -27,14 +27,17 @@ namespace GUI
                 ScrollArea(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
                 void addTexture(const TextureLogic::Texture &texture);
                 void enterEvent(QEvent *event) override;
+                QImage::Format getAtlasFormat() const;
+                unsigned int getNumberTextures() const;
+                QSize getAtlasSize() const;
                 void keyPressEvent(QKeyEvent *event) override;
                 void keyReleaseEvent(QKeyEvent *event) override;
                 void leaveEvent(QEvent *event) override;
-                QImage::Format getAtlasFormat() const;
                 void scrollContentsBy(int dx, int dy) override;
                 void removeTexture(const TextureLogic::Texture *texture);
                 void repaintSelectedTexture();
                 void resizeEvent(QResizeEvent *event) override;
+                bool setIntersectionWidth(TextureLogic::Texture *texture);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
                 void wheelEvent(QWheelEvent *event) override;

@@ -43,7 +43,7 @@ namespace Atlas
             const QString& getTextureLocation() const;
             bool isOpen() const;
             void move(int mouseX, int mouseY, QSize boundaries);
-            void setDrawingCoordinates(QPoint drawingCoords);
+            void setDrawingCoordinates(QPointF drawingCoords);
             void setDrawSelectedSurroundingBorder(bool value);
             void setTexture(const TextureLogic::Texture &selectedTexture, int index = -1);
             void setTextureReference(const TextureLogic::Texture &selectedTexture);

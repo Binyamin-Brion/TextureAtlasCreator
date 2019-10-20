@@ -22,7 +22,7 @@ namespace GUI
             Q_OBJECT
 
             public:
-                TextureButton(const QString &textureLocation, QWidget *parent = nullptr);
+                TextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, QWidget *parent = nullptr);
                 void enterEvent(QEvent *event) override;
                 void leaveEvent(QEvent *event) override;
                 const QString& getTextureLocation() const;
@@ -30,7 +30,7 @@ namespace GUI
                 static const int buttonSizeLength = 150;
 
             signals:
-                void buttonClicked(const QString &textureLocation);
+                void buttonClicked(const QString&, unsigned int, unsigned int);
                 void cursorOverButton(const TextureButton*);
                 void cursorNotOverButton(const TextureButton*);
 
@@ -39,6 +39,8 @@ namespace GUI
                 QIcon buttonIcon;
                 QString textureLocation;
 
+                unsigned int intersectionBorderWidth;
+                unsigned int selectionBorderWidth;
         };
     }
 }

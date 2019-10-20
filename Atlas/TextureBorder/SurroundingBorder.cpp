@@ -20,10 +20,14 @@ namespace Atlas
             {
                 drawIntersectionBorder = true;
 
+                const_cast<SurroundingBorder*>(&otherBorder)->drawIntersectionBorder = true;
+
                 return true;
             }
 
             drawIntersectionBorder = false;
+
+            const_cast<SurroundingBorder*>(&otherBorder)->drawIntersectionBorder = false;
 
             return false;
         }
@@ -106,8 +110,12 @@ namespace Atlas
         *  The width of each rectangle depends on the specified border width (intersectionBorderWidth or  selectedBorderWidth)
         */
 
-        void SurroundingBorder::initialize(int textureWidth, int textureHeight)
+        void SurroundingBorder::initialize(int textureWidth, int textureHeight, int intersectionBorderWidth, int selectedBorderWidth)
         {
+            this->intersectionBorderWidth = intersectionBorderWidth;
+
+            this->selectedBorderWidth = selectedBorderWidth;
+
             intersectionBorder[BorderValue(Border::Top)] = QRect{0, -intersectionBorderWidth, textureWidth, intersectionBorderWidth};
 
             intersectionBorder[BorderValue(Border::Right)] = QRect{textureWidth, 0, intersectionBorderWidth, textureHeight};

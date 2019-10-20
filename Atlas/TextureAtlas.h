@@ -41,18 +41,21 @@ namespace Atlas
             bool checkIntersection();
             void draw(QPainter &painter);
             QImage::Format getAtlasFormat() const;
-            std::pair<bool, QSize> getAtlasSize() const;
-            std::pair<bool, QSize> getSelectedTextureSize() const;
+            QSize getAtlasSize() const;
+            unsigned int getNumberTextures();
+            QSize getSelectedTextureSize() const;
             void keyPressed(int keyID);
             void mouseClicked(int mouseX, int mouseY, int mouseButton);
             void mouseMoved(int mouseX, int mouseY);
             void mouseReleased(int mouseX, int mouseY, int mouseButton);
+            bool resizeIntersectionBorderWidth(TextureLogic::Texture *texture);
             void removeTexture(const TextureLogic::Texture *texture);
             void setAtlasSize(QSize size);
             void setAtlasWidgetReference(GUI::Atlas::AtlasWidget *atlasWidget);
             void setSelectedTexture(const TextureLogic::Texture &texture);
             void setTextureBankReference(TextureLogic::TextureBank *textureBank);
             void textureLoaded(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
+            bool textureSelected() const;
             void zoomIn();
             void zoomOut();
 

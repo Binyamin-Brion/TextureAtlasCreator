@@ -40,7 +40,7 @@ namespace GUI
                 void showLoadTextureDialog();
 
             private slots:
-                void openTexture(QString textureLocation);
+                void openTexture(QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
                 void moveTabLeft();
                 void moveTabRight();
 

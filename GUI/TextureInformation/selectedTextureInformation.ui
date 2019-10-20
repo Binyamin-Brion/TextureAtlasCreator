@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>618</width>
-    <height>500</height>
+    <width>609</width>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,6 +76,40 @@
       <string>Texture Size Bytes: N/A</string>
      </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="intersectionBorderWidthLabel">
+       <property name="text">
+        <string>Intersection Border Width: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="intersectionBorderWidthLineEdit"/>
+     </item>
+     <item>
+      <widget class="QComboBox" name="intersectionZoomComboxBox"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QLabel" name="borderWidthLabel">
+       <property name="text">
+        <string>Surrounding Border Width:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="selectionBorderWidthLineEdit"/>
+     </item>
+     <item>
+      <widget class="QComboBox" name="selectionZoomComboBox"/>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QLabel" name="lastSavedLabel">

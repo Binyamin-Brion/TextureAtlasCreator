@@ -7,11 +7,11 @@
 
 namespace TextureLogic
 {
-    Texture::Texture(const QString &texturePath) : _textureLocation{texturePath}
+    Texture::Texture(const QString &texturePath, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth) : _textureLocation{texturePath}
     {
         for(auto &i : AllZoomValues)
         {
-            _texture[GetZoomIndex(i)].initialize(_textureLocation, i);
+            _texture[GetZoomIndex(i)].initialize(_textureLocation, i, intersectionBorderWidth, selectionBorderWidth);
         }
 
         _textureLocation.replace('\\', '/');
@@ -46,6 +46,16 @@ namespace TextureLogic
        return  _texture[GetZoomIndex(zoom)].getImage();
     }
 
+    unsigned int Texture::getIntersectionBorderWidth(TextureLogic::Zoom zoom) const
+    {
+        return _texture[GetZoomIndex(zoom)].getIntersectionBorderWidth();
+    }
+
+    unsigned int Texture::getSelectedBorderWidth(TextureLogic::Zoom zoom) const
+    {
+        return _texture[GetZoomIndex(zoom)].getSelectionBorderWidth();
+    }
+
     QImage& Texture::getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
     {
         return _texture[GetZoomIndex(zoom)].getSpecularTexture();
@@ -64,6 +74,30 @@ namespace TextureLogic
     PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistoryTexture(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
     {
         return _texture[GetZoomIndex(zoom)].removePaintHistoryTexture();
+    }
+
+    void Texture::setIntersectionBorderWidth(unsigned int newWidth, TextureLogic::Zoom zoom, AccessRestriction::PassKey<TextureBank>)
+    {
+        for(auto &i : AllZoomValues)
+        {
+            float zoomFactor = TextureLogic::GetZoomValue(i) / TextureLogic::GetZoomValue(zoom);
+
+            unsigned int adjustedWidth = newWidth * zoomFactor;
+
+            _texture[GetZoomIndex(i)].setIntersectionWidth(adjustedWidth);
+        }
+    }
+
+    void Texture::setSelectionBorderWidth(unsigned int newWidth, TextureLogic::Zoom zoom, AccessRestriction::PassKey<TextureBank>)
+    {
+        for(auto &i : AllZoomValues)
+        {
+            float zoomFactor = TextureLogic::GetZoomValue(i) / TextureLogic::GetZoomValue(zoom);
+
+            unsigned int adjustedWidth = newWidth * zoomFactor;
+
+            _texture[GetZoomIndex(i)].setSelectionBorderWidth(adjustedWidth);
+        }
     }
 
     void Texture::setTextureDescription(const QString &description, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)

@@ -21,12 +21,16 @@ namespace GUI
                 void closeEvent(QCloseEvent *event) override;
 
             signals:
-                void textureChosen(QString);
+                void textureChosen(QString, unsigned int, unsigned int);
 
             private:
-
+                void borderWidthSpecified(QLineEdit *lineEdit, int &dimension);
+                void checkValidData();
                 void resetDialog();
                 void setStrikeOutErrorLabel(bool value);
+
+                int intersectionBorderWidth;
+                int selectionBorderWidth;
 
                 Ui::TextureChooser *ui = nullptr;
         };

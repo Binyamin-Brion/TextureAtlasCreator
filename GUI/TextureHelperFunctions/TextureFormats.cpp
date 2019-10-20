@@ -8,6 +8,36 @@ namespace GUI
 {
     namespace TextureHelperFunctions
     {
+        QImage::Format convertToFormat(QString imageFormat)
+        {
+            auto internalFormats = internalFormatPairRepresentations();
+
+            auto requestedFormatLocation = std::find_if(internalFormats.begin(), internalFormats.end(), [imageFormat]
+                    (const InternalFormatPair &internalFormatPair)
+            {
+                return internalFormatPair.formatStringRepresentation == imageFormat;
+            });
+
+            Q_ASSERT_X(requestedFormatLocation != internalFormats.end(), __PRETTY_FUNCTION__, "Failed to find the requested image format!");
+
+            return requestedFormatLocation->format;
+        }
+
+        QString convertToString(QImage::Format imageFormat)
+        {
+            auto internalFormats = internalFormatPairRepresentations();
+
+            auto requestedFormatLocation = std::find_if(internalFormats.begin(), internalFormats.end(), [imageFormat]
+                    (const InternalFormatPair &internalFormatPair)
+            {
+                return internalFormatPair.format == imageFormat;
+            });
+
+            Q_ASSERT_X(requestedFormatLocation != internalFormats.end(), __PRETTY_FUNCTION__, "Failed to find the requested image format!");
+
+            return requestedFormatLocation->formatStringRepresentation;
+        }
+
         std::vector<InternalFormatPair> internalFormatPairRepresentations()
         {
             // There is a need to use both the actual enum for the format of the string (as when saving) and its string
