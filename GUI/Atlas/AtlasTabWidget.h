@@ -19,6 +19,7 @@ namespace GUI
 {
     namespace Dialogs
     {
+        class AddNewTab;
         class AddNewAtlasTab;
     }
 
@@ -47,6 +48,7 @@ namespace GUI
                 void repaintSelectedTexture();
                 void showAddNewAtlasTab();
                 void showContextMenu(const QPoint &pos);
+                void showRenameTabDialog();
 
             private:
                 void addAtlasWidget(const QString &tabName, QSize atlasSize, QImage::Format atlasFormat);
@@ -54,6 +56,7 @@ namespace GUI
                 std::vector<std::pair<ScrollArea*, QString>> currentTabs;
                 TextureLogic::TextureBank *textureBank = nullptr;
                 AtlasTabOptionsMenu *atlasTabOptionsMenu = nullptr;
+                Dialogs::AddNewTab *renameTab = nullptr;
                 Dialogs::AddNewAtlasTab *addNewAtlasTab = nullptr;
         };
     }

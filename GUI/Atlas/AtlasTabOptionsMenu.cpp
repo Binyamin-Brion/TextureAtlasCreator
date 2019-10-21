@@ -11,12 +11,14 @@ namespace GUI
         AtlasTabOptionsMenu::AtlasTabOptionsMenu(QWidget *parent) : QMenu{parent}
         {
             addTab.setText("Add New Tab");
+            renameTab.setText("Rename Tab");
             moveTabLeft.setText("Move Current Tab Left");
             moveTabRight.setText("Move Current Tab Right");
             deleteCurrentTab.setText("Delete Current Tab");
             currentTabProperties.setText("Current Atlas Properties");
 
             addAction(&addTab);
+            addAction(&renameTab);
             addAction(&moveTabLeft);
             addAction(&moveTabRight);
             addAction(&deleteCurrentTab);
@@ -25,6 +27,11 @@ namespace GUI
             connect(&addTab, &QAction::triggered, [this]()
             {
                 emit addTabActionTriggered();
+            });
+
+            connect(&renameTab, &QAction::triggered, [this]()
+            {
+                emit renameTabActionTriggered();
             });
         }
     }

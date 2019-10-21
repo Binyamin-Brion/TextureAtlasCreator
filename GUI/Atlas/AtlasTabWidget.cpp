@@ -8,6 +8,7 @@
 #include "ScrollArea.h"
 
 #include "AtlasTabOptionsMenu.h"
+#include "GUI/Dialogs/AddNewTab.h"
 #include "GUI/Dialogs/AddNewAtlasTab.h"
 
 namespace GUI
@@ -16,8 +17,6 @@ namespace GUI
     {
         AtlasTabWidget::AtlasTabWidget(QWidget *parent) : QTabWidget{parent}
         {
-            addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
-
             this->setContextMenuPolicy(Qt::CustomContextMenu);
 
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
@@ -25,6 +24,10 @@ namespace GUI
             atlasTabOptionsMenu = new AtlasTabOptionsMenu{this};
 
             connect(atlasTabOptionsMenu, SIGNAL(addTabActionTriggered()), this, SLOT(showAddNewAtlasTab()));
+
+            connect(atlasTabOptionsMenu, SIGNAL(renameTabActionTriggered()), this, SLOT(showRenameTabDialog()));
+
+            renameTab = new Dialogs::AddNewTab{this};
 
             addNewAtlasTab = new Dialogs::AddNewAtlasTab{this};
 
@@ -36,12 +39,36 @@ namespace GUI
                 addAtlasWidget(newTabName, QSize{requestedWidth, requestedHeight}, atlasFormat);
             });
 
+            connect(renameTab, &Dialogs::AddNewTab::newTabNameChosen, [this](QString newTabName)
+            {
+                int previousIndex = currentIndex();
+
+                removeTab(previousIndex);
+
+                renameTab->removeNameExistingTab(currentTabs[previousIndex].second);
+
+                currentTabs[previousIndex].second = newTabName;
+
+                insertTab(previousIndex, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+                renameTab->addNameExistingTab(newTabName);
+
+                setCurrentIndex(previousIndex);
+            });
+
             connect(this, &QTabWidget::currentChanged, [this](int index)
             {
+                if(index == -1)
+                {
+                    return;
+                }
+
                 const ScrollArea *const scrollArea = currentTabs[index].first;
 
                 emit currentAtlasInformationChanged(scrollArea->getAtlasInformation());
             });
+
+            addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
         }
 
         void AtlasTabWidget::addTextureToCurrentAtlas(const TextureLogic::Texture &texture)
@@ -133,6 +160,11 @@ namespace GUI
             atlasTabOptionsMenu->exec(mapToGlobal(pos));
         }
 
+        void AtlasTabWidget::showRenameTabDialog()
+        {
+            renameTab->open();
+        }
+
         void AtlasTabWidget::addAtlasWidget(const QString &tabName, QSize atlasSize, QImage::Format atlasFormat)
         {
             auto *tabScrollArea = new ScrollArea{atlasSize, atlasFormat, this};
@@ -142,6 +174,8 @@ namespace GUI
             currentTabs.emplace_back(tabScrollArea, tabName);
 
             addTab(currentTabs.back().first, currentTabs.back().second);
+
+            renameTab->addNameExistingTab(tabName);
 
             connect(tabScrollArea, &ScrollArea::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle atlasInformation)
             {

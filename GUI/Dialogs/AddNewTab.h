@@ -23,6 +23,7 @@ namespace GUI
             public:
                 explicit AddNewTab(QWidget *parent = nullptr);
                 void addNameExistingTab(QString tabName);
+                void closeEvent(QCloseEvent *event) override;
                 void removeNameExistingTab(QString tabName);
 
             signals:

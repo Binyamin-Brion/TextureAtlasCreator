@@ -21,12 +21,14 @@ namespace GUI
 
             signals:
                 void addTabActionTriggered();
+                void renameTabActionTriggered();
                 void moveTabLeft();
                 void moveTabRight();
                 void deleteActionTriggered();
 
             private:
                 QAction addTab;
+                QAction renameTab;
                 QAction _moveTabLeft;
                 QAction _moveTabRight;
                 QAction deleteTab;

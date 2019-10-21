@@ -68,6 +68,11 @@ namespace GUI
                 emit moveTabRight();
             });
 
+            connect(optionsMenu, &OptionsMenu::renameTabActionTriggered, [this]()
+            {
+                emit renameTabRequest();
+            });
+
             connect(optionsMenu, SIGNAL(deleteActionTriggered()), this, SLOT(deleteTextureButton()));
         }
 

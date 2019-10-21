@@ -54,11 +54,25 @@ namespace GUI
 
                 ui->errorMessageLabel->setText("You must enter a tab name before continuing.");
             });
+
+            connect(ui->buttonBox, &QDialogButtonBox::rejected, [this]()
+            {
+                ui->tabNameLineEdit->setText("");
+
+                ui->errorMessageLabel->setText("");
+            });
         }
 
         void AddNewTab::addNameExistingTab(QString tabName)
         {
             existingTabNames.push_back(tabName);
+        }
+
+        void AddNewTab::closeEvent(QCloseEvent *event)
+        {
+            ui->tabNameLineEdit->setText("");
+
+            ui->errorMessageLabel->setText("");
         }
 
         void AddNewTab::removeNameExistingTab(QString tabName)

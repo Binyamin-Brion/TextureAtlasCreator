@@ -41,6 +41,7 @@ namespace GUI
                 void addNewTabRequest();
                 void moveTabLeft();
                 void moveTabRight();
+                void renameTabRequest();
                 void deleteCurrentTab();
 
             private slots:

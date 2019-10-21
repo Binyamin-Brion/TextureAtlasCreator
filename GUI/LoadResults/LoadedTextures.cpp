@@ -33,13 +33,34 @@ namespace GUI
 
             connect(optionsMenu, SIGNAL(addTabActionTriggered()), this, SLOT(showAddTabDialog()));
 
+            connect(optionsMenu, SIGNAL(renameTabActionTriggered()), this, SLOT(showRenameTabDialog()));
+
             connect(optionsMenu, SIGNAL(moveTabLeft()), this, SLOT(moveTabLeft()));
 
             connect(optionsMenu, SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
 
             connect(addNewTab, &Dialogs::AddNewTab::newTabNameChosen, [this](QString newTabName)
             {
-                addTextureButtonArea(newTabName);
+                if(renameTab)
+                {
+                    int previousIndex = currentIndex();
+
+                    removeTab(currentIndex());
+
+                    addNewTab->removeNameExistingTab(currentTabs[previousIndex].second);
+
+                    currentTabs[previousIndex].second = newTabName;
+
+                    insertTab(previousIndex, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+                    addNewTab->addNameExistingTab(newTabName);
+
+                    setCurrentIndex(previousIndex);
+                }
+                else
+                {
+                    addTextureButtonArea(newTabName);
+                }
             });
         }
 
@@ -58,7 +79,11 @@ namespace GUI
 
         void LoadedTextures::showAddTabDialog()
         {
-            addNewTab->show();
+            addNewTab->setWindowTitle("Add New Tab");
+
+            renameTab = false;
+
+            addNewTab->open();
         }
 
         void LoadedTextures::showContextMenu(const QPoint& pos)
@@ -69,6 +94,15 @@ namespace GUI
         void LoadedTextures::showLoadTextureDialog()
         {
             chooseTexture->show();
+        }
+
+        void LoadedTextures::showRenameTabDialog()
+        {
+            addNewTab->setWindowTitle("Rename Current Tab");
+
+            renameTab = true;
+
+            addNewTab->show();
         }
 
         void LoadedTextures::openTexture(QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
@@ -121,6 +155,8 @@ namespace GUI
             scrollArea->setTextureBankReference(textureBank);
 
             connect(scrollArea->getTextureArea(), SIGNAL(addNewTabRequest()), this, SLOT(showAddTabDialog()));
+
+            connect(scrollArea->getTextureArea(), SIGNAL(renameTabRequest()), this, SLOT(showRenameTabDialog()));
 
             connect(scrollArea->getTextureArea(), SIGNAL(moveTabLeft()), this, SLOT(moveTabLeft()));
 

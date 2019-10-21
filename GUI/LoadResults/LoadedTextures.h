@@ -38,6 +38,7 @@ namespace GUI
                 void showAddTabDialog();
                 void showContextMenu(const QPoint &pos);
                 void showLoadTextureDialog();
+                void showRenameTabDialog();
 
             private slots:
                 void openTexture(QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
@@ -50,6 +51,7 @@ namespace GUI
                 std::vector<std::pair<GUI::LoadResults::ScrollArea*, QString>> currentTabs;
                 const TextureLogic::TextureBank *textureBank = nullptr;
                 Dialogs::AddNewTab *addNewTab = nullptr;
+                bool renameTab = false;
                 Dialogs::ChooseTexture *chooseTexture = nullptr;
 
                 OptionsMenu *optionsMenu = nullptr;
