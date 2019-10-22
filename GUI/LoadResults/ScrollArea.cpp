@@ -30,6 +30,11 @@ namespace GUI
             textureButtonArea->addTextureButton(textureLocation, intersectionBorderWidth, selectionBorderWidth);
         }
 
+        void ScrollArea::deleteTextureButtons()
+        {
+            textureButtonArea->deleteTextureButtons();
+        }
+
         const TextureButtonArea* ScrollArea::getTextureArea() const
         {
             return textureButtonArea;

@@ -27,6 +27,10 @@ namespace GUI
 
             connect(atlasTabOptionsMenu, SIGNAL(renameTabActionTriggered()), this, SLOT(showRenameTabDialog()));
 
+            connect(atlasTabOptionsMenu, SIGNAL(moveTabLeft()), this, SLOT(moveTabLeft()));
+
+            connect(atlasTabOptionsMenu, SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
+
             renameTab = new Dialogs::AddNewTab{this};
 
             addNewAtlasTab = new Dialogs::AddNewAtlasTab{this};
@@ -54,6 +58,27 @@ namespace GUI
                 renameTab->addNameExistingTab(newTabName);
 
                 setCurrentIndex(previousIndex);
+            });
+
+            connect(atlasTabOptionsMenu, &AtlasTabOptionsMenu::deleteTabActionTriggered, [this]()
+            {
+                if(currentIndex() != -1)
+                {
+                    textureBank->textureSelected(nullptr);
+
+                    removeTab(currentIndex());
+
+                    delete currentTabs[currentIndex() + 1].first;
+
+                    renameTab->removeNameExistingTab(currentTabs[currentIndex() + 1].second);
+
+                    currentTabs.erase(currentTabs.begin() + currentIndex() + 1);
+
+                    if(currentTabs.empty())
+                    {
+                        addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
+                    }
+                }
             });
 
             connect(this, &QTabWidget::currentChanged, [this](int index)
@@ -143,6 +168,42 @@ namespace GUI
             {
                 i.first->updateTextureReferences(textureBank->getTextures());
             }
+        }
+
+        void AtlasTabWidget::moveTabLeft()
+        {
+            if(currentIndex() == 0)
+            {
+                return;
+            }
+
+            int previousIndex = currentIndex();
+
+            removeTab(previousIndex);
+
+            insertTab(previousIndex - 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+            std::swap(currentTabs[previousIndex], currentTabs[previousIndex - 1]);
+
+            setCurrentIndex(previousIndex - 1);
+        }
+
+        void AtlasTabWidget::moveTabRight()
+        {
+            if(currentIndex() == currentTabs.size() - 1)
+            {
+                return;
+            }
+
+            int previousIndex = currentIndex();
+
+            removeTab(currentIndex());
+
+            insertTab(previousIndex + 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+            std::swap(currentTabs[previousIndex], currentTabs[previousIndex + 1]);
+
+            setCurrentIndex(previousIndex + 1);
         }
 
         void AtlasTabWidget::repaintSelectedTexture()

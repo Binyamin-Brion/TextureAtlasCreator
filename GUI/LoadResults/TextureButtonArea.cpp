@@ -51,7 +51,7 @@ namespace GUI
 
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 
-            optionsMenu = new OptionsMenu{this};
+            optionsMenu = new OptionsMenu{true, false, this};
 
             connect(optionsMenu, &OptionsMenu::addTabActionTriggered, [this]()
             {
@@ -102,12 +102,20 @@ namespace GUI
             // Swap the place holder widget with the newly created plcae holder; see the description at the top of
             // this file for more information.
 
-            textureButtons.push_back(new TextureButton{textureLocation, intersectionBorderWidth, selectionBorderWidth});
+            textureButtons.push_back(new TextureButton{textureLocation, intersectionBorderWidth, selectionBorderWidth, this});
 
             connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&, unsigned int, unsigned int)),
                     this, SLOT(textureButtonClicked(const QString&, unsigned int, unsigned int)));
 
             placeTextureButton(textureButtons.back());
+        }
+
+        void TextureButtonArea::deleteTextureButtons()
+        {
+            for(auto &i : textureButtons)
+            {
+                textureBank->removeTexture(i->getTextureLocation());
+            }
         }
 
         void TextureButtonArea::mousePressEvent(QMouseEvent *event)
@@ -201,7 +209,7 @@ namespace GUI
             {
                 for(int j = 0; j < maxColumnCount; ++j)
                 {
-                    textureButtonPlaceHolders.push_back(new QWidget);
+                    textureButtonPlaceHolders.push_back(new QWidget{this});
 
                     gridLayout->addWidget(textureButtonPlaceHolders.back(), i, j, Qt::AlignTop | Qt::AlignLeft);
                 }

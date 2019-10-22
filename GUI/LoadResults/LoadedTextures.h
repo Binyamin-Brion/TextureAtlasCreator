@@ -44,6 +44,7 @@ namespace GUI
                 void openTexture(QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
                 void moveTabLeft();
                 void moveTabRight();
+                void deleteCurrentTab();
 
             private:
                 void addTextureButtonArea(const QString &tabName);

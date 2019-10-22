@@ -57,7 +57,9 @@ namespace TextureLogic
 
     void TextureBank::removeTexture(const QString &textureLocation)
     {
-        if(originalTextureUploadLocation.find(textureLocation.toStdString()) == originalTextureUploadLocation.end())
+        auto originalTextureLocation = originalTextureUploadLocation.find(textureLocation.toStdString());
+
+        if(originalTextureLocation == originalTextureUploadLocation.end())
         {
             QString errorMessage{"Unable to find requested texture to be deleted: " + textureLocation};
 
@@ -69,6 +71,13 @@ namespace TextureLogic
         // be the case in the future and logically makes no sense to keep referencing that texture.
 
         textureSelected(nullptr);
+
+        originalTextureLocation->second.second -= 1;
+
+        if(originalTextureLocation->second.second != 0)
+        {
+            return;
+        }
 
         // Iterate through all of the textures, including those of different formats, and remove that texture
         // from any of the texture atlases, and mark the texture's place in the vector as free
@@ -236,8 +245,12 @@ namespace TextureLogic
     {
         // Stop a texture from being loaded twice- this wastes resources
 
-        if(originalTextureUploadLocation.find(textureLocation.toStdString()) != originalTextureUploadLocation.end())
+        auto originalTextureLocation = originalTextureUploadLocation.find(textureLocation.toStdString());
+
+        if(originalTextureLocation != originalTextureUploadLocation.end())
         {
+            originalTextureLocation->second.second += 1;
+
             return;
         }
 
@@ -248,7 +261,7 @@ namespace TextureLogic
 
         unsigned int RGB32_Index = GUI::TextureHelperFunctions::indexFormat(QImage::Format_RGB32, true);
 
-        originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), RGB32_Index));
+        originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), std::make_pair(RGB32_Index, 1)));
 
         // If there are no free places to insert a new texture, it is inserted at the back of a format texture
 
@@ -284,7 +297,7 @@ namespace TextureLogic
 
                 originalTextureUploadLocation.erase(textureLocation.toStdString());
 
-                originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), newTextureVectorIndex));
+                originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), std::make_pair(newTextureVectorIndex, 1)));
             }
         }
         else // Same logic as the above branch; the only difference is that the original texture is not loaded into the back of the RGB32 format vector
@@ -310,7 +323,7 @@ namespace TextureLogic
 
                 originalTextureUploadLocation.erase(textureLocation.toStdString());
 
-                originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), newTextureVectorIndex));
+                originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), std::make_pair(newTextureVectorIndex, 1)));
             }
             else
             {
@@ -331,6 +344,6 @@ namespace TextureLogic
 
         atlasTabWidget->updateTextureReferences({});
 
-       currentTextureTabWidget->setTexturesReference(textures);
+        currentTextureTabWidget->setTexturesReference(textures);
     }
 }

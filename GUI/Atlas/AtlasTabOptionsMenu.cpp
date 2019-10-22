@@ -12,26 +12,39 @@ namespace GUI
         {
             addTab.setText("Add New Tab");
             renameTab.setText("Rename Tab");
-            moveTabLeft.setText("Move Current Tab Left");
-            moveTabRight.setText("Move Current Tab Right");
+            _moveTabLeft.setText("Move Current Tab Left");
+            _moveTabRight.setText("Move Current Tab Right");
             deleteCurrentTab.setText("Delete Current Tab");
-            currentTabProperties.setText("Current Atlas Properties");
 
             addAction(&addTab);
             addAction(&renameTab);
-            addAction(&moveTabLeft);
-            addAction(&moveTabRight);
+            addAction(&_moveTabLeft);
+            addAction(&_moveTabRight);
             addAction(&deleteCurrentTab);
-            addAction(&currentTabProperties);
 
             connect(&addTab, &QAction::triggered, [this]()
             {
                 emit addTabActionTriggered();
             });
 
+            connect(&_moveTabLeft, &QAction::triggered, [this]()
+            {
+                emit moveTabLeft();
+            });
+
+            connect(&_moveTabRight, &QAction::triggered, [this]()
+            {
+                emit moveTabRight();
+            });
+
             connect(&renameTab, &QAction::triggered, [this]()
             {
                 emit renameTabActionTriggered();
+            });
+
+            connect(&deleteCurrentTab, &QAction::triggered, [this]()
+            {
+                emit deleteTabActionTriggered();
             });
         }
     }

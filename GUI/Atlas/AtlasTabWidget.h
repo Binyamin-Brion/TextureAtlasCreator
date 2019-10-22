@@ -45,6 +45,8 @@ namespace GUI
                 void currentAtlasInformationChanged(::Atlas::AtlasInformationBundle);
 
             private slots:
+                void moveTabLeft();
+                void moveTabRight();
                 void repaintSelectedTexture();
                 void showAddNewAtlasTab();
                 void showContextMenu(const QPoint &pos);

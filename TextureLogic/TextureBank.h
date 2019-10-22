@@ -72,7 +72,7 @@ namespace TextureLogic
 
             // See TextureBank.cpp for more details of these two variables
             std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>> textures;
-            std::unordered_map<std::string, unsigned int> originalTextureUploadLocation;
+            std::unordered_map<std::string, std::pair<unsigned int, unsigned int>> originalTextureUploadLocation;
     };
 }
 

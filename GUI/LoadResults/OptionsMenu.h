@@ -16,7 +16,7 @@ namespace GUI
             Q_OBJECT
 
             public:
-                explicit OptionsMenu(QWidget *parent = nullptr);
+                OptionsMenu(bool showDeleteTextureButton, bool showDeleteTextureButtonArea, QWidget *parent = nullptr);
                 void showDeleteAction(bool value);
 
             signals:
@@ -25,6 +25,7 @@ namespace GUI
                 void moveTabLeft();
                 void moveTabRight();
                 void deleteActionTriggered();
+                void deleteTabTriggered();
 
             private:
                 QAction addTab;

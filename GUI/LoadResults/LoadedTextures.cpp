@@ -17,7 +17,7 @@ namespace GUI
     {
         LoadedTextures::LoadedTextures(QWidget *parent) : QTabWidget{parent}
         {
-            optionsMenu = new OptionsMenu{this};
+            optionsMenu = new OptionsMenu{false, true, this};
 
             addNewTab = new Dialogs::AddNewTab{this};
 
@@ -38,6 +38,8 @@ namespace GUI
             connect(optionsMenu, SIGNAL(moveTabLeft()), this, SLOT(moveTabLeft()));
 
             connect(optionsMenu, SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
+
+            connect(optionsMenu, SIGNAL(deleteTabTriggered()), this, SLOT(deleteCurrentTab()));
 
             connect(addNewTab, &Dialogs::AddNewTab::newTabNameChosen, [this](QString newTabName)
             {
@@ -126,8 +128,6 @@ namespace GUI
             std::swap(currentTabs[previousIndex], currentTabs[previousIndex - 1]);
 
             setCurrentIndex(previousIndex - 1);
-
-            printf("New index: %d \n\n", currentIndex());
         }
 
         void LoadedTextures::moveTabRight()
@@ -146,6 +146,27 @@ namespace GUI
             std::swap(currentTabs[previousIndex], currentTabs[previousIndex + 1]);
 
             setCurrentIndex(previousIndex + 1);
+        }
+
+        void LoadedTextures::deleteCurrentTab()
+        {
+            if(currentIndex() != -1)
+            {
+                currentTabs[currentIndex()].first->deleteTextureButtons();
+
+                removeTab(currentIndex());
+
+                delete currentTabs[currentIndex() + 1].first;
+
+                addNewTab->removeNameExistingTab(currentTabs[currentIndex() + 1].second);
+
+                currentTabs.erase(currentTabs.begin() + currentIndex() + 1);
+
+                if(currentTabs.empty())
+                {
+                    addTextureButtonArea("Default");
+                }
+            }
         }
 
         void LoadedTextures::addTextureButtonArea(const QString &tabName)

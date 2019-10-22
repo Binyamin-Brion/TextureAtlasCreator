@@ -34,6 +34,7 @@ namespace GUI
             public:
                 explicit TextureButtonArea(QWidget *parent = nullptr);
                 void addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
+                void deleteTextureButtons();
                 void mousePressEvent(QMouseEvent *event) override;
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
 
@@ -42,7 +43,6 @@ namespace GUI
                 void moveTabLeft();
                 void moveTabRight();
                 void renameTabRequest();
-                void deleteCurrentTab();
 
             private slots:
                 void deleteTextureButton();

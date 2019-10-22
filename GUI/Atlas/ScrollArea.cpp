@@ -26,15 +26,11 @@ namespace GUI
 
             connect(horizontalScrollBar(), &QScrollBar::valueChanged, [this](int newValue)
             {
-                printf("Setting X to: %d \n", newValue);
-
                 atlasWidget->setViewPortOffsetX(newValue);
             });
 
             connect(verticalScrollBar(), &QScrollBar::valueChanged, [this](int newValue)
             {
-                printf("Setting Y to: %d \n", newValue);
-
                 atlasWidget->setViewPortOffsetY(newValue);
             });
 
