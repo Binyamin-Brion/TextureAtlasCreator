@@ -16,7 +16,7 @@ A sample view of how it looks can be seen below:
 
 ## Features
 
-* Create atlases of arbitary sizes and many different image formats
+* Create atlases of arbitrary sizes and many different image formats
 * Ability to move textures around once placed to optimize available space
 * Specify borders around images within the atlases to deal with issues
   that pop up when mipmapping texture atlases
