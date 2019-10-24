@@ -4,7 +4,7 @@ Texture Atlas Creator
 ## Overview
 
 This is a project to create a texture atlas for used in 3D programs. It was made as a personal project
-to do two things:
+to do three things:
 
 * Have an alternative program to create texture atlases
 * Gain experience with C++ and Qt
