@@ -5,36 +5,103 @@
 #include "ScaledTexture.h"
 #include <limits>
 
+#include <QPainter>
+
 namespace TextureLogic
 {
-    void ScaledTexture::initialize(const QString &textureLocation, TextureLogic::Zoom zoom)
+    void ScaledTexture::addPaintHistorySpecular(PaintFunctions::PaintHistoryCommand *paintHistoryCommand)
+    {
+        specularPaintHistory.push(paintHistoryCommand);
+    }
+
+    void ScaledTexture::addPaintHistoryTexture(PaintFunctions::PaintHistoryCommand *paintHistoryCommand)
+    {
+        texturePaintHistory.push(paintHistoryCommand);
+    }
+
+    void ScaledTexture::convertToFormat(QImage::Format newFormat)
+    {
+        image = image.convertToFormat(newFormat);
+    }
+
+    const QImage& ScaledTexture::getImage() const
+    {
+        return image;
+    }
+
+    unsigned int ScaledTexture::getIntersectionBorderWidth() const
+    {
+        return intersectionBorderWidth;
+    }
+
+    unsigned int ScaledTexture::getSelectionBorderWidth() const
+    {
+        return selectionBorderWidth;
+    }
+
+    QImage& ScaledTexture::getSpecularTexture()
+    {
+        return specularTexture;
+    }
+
+    void ScaledTexture::initialize(const QString &textureLocation, TextureLogic::Zoom zoom, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
     {
         if(!image.load(textureLocation))
         {
             throw std::runtime_error{"Unable to load texture: " + textureLocation.toStdString()};
         }
 
-        if(image.width() < 0 || image.height() < 0)
+        auto zoomFactorValue = GetZoomValue(zoom);
+
+        int newImageWidth = image.width() * zoomFactorValue;
+
+        int newImageHeight = image.height() * zoomFactorValue;
+
+        image = image.scaled(newImageWidth, newImageHeight, Qt::KeepAspectRatio);
+
+        specularTexture = QImage{newImageWidth, newImageHeight, image.format()};
+        specularTexture.fill(QColor{0, 0, 0});
+
+        this->intersectionBorderWidth = intersectionBorderWidth * zoomFactorValue;
+
+        this->selectionBorderWidth = selectionBorderWidth * zoomFactorValue;
+    }
+
+    PaintFunctions::PaintHistoryCommand *ScaledTexture::removePaintHistorySpecular()
+    {
+        if(specularPaintHistory.empty())
         {
-            throw std::runtime_error{"Image dimensions are negative!"};
+            return nullptr;
         }
 
-        auto zoomFactorValue = static_cast<unsigned int>(zoom) & 0xFFFu;
+        auto mostRecentHistory = specularPaintHistory.top();
 
-        auto imageWidthUnsigned = static_cast<unsigned int>(image.width());
+        specularPaintHistory.pop();
 
-        auto imageHeightUnsigned = static_cast<unsigned int>(image.height());
+        return mostRecentHistory;
+    }
 
-        if( (imageWidthUnsigned * zoomFactorValue) > std::numeric_limits<int>::max())
+    PaintFunctions::PaintHistoryCommand *ScaledTexture::removePaintHistoryTexture()
+    {
+        if(texturePaintHistory.empty())
         {
-            throw std::runtime_error{"After zoom, width is too large."};
+            return nullptr;
         }
 
-        if( (imageHeightUnsigned * zoomFactorValue) > std::numeric_limits<int>::max())
-        {
-            throw std::runtime_error{"After zoom, height is too large."};
-        }
+        auto mostRecentHistory = texturePaintHistory.top();
 
-        image = image.scaled(image.width() * zoomFactorValue, image.height() * zoomFactorValue, Qt::KeepAspectRatio);
+        texturePaintHistory.pop();
+
+        return mostRecentHistory;
+    }
+
+    void ScaledTexture::setIntersectionWidth(unsigned int borderWidth)
+    {
+        intersectionBorderWidth = borderWidth;
+    }
+
+    void ScaledTexture::setSelectionBorderWidth(unsigned int borderWidth)
+    {
+        selectionBorderWidth = borderWidth;
     }
 }

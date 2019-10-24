@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SelectedTextureInformation</class>
+ <widget class="QWidget" name="SelectedTextureInformation">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>609</width>
+    <height>513</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="textureNameLabel">
+       <property name="text">
+        <string>Texture Name: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="textureNameLineEdit"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="textureLocationLabel">
+     <property name="text">
+      <string>Original Texture Location: N/A</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="textureWidthLabel">
+     <property name="text">
+      <string>Texture Width: N/A</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="textureHeightLabel">
+     <property name="text">
+      <string>Texture Height: N/A</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="textureDepthLabel">
+     <property name="text">
+      <string>Texture Depth: N/A</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="textureFormatLabel">
+     <property name="text">
+      <string>Texture format:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="textureInternalFormatLabel">
+     <property name="text">
+      <string>Texture Internal Format:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="textureSizeBytesLabel">
+     <property name="text">
+      <string>Texture Size Bytes: N/A</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="intersectionBorderWidthLabel">
+       <property name="text">
+        <string>Intersection Border Width: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="intersectionBorderWidthLineEdit"/>
+     </item>
+     <item>
+      <widget class="QComboBox" name="intersectionZoomComboxBox"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QLabel" name="borderWidthLabel">
+       <property name="text">
+        <string>Surrounding Border Width:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="selectionBorderWidthLineEdit"/>
+     </item>
+     <item>
+      <widget class="QComboBox" name="selectionZoomComboBox"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="lastSavedLabel">
+     <property name="text">
+      <string>Last Saved: N/A</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lastSavedToLabel">
+     <property name="text">
+      <string>Last Saved To: N/A</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="saveTexturFormatLabel">
+       <property name="text">
+        <string>Save as format:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="formatComboBox"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="saveTextureInternalFormatLabel">
+       <property name="text">
+        <string>Save as internal format:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="interalFormatComboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="saveQualityLabel">
+       <property name="text">
+        <string>Save Quality (0 - 100)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="saveQualityLineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GUI::TextureInformation::SaveQualitySlider" name="saveQualitySlider">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="saveTextureToLabel">
+       <property name="text">
+        <string>Save Modified Texture To:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="saveTextureToButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Click here to select a location</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="textureDescription">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="plainText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GUI::TextureInformation::SaveQualitySlider</class>
+   <extends>QSlider</extends>
+   <header>GUI/TextureInformation/SaveQualitySlider.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

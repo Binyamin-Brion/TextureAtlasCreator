@@ -5,7 +5,7 @@
 #ifndef TEXTUREATLAS_BORDER_H
 #define TEXTUREATLAS_BORDER_H
 
-namespace TextureLogic
+namespace Atlas
 {
     namespace TextureBorder
     {

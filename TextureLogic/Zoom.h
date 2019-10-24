@@ -5,6 +5,10 @@
 #ifndef TEXTUREATLAS_ZOOM_H
 #define TEXTUREATLAS_ZOOM_H
 
+#include <QtCore/QString>
+
+// RIP compile times if this header file is modified
+
 namespace TextureLogic
 {
     /*
@@ -54,10 +58,22 @@ namespace TextureLogic
 
     // Clear everything but the lower 12 bits that hold the zoom value
 
-    constexpr unsigned int GetZoomValue(Zoom zoom)
+    constexpr float GetZoomValue(Zoom zoom)
     {
-        return static_cast<unsigned int>(zoom) & 0xFFFu;
+        return static_cast<float>((static_cast<unsigned int>(zoom) & 0xFFFu) / 100.0f);
     }
+
+    Zoom zoomIn(Zoom currentZoom);
+
+    Zoom zoomOut(Zoom currentZoom);
+
+    struct ZoomPair
+    {
+        Zoom zoom;
+        QString zoomStringRepresentation;
+    };
+
+    std::vector<ZoomPair> getZoomPairs();
 }
 
 #endif //TEXTUREATLAS_ZOOM_H

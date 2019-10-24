@@ -1,14 +1,39 @@
-#include "TextureLogic/Zoom.h"
-#include <iostream>
-int main() {
+#include "TextureLogic/TextureBank.h"
+#include "GUI/MainWindow.h"
+#include <QApplication>
+#include <QtTest/qtestcase.h>
+#include <Tests/TestSuite.h>
+#include <QtCore/QTextStream>
 
+int main(int argc, char *argv[]) {
 
-//for(auto &a : TextureLogic::All)
-//{
-//    std::cout << (static_cast< int>(a) >> 28) << std::endl;
-//    std::cout << (static_cast<unsigned int>(a) & 0xFFF) << "\n\n\n";
-//}
+    auto suite = Tests::TestSuite::suite();
 
+    for(const auto i : suite)
+    {
+        QTest::qExec(i, argc, argv);
+    }
 
-    return 0;
+    QApplication app{argc, argv};
+
+    QDir dir = QDir::current();
+    dir.cdUp();
+
+    QFile f(dir.path() + "/darkTheme.txt");
+    if (!f.exists())
+    {
+        printf("Unable to set stylesheet, file not found\n");
+    }
+    else
+    {
+        f.open(QFile::ReadOnly | QFile::Text);
+        QTextStream textStream(&f);
+        qApp->setStyleSheet(textStream.readAll());
+    }
+
+    GUI::MainWindow mainWindow;
+
+    mainWindow.show();
+
+    return app.exec();
 }

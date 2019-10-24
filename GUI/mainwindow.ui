@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>599</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="GUI::Atlas::AtlasTabWidget" name="atlasWidget"/>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="atlasFormatLabel">
+        <property name="text">
+         <string>Atlas Format: RGB32</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="numberTexturesLabel">
+        <property name="text">
+         <string>Number of Textures in Atlas: 0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="percentageAtlasUsed">
+        <property name="text">
+         <string>Percentage Atlas Used: 0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="GUI::LoadResults::LoadedTextures" name="loadedTextures"/>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="GUI::BrushSettings::CurrentBrushSettings" name="brushSettings" native="true"/>
+        </item>
+        <item>
+         <widget class="GUI::CurrentTexture::CurrentTextureTabWidget" name="currentTexture"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="GUI::TextureInformation::TextureInfoScrollArea" name="selectedTextureInformation">
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents_3">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>252</width>
+           <height>241</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GUI::LoadResults::LoadedTextures</class>
+   <extends>QTabWidget</extends>
+   <header>GUI/LoadResults/LoadedTextures.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GUI::Atlas::AtlasTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>GUI/Atlas/AtlasTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GUI::CurrentTexture::CurrentTextureTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>GUI/CurrentTexture/CurrentTextureTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GUI::BrushSettings::CurrentBrushSettings</class>
+   <extends>QWidget</extends>
+   <header>GUI/BrushSettings/CurrentBrushSettings.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GUI::TextureInformation::TextureInfoScrollArea</class>
+   <extends>QScrollArea</extends>
+   <header>GUI/TextureInformation/TextureInfoScrollArea.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
