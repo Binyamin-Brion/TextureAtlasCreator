@@ -112,8 +112,6 @@ namespace GUI
             unsigned int formatIndex = TextureHelperFunctions::indexFormat(currentTexture[
                                        GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second->getCurrentTextureFormat(), true);
 
-
-
             if(currentTextureIndex != -1)
             {
 

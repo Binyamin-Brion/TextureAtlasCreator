@@ -9,6 +9,11 @@
 
 namespace Atlas
 {
+    /*
+     *  Combines information regarding some statistics about the current texture atlas into one logical unit.
+     *  The information used is stored in TextureAtlas and is used in several QLabels the MainWindow
+     */
+
     struct AtlasInformationBundle
     {
         AtlasInformationBundle(QImage::Format textureFormat, unsigned int numberTexturesUsed, unsigned int percentageAtlasUsed)

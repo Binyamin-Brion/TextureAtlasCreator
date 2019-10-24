@@ -12,6 +12,8 @@ namespace GUI
     {
         ui->setupUi(this);
 
+        setWindowTitle("Atlas Creator");
+
         ui->selectedTextureInformation->setCentralWidget();
 
         ui->loadedTextures->setTextureBankReference(textureBank.get());
