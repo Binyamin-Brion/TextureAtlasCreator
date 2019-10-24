@@ -12,6 +12,7 @@
 #include <QResizeEvent>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QScrollArea>
+#include <QtWidgets/QFileDialog>
 
 namespace GUI
 {
@@ -41,6 +42,25 @@ namespace GUI
         ::Atlas::AtlasInformationBundle AtlasWidget::getAtlasInformation() const
         {
             return ::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()};
+        }
+
+        void AtlasWidget::exportTexture()
+        {
+            QString newFileLocation = QFileDialog::getSaveFileName(this, tr("Save Image"), "", tr(""));
+
+            if(newFileLocation.isEmpty())
+            {
+                return;
+            }
+
+            newFileLocation += ".jpg";
+
+            printf("Saving to: %s \n", newFileLocation.toStdString().c_str());
+
+            if(!textureAtlas->exportImage(newFileLocation))
+            {
+                QMessageBox::critical(this, "Error Exporting Image", "Failed to save the texture atlas.", QMessageBox::Ok);
+            }
         }
 
         void AtlasWidget::keyPressed(QKeyEvent *event)

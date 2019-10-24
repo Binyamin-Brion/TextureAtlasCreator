@@ -46,6 +46,7 @@ namespace GUI
         ui->brushSettings->updateSelectedTextureSize(QSize{-1, 1}, QSize{25, 25});
 
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
+        new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), ui->atlasWidget, SLOT(exportTexture()));
 
         setMinimumSize(1280, 720);
     }

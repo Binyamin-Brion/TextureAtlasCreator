@@ -50,6 +50,11 @@ namespace GUI
             QWidget::grabKeyboard();
         }
 
+        void ScrollArea::exportTexture()
+        {
+            atlasWidget->exportTexture();
+        }
+
         QImage::Format ScrollArea::getAtlasFormat() const
         {
             return atlasWidget->getAtlasFormat();

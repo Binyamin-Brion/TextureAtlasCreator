@@ -29,6 +29,7 @@ namespace GUI
                 ScrollArea(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
                 void addTexture(const TextureLogic::Texture &texture);
                 void enterEvent(QEvent *event) override;
+                void exportTexture();
                 QImage::Format getAtlasFormat() const;
                 ::Atlas::AtlasInformationBundle getAtlasInformation() const;
                 void keyPressEvent(QKeyEvent *event) override;

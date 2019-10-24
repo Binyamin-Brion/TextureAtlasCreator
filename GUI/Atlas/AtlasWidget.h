@@ -33,6 +33,7 @@ namespace GUI
                 explicit AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
                 QImage::Format getAtlasFormat() const;
                 ::Atlas::AtlasInformationBundle getAtlasInformation() const;
+                void exportTexture();
                 void keyPressed(QKeyEvent *event);
                 void mouseMoveEvent(QMouseEvent *event) override;
                 void mousePressEvent(QMouseEvent *event) override;

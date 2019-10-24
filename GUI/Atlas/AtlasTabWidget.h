@@ -41,6 +41,9 @@ namespace GUI
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>);
 
+            public slots:
+                void exportTexture();
+
             signals:
                 void currentAtlasInformationChanged(::Atlas::AtlasInformationBundle);
 

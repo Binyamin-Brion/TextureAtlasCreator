@@ -134,6 +134,37 @@ namespace Atlas
         return QSize{-1, -1};
     }
 
+    bool TextureAtlas::exportImage(const QString &exportLocation) const
+    {
+        QImage image = QPixmap(atlasSize).toImage();
+
+        image = image.convertToFormat(atlasFormat);
+
+        for(const auto &i : textureDrawingPositions)
+        {
+            for(int x = 0; x < i.texture->getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
+            {
+                for(int y = 0; y < i.texture->getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
+                {
+                    image.setPixelColor(i.drawingPosition.x() + x, i.drawingPosition.y() + y, i.texture->getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
+                }
+            }
+        }
+
+        if(selectedExistingTexture->isOpen())
+        {
+            for(int x = 0; x < selectedExistingTexture->getImage().getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
+            {
+                for(int y = 0; y <  selectedExistingTexture->getImage().getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
+                {
+                    image.setPixelColor(selectedExistingTexture->getDrawingCoordinates().x() + x, selectedExistingTexture->getDrawingCoordinates().y() + y, selectedExistingTexture->getImage().getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
+                }
+            }
+        }
+
+        return image.save(exportLocation);
+    }
+
     void TextureAtlas::keyPressed(int keyID)
     {
         if(keyID == Qt::Key_Delete)

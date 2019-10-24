@@ -172,6 +172,11 @@ namespace GUI
             }
         }
 
+        void AtlasTabWidget::exportTexture()
+        {
+            currentTabs[currentIndex()].first->exportTexture();
+        }
+
         void AtlasTabWidget::moveTabLeft()
         {
             if(currentIndex() == 0)

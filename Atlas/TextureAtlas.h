@@ -45,6 +45,7 @@ namespace Atlas
             unsigned int getNumberTextures();
             unsigned int getPercentageAtlasUsed() const;
             QSize getSelectedTextureSize() const;
+            bool exportImage(const QString &exportLocation) const;
             void keyPressed(int keyID);
             void mouseClicked(int mouseX, int mouseY, int mouseButton);
             void mouseMoved(int mouseX, int mouseY);
