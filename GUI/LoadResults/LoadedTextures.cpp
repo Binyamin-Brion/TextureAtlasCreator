@@ -152,15 +152,17 @@ namespace GUI
         {
             if(currentIndex() != -1)
             {
+                int previousIndex = currentIndex();
+
                 currentTabs[currentIndex()].first->deleteTextureButtons();
 
                 removeTab(currentIndex());
 
-                delete currentTabs[currentIndex() + 1].first;
+                delete currentTabs[previousIndex].first;
 
-                addNewTab->removeNameExistingTab(currentTabs[currentIndex() + 1].second);
+                addNewTab->removeNameExistingTab(currentTabs[previousIndex].second);
 
-                currentTabs.erase(currentTabs.begin() + currentIndex() + 1);
+                currentTabs.erase(currentTabs.begin() + previousIndex);
 
                 if(currentTabs.empty())
                 {

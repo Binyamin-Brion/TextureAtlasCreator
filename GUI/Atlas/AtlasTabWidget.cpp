@@ -64,15 +64,17 @@ namespace GUI
             {
                 if(currentIndex() != -1)
                 {
+                    int previousIndex = currentIndex();
+
                     textureBank->textureSelected(nullptr);
 
                     removeTab(currentIndex());
 
-                    delete currentTabs[currentIndex() + 1].first;
+                    delete currentTabs[previousIndex].first;
 
-                    renameTab->removeNameExistingTab(currentTabs[currentIndex() + 1].second);
+                    renameTab->removeNameExistingTab(currentTabs[previousIndex].second);
 
-                    currentTabs.erase(currentTabs.begin() + currentIndex() + 1);
+                    currentTabs.erase(currentTabs.begin() + previousIndex);
 
                     if(currentTabs.empty())
                     {
