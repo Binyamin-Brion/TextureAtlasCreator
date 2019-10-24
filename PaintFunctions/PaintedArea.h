@@ -10,6 +10,11 @@
 
 namespace PaintFunctions
 {
+    /*
+     * Used for storing the paint history. Keeps track of what the currently texture looked like before
+     * it was painted on.
+     */
+
     struct PaintedArea
     {
         PaintedArea()

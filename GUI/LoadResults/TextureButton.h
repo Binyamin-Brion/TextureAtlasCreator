@@ -16,6 +16,10 @@ namespace GUI
 {
     namespace LoadResults
     {
+        /*
+         *  Represents a push button that when pressed, requests the texture it represents
+         *  to be loaded into the current texture atlas.
+         */
 
         class TextureButton : public QPushButton
         {

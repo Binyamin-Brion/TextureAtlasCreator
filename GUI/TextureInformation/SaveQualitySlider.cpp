@@ -26,8 +26,6 @@ namespace GUI
             setValue(minimum() + ((maximum()-minimum()) * event->x()) / width() );
 
             emit sliderValueDifferent(value());
-
-            sliderValueChanged = false;
         }
 
         void SaveQualitySlider::wheelEvent(QWheelEvent *event)

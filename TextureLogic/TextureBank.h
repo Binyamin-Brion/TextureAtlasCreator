@@ -7,7 +7,6 @@
 
 #include "TextureLogic/Texture.h"
 
-#include "Attributes/AttributeMacros.h"
 #include "AccessRestriction/PassKey.h"
 #include "GUI/TextureHelperFunctions/TextureFormats.h"
 
@@ -48,8 +47,8 @@ namespace TextureLogic
         public:
 
             TextureBank();
-            const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& WARN_UNUSED getTextures() const;
-            const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& WARN_UNUSED getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
+            const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& getTextures() const;
+            const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
             void removeTexture(const QString &textureLocation);
             void selectedTextureChanged();
             void setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget);
@@ -75,7 +74,5 @@ namespace TextureLogic
             std::unordered_map<std::string, std::pair<unsigned int, unsigned int>> originalTextureUploadLocation;
     };
 }
-
-#include "Attributes/UndefMacros.h"
 
 #endif //TEXTUREATLAS_TEXTUREBANK_H

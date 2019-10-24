@@ -26,6 +26,10 @@ namespace GUI
         class OptionsMenu;
         class ScrollArea;
 
+        /*
+         *  Holds all of the TextureButtonsArea.
+         */
+
         class LoadedTextures : public QTabWidget
         {
             Q_OBJECT

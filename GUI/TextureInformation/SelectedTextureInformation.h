@@ -19,6 +19,11 @@ namespace GUI
 {
     namespace TextureInformation
     {
+        /*
+         *  Holds all of the widgets to show information about the currently selected texture,
+         *  as well as perform operations on it.
+         */
+
         class SelectedTextureInformation : public QWidget
         {
             Q_OBJECT
@@ -33,7 +38,7 @@ namespace GUI
             signals:
                 void newIntersectionBorderWidth(TextureLogic::Texture*, TextureLogic::Zoom , unsigned int);
                 void newSelectionBorderWidth(TextureLogic::Texture*, TextureLogic::Zoom, unsigned int);
-                void reuploadTexture(const QString&, const TextureLogic::Texture*, unsigned int interesectionBorderWidth, unsigned int selectionWidth);
+                void reuploadTexture(const QString&, const TextureLogic::Texture*, unsigned int, unsigned int);
 
             private:
                 int checkValidBorderWidth(QLineEdit *lineEdit, int maxValue);

@@ -12,6 +12,12 @@
 
 namespace PaintFunctions
 {
+    /*
+     * Represents a brush that a user can use to paint a currently selected texture.
+     * It is immutable. Every time a new brush is needed, it is completely recreated
+     * using the setPaintTypeSolid function.
+     */
+
     class Brush
     {
         public:

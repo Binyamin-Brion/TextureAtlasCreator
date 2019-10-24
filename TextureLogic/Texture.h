@@ -30,6 +30,12 @@ namespace TextureLogic
 {
     class TextureBank;
 
+    /*
+     * Represents an image. It stores all of scaled images that are the result of zoom operations.
+     * These functions- there are many- are not complicated. They are either getters or simple setters either to
+     * variables stored in this class or in ScaledTexture.
+     */
+
     class Texture
     {
         using TextureImages = std::array<ScaledTexture, NumberZoomElements()>;
@@ -52,7 +58,6 @@ namespace TextureLogic
             void setTextureLocation(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
             void setTextureName(const QString &textureName, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
             const QString& textureFormat() const;
-            TextureImages& textureImages();
             const QString& textureLocation() const;
             const QString& textureName() const;
 

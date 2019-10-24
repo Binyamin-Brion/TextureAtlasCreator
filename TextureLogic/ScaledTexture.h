@@ -19,6 +19,10 @@ namespace PaintFunctions
 
 namespace TextureLogic
 {
+    /*
+     * Represents a scaled version of an original texture.
+     */
+
     class ScaledTexture
     {
         public:

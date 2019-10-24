@@ -11,6 +11,12 @@ namespace GUI
 {
     namespace Atlas
     {
+        /*
+         * Holds the options that a user can perform on a TextureAtlas when right clicking it.
+         * Whenever an action is pressed, program control goes to the appropriate SLOT in the
+         * AtlasTabWidget class.
+         */
+
         class AtlasTabOptionsMenu : public QMenu
         {
             Q_OBJECT

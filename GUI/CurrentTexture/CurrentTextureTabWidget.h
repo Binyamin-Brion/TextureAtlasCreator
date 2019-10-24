@@ -22,6 +22,10 @@ namespace GUI
     {
         class ScrollArea;
 
+        /*
+         *  Holds all of the render areas for the currently selected texture.
+         */
+
         class CurrentTextureTabWidget : public QTabWidget
         {
             Q_OBJECT
@@ -43,7 +47,6 @@ namespace GUI
                 std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> *textures = nullptr;
                 TextureLogic::TextureBank *textureBank = nullptr;
                 int currentTextureIndex;
-                QSize selectedTextureSize;
         };
     }
 }

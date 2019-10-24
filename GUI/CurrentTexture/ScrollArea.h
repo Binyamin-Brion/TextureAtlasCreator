@@ -25,6 +25,10 @@ namespace GUI
     {
         class RenderArea;
 
+        /*
+         *  Provides a scroll area for a RenderArea.
+         */
+
         class ScrollArea : public QScrollArea
         {
             Q_OBJECT

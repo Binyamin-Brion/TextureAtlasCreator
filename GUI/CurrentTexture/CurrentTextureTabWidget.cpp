@@ -16,7 +16,6 @@ namespace GUI
         CurrentTextureTabWidget::CurrentTextureTabWidget(QWidget *parent) : QTabWidget{parent}
         {
             currentTextureIndex = -1;
-            selectedTextureSize = QSize{-1, -1};
 
             currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].first = "Selected Texture";
             currentTexture[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second = new ScrollArea{CurrentTextureImage::SelectedTexture, this};
@@ -62,6 +61,9 @@ namespace GUI
                 i.second->setTexture(texture);
             }
 
+            // If a texture was selected, check that it indeed exists, and if it does, update the brush to reflect that
+            // a new texture has been selected that may have a different size than the previous selected texture
+
             if(texture != nullptr)
             {
                 unsigned formatIndex = TextureHelperFunctions::indexFormat(texture->getImage(TextureLogic::Zoom::Normal).format(), true);
@@ -80,8 +82,6 @@ namespace GUI
                 {
                     Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
                 }
-
-                selectedTextureSize = texture->getImage(TextureLogic::Zoom::Normal).size();
 
                 const ScrollArea *currentScrollArea = currentTexture[currentIndex()].second;
 
@@ -104,6 +104,8 @@ namespace GUI
                 this->textureBank = textureBank;
             }
         }
+
+        // Called when the vector holding the textures may have been resized due to a texture being added to it
 
         void CurrentTextureTabWidget::setTexturesReference(std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>>& textures)
         {

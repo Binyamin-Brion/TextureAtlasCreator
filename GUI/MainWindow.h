@@ -16,6 +16,11 @@ namespace TextureLogic
 
 namespace GUI
 {
+    /*
+     * The main window for this program. Holds all of the other widgets and their resources.
+     * Also sets up the connections between those widgets.
+     */
+
     class MainWindow : public QMainWindow
     {
         Q_OBJECT

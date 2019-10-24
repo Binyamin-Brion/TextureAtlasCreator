@@ -19,6 +19,12 @@ namespace GUI
     {
         class TextureButtonArea;
 
+        /*
+         *  Provides a scroll area to a TextureButtonArea. Since a TextureButtonArea can hold many buttons that may
+         *  not fit in the given space allocated to it onscreen, a scrollable view is required to be able to view
+         *  all of the buttons that TextureButtonArea holds.
+         */
+
         class ScrollArea : public QScrollArea
         {
             public:

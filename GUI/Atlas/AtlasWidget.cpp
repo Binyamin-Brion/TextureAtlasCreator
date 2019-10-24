@@ -4,14 +4,11 @@
 
 #include "AtlasWidget.h"
 #include "Atlas/TextureAtlas.h"
-#include "Exceptions/Atlas/TextureAlreadyLoaded.h"
 
 #include <QCoreApplication>
 #include <QPainter>
 #include <QMouseEvent>
-#include <QResizeEvent>
 #include <QtWidgets/QMessageBox>
-#include <QtWidgets/QScrollArea>
 #include <QtWidgets/QFileDialog>
 
 namespace GUI
@@ -53,9 +50,10 @@ namespace GUI
                 return;
             }
 
-            newFileLocation += ".jpg";
+            // Export as a png image, to make sure no quality is lost from the texture atlas. User can convert to
+            // different formats if desired using external tools.
 
-            printf("Saving to: %s \n", newFileLocation.toStdString().c_str());
+            newFileLocation += ".png";
 
             if(!textureAtlas->exportImage(newFileLocation))
             {
@@ -65,11 +63,7 @@ namespace GUI
 
         void AtlasWidget::keyPressed(QKeyEvent *event)
         {
-            if(event->key() == Qt::Key_Escape)
-            {
-                QCoreApplication::quit();
-            }
-            else if(event->key() == Qt::Key_Delete)
+            if(event->key() == Qt::Key_Delete)
             {
                 textureAtlas->keyPressed(Qt::Key_Delete);
 
@@ -179,7 +173,7 @@ namespace GUI
                     QCursor c = cursor();
 
                     c.setPos(mapToGlobal(QPoint{mouseX, mouseY}));
-                    printf("In boundaries check \n");
+
                     setCursor(c);
                 }
 
@@ -220,6 +214,9 @@ namespace GUI
 
             textureAtlas->draw(painter);
 
+            // Draw a rect showing the border of the texture atlas. If the user zooms out, this is useful to determine
+            // how much available space is still left in the atlas
+
             painter.drawRect(0,0, width() - 1, height() - 1);
         }
 
@@ -229,7 +226,7 @@ namespace GUI
             {
                 textureAtlas->setSelectedTexture(texture);
             }
-            catch(::Exceptions::Atlas::TextureAlreadyLoaded &e)
+            catch(std::runtime_error &e)
             {
                 QMessageBox::warning(this, tr("Error: Texture Already Loaded"), e.what(), QMessageBox::Ok);
             }
@@ -316,6 +313,8 @@ namespace GUI
             QWidget::repaint();
         }
 
+        // Update the size of this widget to reflect the fact that the user has zoom in or out
+
         void AtlasWidget::resizeAtlasFactor(float factor)
         {
             atlasDisplaySize *= factor;
@@ -373,7 +372,7 @@ namespace GUI
             QCursor c = cursor();
 
             if(mouseX < viewPortOffset.x()) // Trying to move cursor off the atlas widget to the left
-            { printf("Checking left view port \n");
+            {
                 previousMouseCoords.setX(viewPortOffset.x());
 
                 mouseX = previousMouseCoords.x();
@@ -382,7 +381,7 @@ namespace GUI
             }
 
             if(mouseX >= viewPortOffset.x() + viewPort.width()) // Trying to move cursor off the atlas widget to the right
-            {printf("Checking right view port \n");
+            {
                 previousMouseCoords.setX(viewPort.width() + viewPortOffset.x());
 
                 mouseX = previousMouseCoords.x();
@@ -391,7 +390,7 @@ namespace GUI
             }
 
             if(mouseY < viewPortOffset.y()) // Trying to move cursor off the atlas widget upwards
-            {printf("Checking top view port \n");
+            {
                 previousMouseCoords.setY(viewPortOffset.y());
 
                 mouseY = previousMouseCoords.y();
@@ -400,7 +399,7 @@ namespace GUI
             }
 
             if(mouseY >= viewPortOffset.y() + viewPort.height()) // Trying to move cursor off the atlas widget to the bottom
-            {printf("Checking bottom view port \n");
+            {
                 previousMouseCoords.setY(viewPort.height() + viewPortOffset.y());
 
                 mouseY = previousMouseCoords.y();

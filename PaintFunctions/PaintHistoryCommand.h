@@ -13,6 +13,11 @@
 
 namespace PaintFunctions
 {
+    /*
+     * Stores all of the paints that were made with a brush. It is simply a style wrapper
+     * over a stack, which is all it contains.
+     */
+
     class PaintHistoryCommand
     {
         public:

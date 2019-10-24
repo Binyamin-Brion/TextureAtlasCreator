@@ -17,6 +17,9 @@ namespace GUI
     {
         LoadedTextures::LoadedTextures(QWidget *parent) : QTabWidget{parent}
         {
+            // This widget cannot tell a button area to delete a texture button area, to provide a clear separation of
+            // who is responsible for the buttons. Hence the first argument to the optionsMenu is false.
+
             optionsMenu = new OptionsMenu{false, true, this};
 
             addNewTab = new Dialogs::AddNewTab{this};
@@ -26,6 +29,9 @@ namespace GUI
             connect(chooseTexture, SIGNAL(textureChosen(QString, unsigned int, unsigned int)), this, SLOT(openTexture(QString, unsigned int, unsigned int)));
 
             addTextureButtonArea("Default");
+
+            // Set up the code so that the context menu with valid actions are shown and that when an action is requested
+            // the appropriate code is executed
 
             this->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -40,6 +46,9 @@ namespace GUI
             connect(optionsMenu, SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
 
             connect(optionsMenu, SIGNAL(deleteTabTriggered()), this, SLOT(deleteCurrentTab()));
+
+            // The logic for renaming and deleting a tab is the same as that of AtlasTabWidget. Refer to that class
+            // for more information.
 
             connect(addNewTab, &Dialogs::AddNewTab::newTabNameChosen, [this](QString newTabName)
             {

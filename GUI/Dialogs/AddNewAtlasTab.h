@@ -19,6 +19,11 @@ namespace GUI
 {
     namespace Dialogs
     {
+        /*
+         * Provides a pop-up dialog to specify the required information to create a new tab in the AtlasTabWidget,
+         * as well as the information to create a new TextureAtlas as a result of adding a new tab to that widget
+         */
+
         class AddNewAtlasTab : public QDialog
         {
             Q_OBJECT

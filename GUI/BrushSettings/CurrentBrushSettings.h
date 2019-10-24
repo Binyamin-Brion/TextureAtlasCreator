@@ -23,6 +23,11 @@ namespace GUI
 {
     namespace BrushSettings
     {
+        /*
+         * Shows the current state of the brush (colour and size).
+         * Additionally, it provides the user with the means to change the above two properties.
+         */
+
         class CurrentBrushSettings : public QWidget
         {
             Q_OBJECT

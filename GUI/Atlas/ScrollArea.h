@@ -21,6 +21,11 @@ namespace GUI
     {
         class AtlasWidget;
 
+        /*
+         *  Provides a scrollable window to view the Atlas widget. Since the atlas widget may be bigger than the
+         *  size of the window, a scroll view is required to view all of the atlas.
+         */
+
         class ScrollArea : public QScrollArea
         {
             Q_OBJECT

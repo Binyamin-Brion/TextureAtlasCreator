@@ -25,6 +25,11 @@ namespace GUI
 {
     namespace Atlas
     {
+        /*
+         *  The Widget onto which the texture atlas is painted, and widget that stores the texture atlas
+         *  itself. It forwards all necessary arguments to the texture atlas.
+         */
+
         class AtlasWidget : public QWidget
         {
             Q_OBJECT
@@ -64,6 +69,8 @@ namespace GUI
                 bool moveCursorToViewPort(int &mouseX, int &mouseY);
 
                 std::unique_ptr<::Atlas::TextureAtlas> textureAtlas;
+
+                // Used to determine if the texture is being moved off of the widget
                 QSize viewPort;
                 QPoint viewPortOffset;
 

@@ -76,6 +76,8 @@ namespace GUI
             });
         }
 
+        // Update the current brush if a different render area is opened (such as specular render area)
+
         void CurrentBrushSettings::showDifferentBrush(const PaintFunctions::Brush &brush)
         {
             this->brush = const_cast<PaintFunctions::Brush*>(&brush);
@@ -96,6 +98,9 @@ namespace GUI
 
         void CurrentBrushSettings::updateSelectedTextureSize(QSize size, QSize brushSize)
         {
+            // Update what the current texture size is so that the next time the user manually enters a brush width,
+            // it can be checked to make sure that that width is valid
+
             selectedTextureSize = size;
 
             if(size.width() == -1)

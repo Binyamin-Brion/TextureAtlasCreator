@@ -16,6 +16,10 @@ namespace GUI
 {
     namespace Dialogs
     {
+        /*
+         * Provides a pop-up dialog to specify the required information to add a new tab to any of the tab to the LoadedTexture Widget.
+         */
+
         class AddNewTab : public QDialog
         {
             Q_OBJECT

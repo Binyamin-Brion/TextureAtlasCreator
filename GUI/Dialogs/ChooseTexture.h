@@ -11,6 +11,10 @@ namespace GUI
 {
     namespace Dialogs
     {
+        /*
+         * Provides a pop-up dialog to specify the required information to load a new texture.
+         */
+
         class ChooseTexture : public QDialog
         {
             Q_OBJECT

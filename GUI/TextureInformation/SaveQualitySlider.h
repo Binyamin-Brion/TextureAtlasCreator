@@ -11,6 +11,12 @@ namespace GUI
 {
     namespace TextureInformation
     {
+        /*
+         * Provides a slider by which the user can choose the quality to save a selected image.
+         * It is updated when a user chooses a new quality number through the respective line edit in
+         * SelectedTextureInformation, and updates that line edit if the user interacts through this slider.
+         */
+
         class SaveQualitySlider : public QSlider
         {
             Q_OBJECT
@@ -22,9 +28,6 @@ namespace GUI
 
             signals:
                 void sliderValueDifferent(int value);
-
-            private:
-                bool sliderValueChanged;
         };
     }
 }

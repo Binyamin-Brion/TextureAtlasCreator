@@ -28,6 +28,13 @@ namespace GUI
         class AtlasTabOptionsMenu;
         class ScrollArea;
 
+        /*
+         *  Holds all of the ScrollArea (that hold an AtlasWidget, which holds a TextureAtlas).
+         *  It is a central place for managing all of the ScrollArea, in the sense that if an action
+         *  is requested for a texture atlas, it is applied to the current texture atlas being shown,
+         *  which is the current tab being shown.
+         */
+
         class AtlasTabWidget : public QTabWidget
         {
             Q_OBJECT

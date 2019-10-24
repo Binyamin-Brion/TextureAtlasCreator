@@ -16,6 +16,8 @@ namespace GUI
 
         ui->selectedTextureInformation->setCentralWidget();
 
+        // Remember that all of the widgets that deal with textures share the same resource (ie the texture bank).
+
         ui->loadedTextures->setTextureBankReference(textureBank.get());
 
         ui->atlasWidget->setTextureBankReference(textureBank.get());

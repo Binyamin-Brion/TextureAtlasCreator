@@ -181,9 +181,6 @@ namespace GUI
 
         void RenderArea::undoPaintOperation()
         {
-            // TODO: For future reference: all of the paint history are stored as if the current zoom was normal- if the current zoom is not normal,
-            // TODO: an appropriate calculation will have to be done
-
             // If no texture is selected and the undo operation is requested, then a crash will occur. Thus a check
             // to make sure that a texture is selected has to be done first.
 

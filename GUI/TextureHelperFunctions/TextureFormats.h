@@ -12,6 +12,9 @@ namespace GUI
 {
     namespace TextureHelperFunctions
     {
+        // The function definition of "internalFormatPairRepresentations" explains the purpose of this struct.
+        // All of other functions here are helper functions related to this struct.
+
         struct InternalFormatPair
         {
             QImage::Format format;

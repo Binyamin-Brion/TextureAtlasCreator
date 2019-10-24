@@ -6,6 +6,8 @@
 
 namespace TextureLogic
 {
+    // Calculate the next zoom if zooming in, if there is one.
+
     Zoom zoomIn(Zoom currentZoom)
     {
         switch(currentZoom)
@@ -36,6 +38,8 @@ namespace TextureLogic
         return currentZoom;
     }
 
+    // Calculate the next zoom if zooming out, if there is one.
+
     Zoom zoomOut(Zoom currentZoom)
     {
         switch (currentZoom)
@@ -65,6 +69,8 @@ namespace TextureLogic
 
         return currentZoom;
     }
+
+    // Convenience function for use with a GUI.
 
     std::vector<ZoomPair> getZoomPairs()
     {

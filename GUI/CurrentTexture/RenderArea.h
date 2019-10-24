@@ -26,6 +26,10 @@ namespace GUI
 {
     namespace CurrentTexture
     {
+        /*
+         *  Provides an area to modify the currently selected texture.
+         */
+
         class RenderArea : public QWidget
         {
             Q_OBJECT

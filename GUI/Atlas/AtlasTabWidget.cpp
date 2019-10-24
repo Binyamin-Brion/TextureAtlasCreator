@@ -19,6 +19,8 @@ namespace GUI
         {
             this->setContextMenuPolicy(Qt::CustomContextMenu);
 
+            // Code that sets up the logic to apply actions to the tabs that hold a texture atlas
+
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 
             atlasTabOptionsMenu = new AtlasTabOptionsMenu{this};
@@ -35,6 +37,11 @@ namespace GUI
 
             addNewAtlasTab = new Dialogs::AddNewAtlasTab{this};
 
+            // By default there is one tab created, which holds an empty texture atlas.
+            // When this is done, the default name for this tab has to be stored so that other
+            // tabs do not have the same name. The tab with this default name is created at the end of
+            // this constructor.
+
             addNewAtlasTab->addExistingTabName("Default");
 
             connect(addNewAtlasTab, &Dialogs::AddNewAtlasTab::newAtlasInformationSpecified, [this]
@@ -43,8 +50,14 @@ namespace GUI
                 addAtlasWidget(newTabName, QSize{requestedWidth, requestedHeight}, atlasFormat);
             });
 
+            // When renaming a tab, there is no direct way to renane a tab. As such, in order to rename a tab,
+            // the old tab has to be removed and a new tab with the new name has to be inserted.
+
             connect(renameTab, &Dialogs::AddNewTab::newTabNameChosen, [this](QString newTabName)
             {
+                // Keep track of the tab index of the tab being removed as this will change after the tab is removed.
+                // Keeping track of this eases the logic of being the operations required to rename a tab.
+
                 int previousIndex = currentIndex();
 
                 removeTab(previousIndex);
@@ -64,6 +77,10 @@ namespace GUI
             {
                 if(currentIndex() != -1)
                 {
+                    // Remember there is a one to one correspondence between the order of the tabs shown and the
+                    // order tabs stored internally. For example, the first tab shown is stored at the beginning of
+                    // the currentTabs variable, the second tab at the second spot in the currentTab variable, and so on
+
                     int previousIndex = currentIndex();
 
                     textureBank->textureSelected(nullptr);
@@ -76,6 +93,8 @@ namespace GUI
 
                     currentTabs.erase(currentTabs.begin() + previousIndex);
 
+                    // Make sure that there is always at least one tab shown, even if the last one was previous deleted
+
                     if(currentTabs.empty())
                     {
                         addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
@@ -85,10 +104,15 @@ namespace GUI
 
             connect(this, &QTabWidget::currentChanged, [this](int index)
             {
+                // If the last tab is deleted, and before a new one is set, this lambda is called when the currentIndex is -1.
+                // This leads to a segfault due to an invalid index. Thus a check against an invalid currentIndex has to be performed.
+
                 if(index == -1)
                 {
                     return;
                 }
+
+                // Variable just used to increase readability
 
                 const ScrollArea *const scrollArea = currentTabs[index].first;
 
@@ -118,6 +142,10 @@ namespace GUI
 
         bool AtlasTabWidget::setIntersectionWidth(TextureLogic::Texture *texture)
         {
+            // When a new intersection width is specified for a texture, that new intersection width is checked
+            // to see if it is valid in all of the texture atlases that use that texture. If there is a problem with
+            // the new width, the user has to be notified with an appropriate error message.
+
             std::vector<QString> atlasNames;
 
             bool borderWidthChangeFailed = false;
@@ -164,6 +192,9 @@ namespace GUI
             }
         }
 
+        // Called when the vector holding all of the texture references has been added to, and so previous references
+        // to the contents within that vector may no longer be valid
+
         void AtlasTabWidget::updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>)
         {
             for(auto &i : currentTabs)
@@ -190,6 +221,8 @@ namespace GUI
 
             insertTab(previousIndex - 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
 
+            // Swap done to keep one-to-one correspondence between the order of tabs shown visually and the order the tabs are stored internally
+
             std::swap(currentTabs[previousIndex], currentTabs[previousIndex - 1]);
 
             setCurrentIndex(previousIndex - 1);
@@ -207,6 +240,8 @@ namespace GUI
             removeTab(currentIndex());
 
             insertTab(previousIndex + 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+            // Swap done to keep one-to-one correspondence between the order of tabs shown visually and the order the tabs are stored internally
 
             std::swap(currentTabs[previousIndex], currentTabs[previousIndex + 1]);
 

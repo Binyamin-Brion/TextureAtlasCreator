@@ -22,6 +22,9 @@ namespace PaintFunctions
 
     void Brush::setPaintTypeSolid(TextureLogic::Zoom zoom, QSize drawAreaSize, QColor colour)
     {
+        // When a brush size is selected, it is done with respective to a given zoom. The brush size changes
+        // depending on the zoom of the currently selected texture. This is calculated ahead of time for convinience.
+
           for(auto currentZoom : TextureLogic::AllZoomValues)
           {
               float zoomFactor = TextureLogic::GetZoomValue(currentZoom) / TextureLogic::GetZoomValue(zoom);

@@ -51,6 +51,10 @@ namespace GUI
 
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 
+            // A button area cannot be deleted from a texture button area (through a context menu). The problem is that once the button area
+            // is deleted through that action, the 'this' pointer is now invalid, but the control flow returns to the function that requested
+            // the button area to be deleted. That function is a slot in this object- but this object no longer exists. Hence a seg fault would occur.
+
             optionsMenu = new OptionsMenu{true, false, this};
 
             connect(optionsMenu, &OptionsMenu::addTabActionTriggered, [this]()

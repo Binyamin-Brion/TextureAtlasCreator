@@ -6,7 +6,6 @@
 
 #include "TextureLogic/TextureBank.h"
 #include "Atlas/SelectedTexture.h"
-#include "Exceptions/Atlas/TextureAlreadyLoaded.h"
 #include "GUI/TextureHelperFunctions/TextureFormats.h"
 
 #include <QPainter>
@@ -505,7 +504,7 @@ namespace Atlas
             errorMessage += "A texture cannot be added to an atlas twice.\n";
             errorMessage += "The requested operation will be aborted.";
 
-            throw ::Exceptions::Atlas::TextureAlreadyLoaded{errorMessage};
+            throw std::runtime_error{errorMessage};
         }
 
         selectedTexture->setTexture(texture);

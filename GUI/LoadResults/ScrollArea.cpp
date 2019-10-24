@@ -15,7 +15,7 @@ namespace GUI
         {
             setLayout(new QHBoxLayout);
 
-            if(textureButtonArea != nullptr) // TODO: Why?
+            if(textureButtonArea != nullptr)
             {
                 return;
             }

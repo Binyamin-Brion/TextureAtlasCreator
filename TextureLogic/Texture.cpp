@@ -106,7 +106,6 @@ namespace TextureLogic
 
         if(descriptionLengthDifference > 0)
         {
-            //textureDescription += description.mid(textureDescription.size() + 1);
             textureDescription += description[description.size() - 1];
         }
         else
@@ -134,11 +133,6 @@ namespace TextureLogic
     const QString& Texture::textureFormat() const
     {
         return _textureFormat;
-    }
-
-    Texture::TextureImages &Texture::textureImages()
-    {
-        return _texture;
     }
 
     const QString &Texture::textureLocation() const
