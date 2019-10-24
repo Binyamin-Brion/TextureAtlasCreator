@@ -12,7 +12,7 @@ to do two things:
 
 A sample view of how it looks can be seen below:
 
-![alt-text] (https://github.com/Binyamin-Brion/TextureAtlasCreatorV2/blob/master/TextureCreatorSample.PNG)
+![alt-text](https://github.com/Binyamin-Brion/TextureAtlasCreatorV2/blob/master/TextureCreatorSample.PNG)
 
 ## Features
 
@@ -34,4 +34,4 @@ changes to textures used in Minecraft. Serious alterations to textures should be
 * Qt5.9.8
 * CMake
 
-_Note: Dark theme obtained from: http://www.yasinuludag.com/darkorange.stylesheet
+_Dark theme obtained from: http://www.yasinuludag.com/darkorange.stylesheet_
