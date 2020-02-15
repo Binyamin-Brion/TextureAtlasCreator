@@ -61,7 +61,7 @@ namespace TextureLogic
         return _texture[GetZoomIndex(zoom)].getSpecularTexture();
     }
 
-    const QString& Texture::getTextureDescription(AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>) const
+    const QString& Texture::getTextureDescription() const
     {
         return textureDescription;
     }

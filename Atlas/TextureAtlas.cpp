@@ -135,17 +135,27 @@ namespace Atlas
 
     bool TextureAtlas::exportImage(const QString &exportLocation) const
     {
-        QImage image = QPixmap(atlasSize).toImage();
+        float zoomFactor = TextureLogic::GetZoomValue(TextureLogic::Zoom::Normal) / TextureLogic::GetZoomValue(currentZoom);
+
+        QImage image = QPixmap(atlasSize * zoomFactor).toImage();
 
         image = image.convertToFormat(atlasFormat);
 
         for(const auto &i : textureDrawingPositions)
         {
+            float xDrawingPosition = i.drawingPosition.x();
+
+            float yDrawPosition = i.drawingPosition.y();
+
+            xDrawingPosition /= TextureLogic::GetZoomValue(currentZoom);
+
+            yDrawPosition /= TextureLogic::GetZoomValue(currentZoom);
+
             for(int x = 0; x < i.texture->getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
             {
                 for(int y = 0; y < i.texture->getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
                 {
-                    image.setPixelColor(i.drawingPosition.x() + x, i.drawingPosition.y() + y, i.texture->getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
+                    image.setPixelColor(xDrawingPosition + x, yDrawPosition + y, i.texture->getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
                 }
             }
         }

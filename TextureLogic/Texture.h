@@ -49,7 +49,7 @@ namespace TextureLogic
             unsigned int getIntersectionBorderWidth(Zoom zoom) const;
             unsigned int getSelectedBorderWidth(Zoom zoom) const;
             QImage& getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
-            const QString& getTextureDescription(AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>) const;
+            const QString& getTextureDescription() const;
             PaintFunctions::PaintHistoryCommand* removeRecentPaintHistorySpecular(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             PaintFunctions::PaintHistoryCommand* removeRecentPaintHistoryTexture(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
             void setIntersectionBorderWidth(unsigned int newWidth, Zoom zoom, AccessRestriction::PassKey<TextureBank>);

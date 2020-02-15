@@ -304,13 +304,13 @@ namespace GUI
 
             ui->lastSavedLabel->setText("Last Saved To: " + fileInfo.lastModified().toString());
 
-            if(texture->getTextureDescription({}).isEmpty())
+            if(texture->getTextureDescription().isEmpty())
             {
                 ui->textureDescription->setPlainText("No Description");
             }
             else
             {
-                ui->textureDescription->setPlainText(texture->getTextureDescription({}));
+                ui->textureDescription->setPlainText(texture->getTextureDescription());
             }
 
             // Find and display format information to the user
