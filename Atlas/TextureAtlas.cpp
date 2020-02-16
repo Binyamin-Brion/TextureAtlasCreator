@@ -10,6 +10,7 @@
 
 #include <QPainter>
 #include "GUI/Atlas/AtlasWidget.h"
+#include <fstream>
 
 namespace Atlas
 {
@@ -162,11 +163,11 @@ namespace Atlas
 
         if(selectedExistingTexture->isOpen())
         {
-            for(int x = 0; x < selectedExistingTexture->getImage().getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
+            for(int x = 0; x < selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
             {
-                for(int y = 0; y <  selectedExistingTexture->getImage().getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
+                for(int y = 0; y <  selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
                 {
-                    image.setPixelColor(selectedExistingTexture->getDrawingCoordinates().x() + x, selectedExistingTexture->getDrawingCoordinates().y() + y, selectedExistingTexture->getImage().getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
+                    image.setPixelColor(selectedExistingTexture->getDrawingCoordinates().x() + x, selectedExistingTexture->getDrawingCoordinates().y() + y, selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
                 }
             }
         }

@@ -19,13 +19,12 @@ namespace TextureLogic
 
 namespace Atlas
 {
-    /*
+    /**
      *  Represents a texture that is selected. It is used in conjunction with the TextureAtlas class.
      *  Whenever a user clicks on a texture in the atlas, the reference to that texture is passed to an instance
      *  of this class from the TextureAtlas class. The reference in the TextureAtlas class is removed until the user
      *  moves to the selected texture to the desired place and indicates the texture is to be placed there. Then,
-     *  this class becomes "empty" (doesn't hold any reference), and the TextureAtlas class once again holds the texture
-     *  reference.
+     *  this class becomes "empty" (doesn't hold any reference), and the TextureAtlas class once again holds the texture reference.
      */
 
     class SelectedTexture

@@ -17,7 +17,7 @@ namespace TextureLogic
 
 namespace Atlas
 {
-    /*
+    /**
      * Stores information needed to draw a texture, as well as to update the texture reference stored if the old
      * reference becomes invalid.
      */
@@ -28,7 +28,6 @@ namespace Atlas
         int index = -1;
         QPointF drawingPosition;
         std::array<TextureBorder::SurroundingBorder, ::TextureLogic::NumberZoomElements()> surroundingBorder;
-
     };
 }
 
