@@ -15,7 +15,6 @@ namespace Atlas
             // Intersection of the borders are commutative. It does not matter in what order the borders are checked.
             // Both of these operations should be the same- but just in case Qt's implementation of QRect gives different
             // results based off of the order of QRect implementation.
-
             if(entireTextureArea.intersects(otherBorder.entireTextureArea) || otherBorder.entireTextureArea.intersects(entireTextureArea))
             {
                 drawIntersectionBorder = true;
@@ -37,20 +36,17 @@ namespace Atlas
             // Make sure to restore the painter to its original state once the drawing of the border is done
             // A copy is done as it is not sure if when setting new pen if the old one is deleted- keeping a reference
             // to that would be a dangling reference.
-
             const QPen previousPen = painter.pen();
 
             // Give the painter a different pen for the drawing operations- it will not make a difference to how the
             // borders are drawn, but will ensure that the rest of this function does not modify the pen the painter had
             // when it was passed into this function in any way
-
             QPen pen{QColor{0, 0, 0,}, 0};
 
             painter.setPen(pen);
 
             // Note: the painter paths are used so that the rectangles representing the border can be filled in;
-            //       without a path only the outline of a rectangle is drawn.
-
+            // without a path only the outline of a rectangle is drawn.
             if(drawIntersectionBorder)
             {
                 for(const QRectF &rect : intersectionBorder)
@@ -79,7 +75,6 @@ namespace Atlas
             }
 
             // Restore the painter with the pen it had originally; in the caller's view the painter was never modified
-
             painter.setPen(previousPen);
         }
 
@@ -164,7 +159,6 @@ namespace Atlas
         {
             // Remember that while the surrounding border is logically made of two border- intersection and selection-
             // both still logically need to be translated so that both of them surround the texture they are associated with
-
             for(QRectF &rect : intersectionBorder)
             {
                 rect.translate(differenceX, differenceY);

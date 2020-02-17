@@ -129,9 +129,9 @@ namespace GUI
             atlasWidget->setTextureBankReference(textureBank);
         }
 
-        void ScrollArea::updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures)
+        void ScrollArea::updateTextureReferences()
         {
-            atlasWidget->updateTextureReferences(textures);
+            atlasWidget->updateTextureReferences();
         }
 
         void ScrollArea::wheelEvent(QWheelEvent *event)

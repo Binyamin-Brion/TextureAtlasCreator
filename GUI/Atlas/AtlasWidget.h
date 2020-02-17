@@ -38,6 +38,7 @@ namespace GUI
                 explicit AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
                 QImage::Format getAtlasFormat() const;
                 ::Atlas::AtlasInformationBundle getAtlasInformation() const;
+                void enterEvent(QEvent *event) override;
                 void exportTexture();
                 void keyPressed(QKeyEvent *event);
                 void mouseMoveEvent(QMouseEvent *event) override;
@@ -53,7 +54,7 @@ namespace GUI
                 void setViewPortOffsetX(int value);
                 void setViewPortOffsetY(int value);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
-                void updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
+                void updateTextureReferences();
                 void wheelEvent(QWheelEvent *event) override;
                 void zoomIn();
                 void zoomOut();

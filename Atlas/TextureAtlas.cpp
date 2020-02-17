@@ -14,7 +14,9 @@
 
 namespace Atlas
 {
-    TextureAtlas::TextureAtlas(QImage::Format atlasFormat) : atlasFormat{atlasFormat}
+    TextureAtlas::TextureAtlas(QImage::Format atlasFormat)
+                    :
+                        atlasFormat{atlasFormat}
     {
         selectedTexture = new SelectedTexture;
 
@@ -53,16 +55,17 @@ namespace Atlas
 
     void TextureAtlas::draw(QPainter &painter)
     {
-        // Note the order of drawing: the selected texture should be drawn last so that it is always drawn,
-        // even when over another texture
+        // When drawing the texture, only the texture and its border at the current zoom level is drawn. Since
+        // the contents position and size changes with the zoom, only the contents that have been adjusted for
+        // the current zoom can be drawn.
 
+        // Note: the order of drawing: the selected texture should be drawn last so that it is always drawn,
+        // even when over another texture
         for(const auto &i : textureDrawingPositions)
         {
             painter.drawImage(i.drawingPosition, i.texture->getImage(currentZoom));
 
             i.surroundingBorder[currentZoomIndex].draw(painter);
-
-           // i.texture->drawBorder(painter, currentZoom);
         }
 
         if(selectedTexture->isOpen())
@@ -88,7 +91,6 @@ namespace Atlas
     {
         // The result of this function is intended to be used if a texture is selected, as the result is used to determine
         // if a texture can further moved in a direction and when to reset cursor (call to textureSelected has to be done first)
-
         return atlasSize;
     }
 
@@ -121,7 +123,6 @@ namespace Atlas
     QSize TextureAtlas::getSelectedTextureSize() const
     {
         // Same idea for using pair and checking if a texture is selected as fn getAtlasSize
-
         if(selectedTexture->isOpen())
         {
             return QSize{selectedTexture->getImageForDrawing().getImage(currentZoom).width(), selectedTexture->getImageForDrawing().getImage(currentZoom).height()};
@@ -136,10 +137,16 @@ namespace Atlas
 
     bool TextureAtlas::exportImage(const QString &exportLocation) const
     {
+        // Exporting is done at the Normal zoom level, as that is true representation of the sizes that the user
+        // has input into the program. To account for this without having to change the zoom onscreen, the ratio
+        // between the current zoom and the normal zoom is calculated so it is known what the exported atlas should be.
+        // Remember that when zoom changes, so does the atlas size and the drawing positions of the textures in the atlas,
+        // which should not affect the final exported atlas size.
         float zoomFactor = TextureLogic::GetZoomValue(TextureLogic::Zoom::Normal) / TextureLogic::GetZoomValue(currentZoom);
 
         QImage image = QPixmap(atlasSize * zoomFactor).toImage();
 
+        // The exported image should have the same format as what the atlas was specified to have when it was created
         image = image.convertToFormat(atlasFormat);
 
         for(const auto &i : textureDrawingPositions)
@@ -148,9 +155,9 @@ namespace Atlas
 
             float yDrawPosition = i.drawingPosition.y();
 
-            xDrawingPosition /= TextureLogic::GetZoomValue(currentZoom);
+            xDrawingPosition *= zoomFactor;
 
-            yDrawPosition /= TextureLogic::GetZoomValue(currentZoom);
+            yDrawPosition *= zoomFactor;
 
             for(int x = 0; x < i.texture->getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
             {
@@ -161,6 +168,9 @@ namespace Atlas
             }
         }
 
+        // The selected existing texture, if any existing texture is selected, is not held in the textureDrawingPositions variable.
+        // In order for it to be drawn, it must be added to the exported atlas separately. Exporting an atlas only writes the textures
+        // that were added to the atlas, and as such the selectedTexture is not considered for exporting
         if(selectedExistingTexture->isOpen())
         {
             for(int x = 0; x < selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
@@ -177,13 +187,17 @@ namespace Atlas
 
     void TextureAtlas::keyPressed(int keyID)
     {
-        if(keyID == Qt::Key_Delete)
+        // Remove the selected existing texture by making the variable holding the selected texture empty.
+        // Since the selected existing texture is not part of textureDrawingPositions when it was selected,
+        // this operation effectively removes the texture from the atlas as it is not added back to textureDrawingPositions.
+        if(keyID == Qt::Key_Delete && selectedExistingTexture->isOpen())
         {
-            if(selectedExistingTexture->isOpen())
-            {
-                selectedExistingTexture->getImage();
-                textureBank->textureSelected(nullptr);
-            }
+            selectedExistingTexture->getImage();
+            textureBank->textureSelected(nullptr);
+        }
+        else if(keyID == Qt::Key_Escape && selectedTexture->isOpen())
+        {
+            selectedTexture->getImage();
         }
     }
 
@@ -193,20 +207,20 @@ namespace Atlas
 
         bool deSelectTexture = false;
 
+        // Block in if-statement refers to determining if selectedExistingTexture should be unselected or moved around (actually moving texture around is done in mouseMoved() )
         if(selectedExistingTexture->isOpen())
         {
+            // Check if cursor is over the selected existing texture, if there is one.
             if(mouseX >= selectedExistingTexture->getDrawingCoordinates().x() && mouseX <= selectedExistingTexture->getDrawingCoordinates().x() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).width())
             {
                 if(mouseY >= selectedExistingTexture->getDrawingCoordinates().y() && mouseY <= selectedExistingTexture->getDrawingCoordinates().y() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).height())
                 {
                     // If an existing texture is selected, and at the time of the cursor click the cursor is over the texture,
-                    // then make a note that when the cursor is released, execute the logic that may result in the cursor being unselected
-
+                    // then make a note that when the cursor is released, execute the logic that may result in the cursor being unselected.
                     ignoreMouseRelease = false;
 
                     // If the texture has been clicked, there is a chance it will be dragged (moved). However, it may be placed in an invalid
                     // location, which case it has to be returned to its position at the time of being clicked. This assignment keeps track of that position.
-
                     previousDrawingCoords = selectedExistingTexture->getDrawingCoordinates();
 
                     return;
@@ -227,7 +241,6 @@ namespace Atlas
             // If an area that is not the texture is clicked, then deselect it visually by not drawing its selection borders,
             // and add the texture internally so that logically it is not longer selected (hence call to addTexture)
             // Note that because only one texture can be selected at a time, this effectively marks all the textures as unselected
-
             selectedExistingTexture->setDrawSelectedSurroundingBorder(false);
 
             addTexture(selectedExistingTexture);
@@ -235,12 +248,12 @@ namespace Atlas
 
         textureBank->textureSelected(nullptr);
 
+        // Block of code in if-statement refers to selecting an existing texture within the atlas
         if(!selectedTexture->isOpen())
         {
             // If a texture is selected, then it needs to removed from the texture drawing position,
             // as it now is being referenced by the selectedExistingTexture object. Otherwise the texture will be drawn twice
             // and as the selected texture is moved, the texture will be drawn twice in different locations
-
             bool deleteTextureDrawingPosition = false;
 
             unsigned int deleteIndex = 0;
@@ -251,42 +264,39 @@ namespace Atlas
 
                 int currentTextureHeight = i.texture->getImage(currentZoom).height();
 
+                // Determine if cursor position is over any existing texture
                 if(mouseX >= i.drawingPosition.x() && mouseX <= i.drawingPosition.x() + currentTextureWidth)
                 {
                     if(mouseY >= i.drawingPosition.y() && mouseY <= i.drawingPosition.y() + currentTextureHeight)
                     {
                         // Put back the existing selected texture, if it exists, so that a new texture can be selected
-
                         if(selectedExistingTexture->isOpen())
                         {
+                            selectedExistingTexture->setDrawSelectedSurroundingBorder(false);
                             addTexture(selectedExistingTexture);
                         }
 
                         // Initialize the selectedExistingTexture reference with information about the texture that was clicked;
                         // the reference is drawing the exact same texture in the same place, so the texture data and drawing position
                         // has to be identical
-
                         selectedExistingTexture->setTexture(*i.texture, i.index);
 
                         selectedExistingTexture->move(i.drawingPosition.x() + i.texture->getImage(currentZoom).width() / 2,
                                               i.drawingPosition.y() + i.texture->getImage(currentZoom).height() / 2,
                                               atlasSize);
 
-                        // The texture that was clicked on was meant to be selected, so visually show it as selected
-
+                        // The texture that was clicked on was meant to be selected, so visually show it as selected.
                         selectedExistingTexture->setDrawSelectedSurroundingBorder(true);
 
                         // Update the variable that holds where existing selected texture should go if it is placed on
-                        // another texture. This variable will change when the texture is placed on a new valid spot in the atlas
-
+                        // another texture. This variable will change when the texture is placed on a new valid spot in the atlas.
                         previousDrawingCoords = i.drawingPosition;
 
                         // When the mouse is released is when the logic to place an existing selected texture is executed.
                         // However, then what will happen is that as soon as the texture is selected through a click, it
                         // will be unselected when the same mouse click is released. Thus for the click that determines
                         // to select a texture, ignore (only) the next mouse release so that the user can release the mouse
-                        // without deselecting the texture
-
+                        // without deselecting the texture.
                         ignoreMouseRelease = true;
 
                         deleteTextureDrawingPosition = true;
@@ -301,6 +311,10 @@ namespace Atlas
                 }
             }
 
+            // The selected existing texture is no longer part of the textureDrawingPositions and thus must be removed
+            // from that variable in order for the texture to be drawn according to where it should be as the it is moved
+            // as a selected existing texture. if it is not removed, the texture will be drawn in two places- where it was
+            // when it was selected, and its new position as a selected existing texture.
             if(deleteTextureDrawingPosition)
             {
                 textureDrawingPositions.erase(textureDrawingPositions.begin() + deleteIndex);
@@ -310,6 +324,9 @@ namespace Atlas
 
     void TextureAtlas::mouseMoved(int mouseX, int mouseY)
     {
+        // If the selected texture is not an existing texture, then the selected texture will always move with the cursor.
+        // Otherwise, it will only move the left mouse button is pressed.
+
         if(selectedTexture->isOpen())
         {
             selectedTexture->move(mouseX, mouseY, atlasSize);
@@ -319,8 +336,7 @@ namespace Atlas
         else if(selectedExistingTexture->isOpen())
         {
             // If the left mouse is not down when an existing texture is selected, then the user is not trying to drag
-            // the texture. In that case, no action has to be done if the mouse moves
-
+            // the texture. In that case, no action has to be done if the mouse moves.
             if(!leftMouseButtonDown)
             {
                 return;
@@ -329,8 +345,7 @@ namespace Atlas
             // If it is the first time the mouse is being dragged after clicking the left mouse, then centre the cursor
             // over the centre of the image. This is to prevent the texture from jumping during the first event of the mouse moving,
             // Remember that when moving the texture, is it relative to the centre of the texture.
-            // TODO: Occasionally there are jumps in the texture when moving it for the first time. Perhaps figure out why?
-
+            // TODO: In some cases the texture that is selected jumps around when it is moved initially. Would be nice, though not required, if it was fixed.
             if(!ignoreMouseRelease)
             {
                 QPointF drawingCoords = selectedExistingTexture->getDrawingCoordinates();
@@ -342,13 +357,11 @@ namespace Atlas
 
                 // If the user has dragged the mouse, then don't automatically deselect the texture.
                 // That would be annoying if that happened
-
                 ignoreMouseRelease = true;
 
                 // There is a small error in the program logic that causes the selected texture to jump the first time
                 // it is moved after being selected. Returning early from the function (causing mouse movements to begin
                 // from the centre of the texture due to the above code) fixes that issue.
-
                 return;
             }
 
@@ -360,26 +373,27 @@ namespace Atlas
 
     void TextureAtlas::mouseReleased(int mouseX, int mouseY, int mouseButton)
     {
-        if(mouseButton == Qt::LeftButton)
+        // A new texture is only added to the atlas after the user release the left mouse button.
+        // This prevents allows user to still drag the texture after clicking, which seems more intuitive.
+        if(leftMouseButtonDown && selectedTexture->isOpen())
         {
-            leftMouseButtonDown = false;
+            addTexture(selectedTexture);
         }
 
-        if(selectedExistingTexture->isOpen())
+        // Deselecting an existing texture can only be done by releasing the same button used to select a texture- left mouse button.
+        if(leftMouseButtonDown && selectedExistingTexture->isOpen())
         {
             if(intersectionOccured)
             {
                 // If the texture was released over another texture, then it has to be moved back to its original location
                 // before the drag occurred. Note that the previousDrawingCoords are set whenever a new existing texture is selected
-                // and everytime an existing selected texture is clicked
-
+                // and every time an existing selected texture is clicked.
                 previousDrawingCoords.setX(previousDrawingCoords.x() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).width() / 2);
                 previousDrawingCoords.setY(previousDrawingCoords.y() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).height() / 2);
 
                 selectedExistingTexture->move(previousDrawingCoords.x(), previousDrawingCoords.y(), atlasSize);
 
                 // This will always return false, but it will clear all textures of showing an intersection visually
-
                 checkIntersection();
             }
             else if(!ignoreMouseRelease)
@@ -387,7 +401,6 @@ namespace Atlas
                 // Only deselect texture if the cursor is released over the selected texture. This behaviour is enabled as
                 // it allows the user to drag the mouse away from over the texture and then release, preventing the texture
                 // from being deselected. It's not required behaviour, but it seems more intuitive.
-
                 if(mouseX >= selectedExistingTexture->getDrawingCoordinates().x() && mouseX <= selectedExistingTexture->getDrawingCoordinates().x() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).width())
                 {
                     if(mouseY >= selectedExistingTexture->getDrawingCoordinates().y() && mouseY <= selectedExistingTexture->getDrawingCoordinates().y() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).height())
@@ -402,9 +415,9 @@ namespace Atlas
             }
         }
 
-        if(selectedTexture->isOpen())
+        if(mouseButton == Qt::LeftButton)
         {
-            addTexture(selectedTexture);
+            leftMouseButtonDown = false;
         }
     }
 
@@ -412,13 +425,11 @@ namespace Atlas
     {
         unsigned int intersectionBorderWidth = texture->getIntersectionBorderWidth(TextureLogic::Zoom::Normal);
 
-        if(intersectionBorderWidth > atlasSize.width() || intersectionBorderWidth > atlasSize.height())
-        {
-            return true;
-        }
-
         bool foundTexture = false;
 
+        // The passed texture whose intersection border width was changed should have been selected when the border width
+        // was changed. Check to make sure this is the case, and that the currently selected texture is the same texture
+        // whose intersection border width was changed.
         if(selectedExistingTexture->isOpen())
         {
             if(texture == &selectedExistingTexture->getImageForDrawing())
@@ -432,12 +443,43 @@ namespace Atlas
                 foundTexture = true;
             }
 
+            // There is a serious logic failed if the current selected texture is not the same texture whose intersection border width
+            // was changed, as the option to change the border width is only present if a texture is selected and the check is done immediately.
             if(!foundTexture)
             {
                 Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Unable to find the selected texture passed into this function!");
             }
+
+            // The intersection width must not pass the borders of the atlas, as that logically does not make sense.
+            // To ensure this, calculate if the intersectionBorderWidth on all four sides of the texture is greater than
+            // the distance between the texture and the atlas border in the respective direction.
+            if(selectedExistingTexture->getDrawingCoordinates().x() < intersectionBorderWidth)
+            {
+                return true;
+            }
+
+            if(selectedExistingTexture->getDrawingCoordinates().y() < intersectionBorderWidth)
+            {
+                return true;
+            }
+
+            // To calculate the empty area to the right and bottom of the texture, its bottom-right corner is needed.
+            // Remember that the empty area is calculated with respect to the current atlas size, which changes with the zoom value.
+            // This is done as the user is selecting a border width when there viewing at a certain zoom, so it makes sense
+            // to keep all calculations at the same zoom level.
+            QPointF bottomRightCorner = QPointF{selectedExistingTexture->getDrawingCoordinates().x() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).size().width(),
+                                              selectedExistingTexture->getDrawingCoordinates().y() + selectedExistingTexture->getImageForDrawing().getImage(currentZoom).size().height()};
+
+            unsigned int emptyAreaRight = std::max(atlasSize.width() - bottomRightCorner.x(), 0.0);
+            unsigned int emptyAreaBottom = std::max(atlasSize.height() - bottomRightCorner.y(), 0.0);
+
+            if(emptyAreaRight < intersectionBorderWidth || emptyAreaBottom < intersectionBorderWidth)
+            {
+                return true;
+            }
         }
 
+        // Determine if the new intersection border width results in intersections with other textures in the atlas
         return checkIntersection();
     }
 
@@ -448,6 +490,8 @@ namespace Atlas
             return drawingPosition.texture == texture;
         });
 
+        // The checks to see if the selected textures are the texture that have to be deleted just an additional check
+        // to ensure program correctness. The last branch- with the assert- should not be reached.
         if(textureLocation != textureDrawingPositions.end())
         {
             textureDrawingPositions.erase(textureLocation);
@@ -466,19 +510,24 @@ namespace Atlas
                 selectedExistingTexture->getImage();
             }
         }
+        else
+        {
+            Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Unable to find the texture to remove from the atlas!");
+        }
     }
 
     void TextureAtlas::setAtlasSize(QSize size)
     {
-        // This function is called when the atlasWidget holding this texture atlas resizes
-
+        // This function is called when the atlasWidget holding this texture atlas resizes, which happens when the
+        // the zoom of the atlas changes
         atlasSize = size;
     }
 
     void TextureAtlas::setAtlasWidgetReference(GUI::Atlas::AtlasWidget *atlasWidget)
     {
         // This class needs to be able to call a function in atlasWidget. Tried passing a function pointer instead
-        // but got compile time errors. Should be revisited if author has time.
+        // but got compile time errors. It is not required but would increase encapsulation as only access to a specific
+        // function is granted rather than the entire class. It is not mandatory though.
         // TODO: change reference to atlasWidget to function pointer pointing to function that needs to be called within atlasWidget
 
         this->atlasWidget = atlasWidget;
@@ -486,9 +535,8 @@ namespace Atlas
 
     void TextureAtlas::setSelectedTexture(const TextureLogic::Texture &texture)
     {
-        // In a texture atlas, there is only one of each atlas. If that texture is already put in the atlas, then it is an error
+        // In a texture atlas, there is only one of each texture. If that texture is already put in the atlas, then it is an error
         // to place it again and the user must be notified
-
         bool textureLoadedAlready = false;
 
         for(const auto &i : textureDrawingPositions)
@@ -522,14 +570,9 @@ namespace Atlas
 
         // If there is an existing texture that is selected, deselect it. This will put the texture back into
         // textureDrawingPositions, allowing for that texture to be checked against the newly selected texture in the
-        // checkIntersection() function
-
+        // checkIntersection() function. Since it is no longer selected, its selected border is no longer visible.
+        selectedExistingTexture->getSurroundingBorder()[currentZoomIndex].setSelectedBorderVisible(false);
         addTexture(selectedExistingTexture);
-
-        for(auto &i : textureDrawingPositions)
-        {
-            i.surroundingBorder[currentZoomIndex].setSelectedBorderVisible(false);
-        }
     }
 
     void TextureAtlas::setTextureBankReference(TextureLogic::TextureBank *textureBank)
@@ -542,12 +585,11 @@ namespace Atlas
         }
     }
 
-    void TextureAtlas::textureLoaded(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures)
+    void TextureAtlas::textureLoaded()
     {
         // Texture has been added to the texture bank. Note that when adding a texture to the image, the old vector of textures
         // might be moved in memory due to reallocation of the vector. Therefore references to that vector have to be reset just in case.
-
-        this->textures = &textures;
+        this->textures = &textureBank->getTextures();
 
         for(auto &i : textureDrawingPositions)
         {
@@ -568,8 +610,14 @@ namespace Atlas
         }
         else if(selectedExistingTexture->isOpen())
         {
+            // Only return true if the left mouse button is down as where the cursor can be moved to should be
+            // limited only if the texture is being dragged around. If true is always returned, then if a texture
+            // is selected the cursor will not be able to move freely as the program will think the user is dragging
+            // the texture and take measures to ensure that the "moving" texture cannot be placed past the atlas borders.
             return leftMouseButtonDown;
         }
+
+        return false;
     }
 
     void TextureAtlas::zoomIn()
@@ -580,10 +628,19 @@ namespace Atlas
 
         if(oldZoom != currentZoom)
         {
+            // Zoom factors can only be zoomed in by one step increments, ie from 100% to 200%, not 100% to 400%.
+            // Thus with the zoom options available, zooming in will always have a zoom factor relative to the previous
+            // factor of two. Note that TextureLogic::zoomOut will ensure zoom past 400% is never obtained.
             updateTextureDrawingPositions(2.0f);
+
             currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
+
+            // Remember: selected textures (both existing and new) are not part of textureDrawingPositions; they have to be
+            // updated separately
             updateSelectedTexturesZoom(currentZoom, 2.0f);
 
+            // Tell the widget holding the atlas to visually resize the atlas to match the new zoom value, which will
+            // also logically resize the atlas in setAtlasSize()
             atlasWidget->resizeAtlasFactor(2.0f);
         }
     }
@@ -596,10 +653,19 @@ namespace Atlas
 
         if(oldZoom != currentZoom)
         {
+            // Zoom factors can only be zoomed in by one step increments, ie from 100% to 50%, not 100% to 25%.
+            // Thus with the zoom options available, zooming in will always have a zoom factor relative to the previous
+            // factor of two. Note that TextureLogic::zoomOut will ensure zoom past 25% is never obtained.
             updateTextureDrawingPositions(0.5f);
+
             currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
+
+            // Remember: selected textures (both existing and new) are not part of textureDrawingPositions; they have to be
+            // updated separately
             updateSelectedTexturesZoom(currentZoom, 0.5f);
 
+            // Tell the widget holding the atlas to visually resize the atlas to match the new zoom value, which will
+            // also logically resize the atlas in setAtlasSize()
             atlasWidget->resizeAtlasFactor(0.5f);
         }
     }
@@ -620,14 +686,13 @@ namespace Atlas
              * 4. The index of the QImage reference into the textures reference. This is needed when the textures reference is updated.
              *    See fn textureLoaded
              */
-
             textureDrawingPositions.emplace_back();
 
             textureDrawingPositions.back().drawingPosition = selectedTexture->getDrawingCoordinates();
 
             textureDrawingPositions.back().texture = &selectedTexture->getImage();
 
-            textureDrawingPositions.back().surroundingBorder = selectedTexture->getSurroundingBorder();
+            textureDrawingPositions.back().surroundingBorder = selectedTexture->getSurroundingBorderForDrawing();
 
             for(int i = 0; i < textures->size(); ++i)
             {
@@ -639,6 +704,8 @@ namespace Atlas
                 }
             }
 
+            // Serious issue if the selected texture is not known to exist in the texture bank; this means that within the bounds
+            // of the program it no longer exists, yet the fact that it was in selected existing texture implies that it does exist
             if(textureDrawingPositions.back().index == -1)
             {
                 Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Selected texture has a location not found in texture bank!");
@@ -657,10 +724,13 @@ namespace Atlas
     {
         for(auto &i : textureDrawingPositions)
         {
+            // For example: if a point is at 50, and the user zooms in, resulting in a zoom factor of 2, the new drawing point is 100
             QPointF oldDrawingCoordinates = i.drawingPosition;
 
             i.drawingPosition *= factor;
 
+            // The surrounding border uses QRects internally, which only support translations for moving the QRects,
+            // meaning the above factor multplication won't work with the texture borders
             QPointF translation = i.drawingPosition - oldDrawingCoordinates;
 
             for(auto &j: i.surroundingBorder)

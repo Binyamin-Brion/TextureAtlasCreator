@@ -46,7 +46,7 @@ namespace GUI
                 void resizeEvent(QResizeEvent *event) override;
                 bool setIntersectionWidth(TextureLogic::Texture *texture);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
-                void updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
+                void updateTextureReferences();
                 void wheelEvent(QWheelEvent *event) override;
 
             signals:

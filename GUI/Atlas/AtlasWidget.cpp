@@ -41,6 +41,11 @@ namespace GUI
             return ::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()};
         }
 
+        void AtlasWidget::enterEvent(QEvent *event)
+        {
+            setFocus(Qt::MouseFocusReason);
+        }
+
         void AtlasWidget::exportTexture()
         {
             QString newFileLocation = QFileDialog::getSaveFileName(this, tr("Save Image"), "", tr(""));
@@ -70,6 +75,12 @@ namespace GUI
                 QWidget::repaint();
 
                 emit currentAtlasInformationChanged(::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()});
+            }
+            else if(event->key() == Qt::Key_Escape)
+            {
+                textureAtlas->keyPressed(Qt::Key_Escape);
+
+                QWidget::repaint();
             }
         }
 
@@ -261,9 +272,9 @@ namespace GUI
             textureAtlas->setTextureBankReference(textureBank);
         }
 
-        void AtlasWidget::updateTextureReferences(const std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures)
+        void AtlasWidget::updateTextureReferences()
         {
-            textureAtlas->textureLoaded(textures);
+            textureAtlas->textureLoaded();
         }
 
         void AtlasWidget::wheelEvent(QWheelEvent *event)
