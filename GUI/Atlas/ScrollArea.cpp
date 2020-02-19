@@ -119,9 +119,9 @@ namespace GUI
             atlasWidget->setViewPort(QSize{viewport()->width(), viewport()->height()});
         }
 
-        bool ScrollArea::setIntersectionWidth(TextureLogic::Texture *texture)
+        bool ScrollArea::newIntersectionBorderWidthValid(TextureLogic::Texture *texture)
         {
-            return atlasWidget->setIntersectionBorderWidth(texture);
+            return atlasWidget->newIntersectionBorderWidthValid(texture);
         }
 
         void ScrollArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)

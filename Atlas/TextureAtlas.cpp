@@ -421,7 +421,7 @@ namespace Atlas
         }
     }
 
-    bool TextureAtlas::resizeIntersectionBorderWidth(TextureLogic::Texture *texture)
+    bool TextureAtlas::newIntersectionBorderWidthValid(TextureLogic::Texture *texture)
     {
         unsigned int intersectionBorderWidth = texture->getIntersectionBorderWidth(TextureLogic::Zoom::Normal);
 

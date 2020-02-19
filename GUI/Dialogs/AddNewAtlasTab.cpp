@@ -57,7 +57,7 @@ namespace GUI
 
             connect(ui->buttonBox, &QDialogButtonBox::accepted, [this]()
             {
-                emit newAtlasInformationSpecified(ui->newTabNameLineEdit->text(), requestedWidth, requestedHeight,
+                emit newAtlasInformationSpecified(ui->newTabNameLineEdit->text(), QSize{requestedWidth, requestedHeight},
                                                   internalFormatPairs[ui->textureFormatComboBox->currentIndex() + 1].format);
 
                 resetDialog();

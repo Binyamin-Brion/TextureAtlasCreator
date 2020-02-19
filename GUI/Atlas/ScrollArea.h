@@ -21,14 +21,17 @@ namespace GUI
     {
         class AtlasWidget;
 
-        /*
+        /**
          *  Provides a scrollable window to view the Atlas widget. Since the atlas widget may be bigger than the
          *  size of the window, a scroll view is required to view all of the atlas.
+         *
+         *  This class, beyond holding an atlas widget to provide with scrolling capabilities, simply forwards
+         *  arguments to the atlas widget.
          */
 
         class ScrollArea : public QScrollArea
         {
-            Q_OBJECT
+                Q_OBJECT
 
             public:
                 ScrollArea(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
@@ -44,7 +47,7 @@ namespace GUI
                 void removeTexture(const TextureLogic::Texture *texture);
                 void repaintSelectedTexture();
                 void resizeEvent(QResizeEvent *event) override;
-                bool setIntersectionWidth(TextureLogic::Texture *texture);
+                bool newIntersectionBorderWidthValid(TextureLogic::Texture *texture);
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
                 void updateTextureReferences();
                 void wheelEvent(QWheelEvent *event) override;

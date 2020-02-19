@@ -243,9 +243,9 @@ namespace GUI
             }
         }
 
-        bool AtlasWidget::setIntersectionBorderWidth(TextureLogic::Texture *texture)
+        bool AtlasWidget::newIntersectionBorderWidthValid(TextureLogic::Texture *texture)
         {
-            bool result = textureAtlas->resizeIntersectionBorderWidth(texture);
+            bool result = textureAtlas->newIntersectionBorderWidthValid(texture);
 
             QWidget::repaint();
 

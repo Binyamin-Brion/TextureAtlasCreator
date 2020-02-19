@@ -15,15 +15,33 @@ namespace GUI
 {
     namespace Atlas
     {
-        AtlasTabWidget::AtlasTabWidget(QWidget *parent) : QTabWidget{parent}
+        /*
+         *  About the variable currentTabs:
+         *
+         *  Its use is not required. It was originally implemented it was not known that Qt supports switching the placement
+         *  of tabs. This variable was used to help out with implementing a manual version of switching the order of tabs.
+         *
+         *  It could be removed, but it is likely not worth it. An attempt was made, but quickly a segfault came up.
+         *  Considering how rarely tab order is changed, the current way- right clicking the currently viewed tab, and selecting
+         *  to either move left or right- is sufficient.
+         */
+
+        // Beginning of public functions
+
+        AtlasTabWidget::AtlasTabWidget(QWidget *parent)
+                        :
+                            QTabWidget{parent},
+                            atlasTabOptionsMenu{new AtlasTabOptionsMenu{this}},
+                            renameTab{new Dialogs::AddNewTab{this}},
+                            addNewAtlasTab{new Dialogs::AddNewAtlasTab{this}}
         {
             this->setContextMenuPolicy(Qt::CustomContextMenu);
 
             // Code that sets up the logic to apply actions to the tabs that hold a texture atlas
-
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 
-            atlasTabOptionsMenu = new AtlasTabOptionsMenu{this};
+            // The following connect signals connect any action clicked in the context menu to the appropriate slot
+            // so that the user request for the currently displayed tab can be processed
 
             connect(atlasTabOptionsMenu, SIGNAL(addTabActionTriggered()), this, SLOT(showAddNewAtlasTab()));
 
@@ -33,93 +51,22 @@ namespace GUI
 
             connect(atlasTabOptionsMenu, SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
 
-            renameTab = new Dialogs::AddNewTab{this};
+            // Following connections ensure that the appropriate function is executed after a dialog was shown to the user after clicking on an action in the context menu
 
-            addNewAtlasTab = new Dialogs::AddNewAtlasTab{this};
+            connect(addNewAtlasTab, SIGNAL(newAtlasInformationSpecified(QString, QSize, QImage::Format)), this, SLOT(addAtlasWidget(const QString&, QSize, QImage::Format)));
+
+            connect(renameTab, SIGNAL(newTabNameChosen(QString)), this, SLOT(newTabNameChosen(const QString&)));
+
+            connect(atlasTabOptionsMenu, SIGNAL(deleteTabActionTriggered()), this, SLOT(deleteCurrentTab()));
+
+            connect(this, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
+
+            addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
 
             // By default there is one tab created, which holds an empty texture atlas.
             // When this is done, the default name for this tab has to be stored so that other
-            // tabs do not have the same name. The tab with this default name is created at the end of
-            // this constructor.
-
+            // tabs do not have the same name. The tab with this default name is created at the end of this constructor.
             addNewAtlasTab->addExistingTabName("Default");
-
-            connect(addNewAtlasTab, &Dialogs::AddNewAtlasTab::newAtlasInformationSpecified, [this]
-                   (QString newTabName, int requestedWidth, int requestedHeight, QImage::Format atlasFormat)
-            {
-                addAtlasWidget(newTabName, QSize{requestedWidth, requestedHeight}, atlasFormat);
-            });
-
-            // When renaming a tab, there is no direct way to renane a tab. As such, in order to rename a tab,
-            // the old tab has to be removed and a new tab with the new name has to be inserted.
-
-            connect(renameTab, &Dialogs::AddNewTab::newTabNameChosen, [this](QString newTabName)
-            {
-                // Keep track of the tab index of the tab being removed as this will change after the tab is removed.
-                // Keeping track of this eases the logic of being the operations required to rename a tab.
-
-                int previousIndex = currentIndex();
-
-                removeTab(previousIndex);
-
-                renameTab->removeNameExistingTab(currentTabs[previousIndex].second);
-
-                currentTabs[previousIndex].second = newTabName;
-
-                insertTab(previousIndex, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
-
-                renameTab->addNameExistingTab(newTabName);
-
-                setCurrentIndex(previousIndex);
-            });
-
-            connect(atlasTabOptionsMenu, &AtlasTabOptionsMenu::deleteTabActionTriggered, [this]()
-            {
-                if(currentIndex() != -1)
-                {
-                    // Remember there is a one to one correspondence between the order of the tabs shown and the
-                    // order tabs stored internally. For example, the first tab shown is stored at the beginning of
-                    // the currentTabs variable, the second tab at the second spot in the currentTab variable, and so on
-
-                    int previousIndex = currentIndex();
-
-                    textureBank->textureSelected(nullptr);
-
-                    removeTab(currentIndex());
-
-                    delete currentTabs[previousIndex].first;
-
-                    renameTab->removeNameExistingTab(currentTabs[previousIndex].second);
-
-                    currentTabs.erase(currentTabs.begin() + previousIndex);
-
-                    // Make sure that there is always at least one tab shown, even if the last one was previous deleted
-
-                    if(currentTabs.empty())
-                    {
-                        addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
-                    }
-                }
-            });
-
-            connect(this, &QTabWidget::currentChanged, [this](int index)
-            {
-                // If the last tab is deleted, and before a new one is set, this lambda is called when the currentIndex is -1.
-                // This leads to a segfault due to an invalid index. Thus a check against an invalid currentIndex has to be performed.
-
-                if(index == -1)
-                {
-                    return;
-                }
-
-                // Variable just used to increase readability
-
-                const ScrollArea *const scrollArea = currentTabs[index].first;
-
-                emit currentAtlasInformationChanged(scrollArea->getAtlasInformation());
-            });
-
-            addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
         }
 
         void AtlasTabWidget::addTextureToCurrentAtlas(const TextureLogic::Texture &texture)
@@ -145,20 +92,23 @@ namespace GUI
             // When a new intersection width is specified for a texture, that new intersection width is checked
             // to see if it is valid in all of the texture atlases that use that texture. If there is a problem with
             // the new width, the user has to be notified with an appropriate error message.
-
             std::vector<QString> atlasNames;
 
+            // This holds the result of checking all the texture atlases.
+            // If one or more atlases state the texture cannot have the selected texture intersection width change,
+            // this variable is true
             bool borderWidthChangeFailed = false;
 
             for(auto &i : currentTabs)
             {
-                bool result = i.first->setIntersectionWidth(texture);
+                bool result = i.first->newIntersectionBorderWidthValid(texture);
 
                 if(result)
                 {
                     atlasNames.push_back(i.second);
                 }
 
+                // Bitwise operation needed so that the most recent check does not override the previous checks
                 borderWidthChangeFailed |= result;
             }
 
@@ -173,7 +123,7 @@ namespace GUI
 
                errorMessage.chop(1);
 
-               QMessageBox::warning(this, tr("Error: Invalid New Intersection Border Wdith"), errorMessage.toStdString().c_str(), QMessageBox::Ok);
+               QMessageBox::warning(this, tr("Error: Invalid New Intersection Border Width"), errorMessage.toStdString().c_str(), QMessageBox::Ok);
             }
 
             return borderWidthChangeFailed;
@@ -192,9 +142,6 @@ namespace GUI
             }
         }
 
-        // Called when the vector holding all of the texture references has been added to, and so previous references
-        // to the contents within that vector may no longer be valid
-
         void AtlasTabWidget::updateTextureReferences(AccessRestriction::PassKey<TextureLogic::TextureBank>)
         {
             for(auto &i : currentTabs)
@@ -203,18 +150,90 @@ namespace GUI
             }
         }
 
+        // Beginning of public slots
+
         void AtlasTabWidget::exportTexture()
         {
             currentTabs[currentIndex()].first->exportTexture();
         }
 
+        // Beginning of private slots
+
+        void AtlasTabWidget::addAtlasWidget(const QString &tabName, QSize atlasSize, QImage::Format atlasFormat)
+        {
+            auto *tabScrollArea = new ScrollArea{atlasSize, atlasFormat, this};
+
+            tabScrollArea->setTextureBankReference(textureBank);
+
+            currentTabs.emplace_back(tabScrollArea, tabName);
+
+            addTab(currentTabs.back().first, currentTabs.back().second);
+
+            // The name for the tab was checked to make sure it was unique before this function (addAtlasWidget()) was called
+            renameTab->addNameExistingTab(tabName);
+
+            // Make sure that if the just added atlas changes in any way, the statistics are displayed
+            connect(tabScrollArea, &ScrollArea::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle atlasInformation)
+            {
+                emit currentAtlasInformationChanged(atlasInformation);
+            });
+        }
+
+        void AtlasTabWidget::currentTabChanged(int index)
+        {
+            // If the last tab is deleted, and before a new one is set, this lambda is called when the currentIndex is -1.
+            // This leads to a segfault due to an invalid index. Thus a check against an invalid currentIndex has to be performed.
+            if(index == -1)
+            {
+                return;
+            }
+
+            // Variable just used to increase readability
+            const ScrollArea *const scrollArea = currentTabs[index].first;
+
+            emit currentAtlasInformationChanged(scrollArea->getAtlasInformation());
+        }
+
+        void AtlasTabWidget::deleteCurrentTab()
+        {
+            // The user should not be able to delete a tab that would cause the currentIndex() to be -1, as this indicates
+            // that there is no current tab. This should not happen as if there is no tab, then a default one is placed,
+            // but the user theoretically may be quick enough to ask to delete a tab before the default one is placed.
+            // Placing a check here ensures the program does not crash in such a situation.
+            if(currentIndex() != -1)
+            {
+                // Remember there is a one to one correspondence between the order of the tabs shown and the
+                // order tabs stored internally. For example, the first tab shown is stored at the beginning of
+                // the currentTabs variable, the second tab at the second spot in the currentTab variable, and so on
+                int previousIndex = currentIndex();
+
+                textureBank->textureSelected(nullptr);
+
+                removeTab(currentIndex());
+
+                delete currentTabs[previousIndex].first;
+
+                renameTab->removeNameExistingTab(currentTabs[previousIndex].second);
+
+                currentTabs.erase(currentTabs.begin() + previousIndex);
+
+                // Make sure that there is always at least one tab shown, even if the last one was previous deleted
+                if(currentTabs.empty())
+                {
+                    addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
+                }
+            }
+        }
+
         void AtlasTabWidget::moveTabLeft()
         {
+            // The left most tab cannot be moved left
             if(currentIndex() == 0)
             {
                 return;
             }
 
+            // Remove the current tab and place it in a position to the left
             int previousIndex = currentIndex();
 
             removeTab(previousIndex);
@@ -222,19 +241,22 @@ namespace GUI
             insertTab(previousIndex - 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
 
             // Swap done to keep one-to-one correspondence between the order of tabs shown visually and the order the tabs are stored internally
-
             std::swap(currentTabs[previousIndex], currentTabs[previousIndex - 1]);
 
+            // Make sure that the tab that was moved left is still the one being displayed
             setCurrentIndex(previousIndex - 1);
         }
 
         void AtlasTabWidget::moveTabRight()
         {
-            if(currentIndex() == currentTabs.size() - 1)
+            // There will realistically not be more than the max value int number of tabs, so this cast is safe,
+            // and removes a warning between between signed and unsigned comparisons
+            if(currentIndex() == static_cast<int>(currentTabs.size() - 1))
             {
                 return;
             }
 
+            // Order of operations same as moveTabLeft()
             int previousIndex = currentIndex();
 
             removeTab(currentIndex());
@@ -242,10 +264,31 @@ namespace GUI
             insertTab(previousIndex + 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
 
             // Swap done to keep one-to-one correspondence between the order of tabs shown visually and the order the tabs are stored internally
-
             std::swap(currentTabs[previousIndex], currentTabs[previousIndex + 1]);
 
             setCurrentIndex(previousIndex + 1);
+        }
+
+        void AtlasTabWidget::newTabNameChosen(const QString &newTabName)
+        {
+            // When renaming a tab, there is no direct way to rename a tab. As such, in order to rename a tab,
+            // the old tab has to be removed and a new tab with the new name has to be inserted.
+
+            // Keep track of the tab index of the tab being removed as this will change after the tab is removed.
+            // Keeping track of this eases the logic of being the operations required to rename a tab.
+            int previousIndex = currentIndex();
+
+            removeTab(previousIndex);
+
+            renameTab->removeNameExistingTab(currentTabs[previousIndex].second);
+
+            currentTabs[previousIndex].second = newTabName;
+
+            insertTab(previousIndex, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+            renameTab->addNameExistingTab(newTabName);
+
+            setCurrentIndex(previousIndex);
         }
 
         void AtlasTabWidget::repaintSelectedTexture()
@@ -266,24 +309,6 @@ namespace GUI
         void AtlasTabWidget::showRenameTabDialog()
         {
             renameTab->open();
-        }
-
-        void AtlasTabWidget::addAtlasWidget(const QString &tabName, QSize atlasSize, QImage::Format atlasFormat)
-        {
-            auto *tabScrollArea = new ScrollArea{atlasSize, atlasFormat, this};
-
-            tabScrollArea->setTextureBankReference(textureBank);
-
-            currentTabs.emplace_back(tabScrollArea, tabName);
-
-            addTab(currentTabs.back().first, currentTabs.back().second);
-
-            renameTab->addNameExistingTab(tabName);
-
-            connect(tabScrollArea, &ScrollArea::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle atlasInformation)
-            {
-                emit currentAtlasInformationChanged(atlasInformation);
-            });
         }
     }
 }

@@ -147,7 +147,7 @@ namespace Atlas
              * @param texture
              * @return true if the new intersection width causes an intersection; the new intersection width is not valid
              */
-            bool resizeIntersectionBorderWidth(TextureLogic::Texture *texture);
+            bool newIntersectionBorderWidthValid(TextureLogic::Texture *texture);
 
             /**
              * Removes the passed in texture from the atlas. This includes selected textures as well. If the selected

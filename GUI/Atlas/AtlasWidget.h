@@ -25,7 +25,7 @@ namespace GUI
 {
     namespace Atlas
     {
-        /*
+        /**
          *  The Widget onto which the texture atlas is painted, and widget that stores the texture atlas
          *  itself. It forwards all necessary arguments to the texture atlas.
          */
@@ -49,7 +49,7 @@ namespace GUI
                 void removeTexture(const TextureLogic::Texture *texture);
                 void resizeAtlasFactor(float factor);
                 void resizeEvent(QResizeEvent *event) override;
-                bool setIntersectionBorderWidth(TextureLogic::Texture *texture);
+                bool newIntersectionBorderWidthValid(TextureLogic::Texture *texture);
                 void setViewPort(QSize viewPort);
                 void setViewPortOffsetX(int value);
                 void setViewPortOffsetY(int value);

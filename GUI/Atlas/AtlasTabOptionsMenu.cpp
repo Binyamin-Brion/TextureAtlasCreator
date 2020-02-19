@@ -8,7 +8,9 @@ namespace GUI
 {
     namespace Atlas
     {
-        AtlasTabOptionsMenu::AtlasTabOptionsMenu(QWidget *parent) : QMenu{parent}
+        AtlasTabOptionsMenu::AtlasTabOptionsMenu(QWidget *parent)
+                            :
+                                QMenu{parent}
         {
             addTab.setText("Add New Tab");
             renameTab.setText("Rename Tab");

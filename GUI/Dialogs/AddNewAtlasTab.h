@@ -33,7 +33,7 @@ namespace GUI
                 void addExistingTabName(QString tabName);
 
             signals:
-                void newAtlasInformationSpecified(QString, int, int, QImage::Format);
+                void newAtlasInformationSpecified(QString, QSize, QImage::Format);
 
             private:
                 void atlasDimensionSpecified(QLineEdit *lineEdit, int &dimension);
