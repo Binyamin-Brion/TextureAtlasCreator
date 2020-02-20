@@ -135,6 +135,11 @@ namespace Atlas
         return QSize{-1, -1};
     }
 
+    TextureLogic::Zoom TextureAtlas::getCurrentZoom() const
+    {
+        return currentZoom;
+    }
+
     bool TextureAtlas::exportImage(const QString &exportLocation) const
     {
         // Exporting is done at the Normal zoom level, as that is true representation of the sizes that the user
@@ -269,6 +274,13 @@ namespace Atlas
                 {
                     if(mouseY >= i.drawingPosition.y() && mouseY <= i.drawingPosition.y() + currentTextureHeight)
                     {
+                        // Restriction is in-place that only textures that fit entirely within the viewport can be selected.
+                        // This ensures that checks on valid cursor positions with an open new selected texture remain valid.
+                        if(atlasWidget->checkTextureNotWithinViewPort(i.texture->getImage(currentZoom).size()))
+                        {
+                            return;
+                        }
+
                         // Put back the existing selected texture, if it exists, so that a new texture can be selected
                         if(selectedExistingTexture->isOpen())
                         {
@@ -356,7 +368,7 @@ namespace Atlas
                 atlasWidget->moveMouseTo(newMousePosition.x(), newMousePosition.y());
 
                 // If the user has dragged the mouse, then don't automatically deselect the texture.
-                // That would be annoying if that happened
+                // That would be annoying if that happened.
                 ignoreMouseRelease = true;
 
                 // There is a small error in the program logic that causes the selected texture to jump the first time
@@ -626,6 +638,20 @@ namespace Atlas
 
         currentZoom = TextureLogic::zoomIn(currentZoom);
 
+        // Restriction is in-place that only textures that fit entirely within the viewport can be selected.
+        // This ensures that checks on valid cursor positions with an open new selected texture remain valid.
+        // Since the zoomIn increases the effective size of a selected texture, only a zoomIn can cause a texture
+        // to no longer be displayed entirely within a viewport.
+        if(selectedExistingTexture->isOpen())
+        {
+            if(atlasWidget->checkTextureNotWithinViewPort(selectedExistingTexture->getImageForDrawing().getImage(currentZoom).size()))
+            {
+                currentZoom = oldZoom;
+
+                return;
+            }
+        }
+
         if(oldZoom != currentZoom)
         {
             // Zoom factors can only be zoomed in by one step increments, ie from 100% to 200%, not 100% to 400%.
@@ -684,7 +710,7 @@ namespace Atlas
              * 2. Get the reference to the selected texture QImage- ie the actual data to render
              * 3. Copy the surrounding border of the selected texture. This gets the state of the border: its position, and whether it is drawn
              * 4. The index of the QImage reference into the textures reference. This is needed when the textures reference is updated.
-             *    See fn textureLoaded
+             *    See textureLoaded()
              */
             textureDrawingPositions.emplace_back();
 

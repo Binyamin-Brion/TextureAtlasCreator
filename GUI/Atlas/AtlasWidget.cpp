@@ -16,19 +16,43 @@ namespace GUI
     namespace Atlas
     {
         AtlasWidget::AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent)
-                                : QWidget{parent}, textureAtlas{std::make_unique<::Atlas::TextureAtlas>(atlasFormat)}
+                        :
+                            QWidget{parent},
+                            textureAtlas{std::make_unique<::Atlas::TextureAtlas>(atlasFormat)}
         {
+            // The size of this widget is the size of the atlas. By setting the restrictions on the widget,
+            // the resizeEvent() function will be called, resizing the texture atlas to the size of this widget
             setMinimumSize(atlasSize);
             setMaximumSize(atlasSize);
 
-            atlasDisplaySize = QSizeF{static_cast<float>(atlasSize.width()), static_cast<float>(atlasSize.height())};
-
-            setFocusPolicy(Qt::StrongFocus);
+            // Widget needs to track cursor if a texture is being dragged around
             setMouseTracking(true);
 
+            // The texture atlas needs to notify this widget of how much to change its size based off of the next
+            // zoom value (when user requests to change zoom level)
             textureAtlas->setAtlasWidgetReference(this);
 
+            // At the start of the program, the scroll bars of the scroll area holding this widget are not moved,
+            // meaning the viewport through which this viewport is looked at is not moved
             viewPortOffset = QPoint{0, 0};
+        }
+
+        bool AtlasWidget::checkTextureNotWithinViewPort(QSize textureSize)
+        {
+            if(viewPort.width() < textureSize.width() || viewPort.height() < textureSize.height())
+            {
+                std::string errorMessage;
+
+                errorMessage += "The texture cannot be added as it is too big for the viewport. You must zoom out.\n\n";
+                errorMessage += "Viewport Size: " + std::to_string(viewPort.width()) + " x " + std::to_string(viewPort.height()) + "\n";
+                errorMessage += "Texture size: " + std::to_string(textureSize.width()) + " x " + std::to_string(textureSize.height());
+
+                QMessageBox::warning(this, tr("Error: Texture Too Large"), errorMessage.c_str(), QMessageBox::Ok);
+
+                return true;
+            }
+
+            return false;
         }
 
         QImage::Format AtlasWidget::getAtlasFormat() const
@@ -41,15 +65,11 @@ namespace GUI
             return ::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()};
         }
 
-        void AtlasWidget::enterEvent(QEvent *event)
-        {
-            setFocus(Qt::MouseFocusReason);
-        }
-
         void AtlasWidget::exportTexture()
         {
             QString newFileLocation = QFileDialog::getSaveFileName(this, tr("Save Image"), "", tr(""));
 
+            // If no location is selected to save to, then do not attempt to export the atlas
             if(newFileLocation.isEmpty())
             {
                 return;
@@ -57,7 +77,6 @@ namespace GUI
 
             // Export as a png image, to make sure no quality is lost from the texture atlas. User can convert to
             // different formats if desired using external tools.
-
             newFileLocation += ".png";
 
             if(!textureAtlas->exportImage(newFileLocation))
@@ -70,23 +89,30 @@ namespace GUI
         {
             if(event->key() == Qt::Key_Delete)
             {
+                // This will cause to remove the selected texture from the texture atlas, if there is one. If no texture is selected,
+                // then no action is taken by the texture atlas
                 textureAtlas->keyPressed(Qt::Key_Delete);
 
+                // Removing texture from atlas changes the atlas visually, and this change should be visible immediately
                 QWidget::repaint();
 
+                // Removing texture also changes the statistics of the texture atlas, which should be reflected in the GUI
                 emit currentAtlasInformationChanged(::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()});
             }
             else if(event->key() == Qt::Key_Escape)
             {
+                // This will notify the texture atlas the current texture that might be added to the texture atlas will no longer
+                // be added.
                 textureAtlas->keyPressed(Qt::Key_Escape);
 
+                // This also changes what is drawn around the cursor, as no texture is now drawn. This change should visible immediately
                 QWidget::repaint();
             }
         }
 
         void AtlasWidget::mouseMoveEvent(QMouseEvent *event)
         {
-            auto testPosAgainstAtlasBoundaries = textureAtlas->getAtlasSize();
+            auto atlasSize = textureAtlas->getAtlasSize();
 
             int mouseX = event->x();
 
@@ -94,48 +120,24 @@ namespace GUI
 
             if(textureAtlas->textureSelected()) // A texture is selected
             {
-                // See fn moveCursorToViewPort for a description of what this does
-
-                if(moveCursorToViewPort(mouseX, mouseY))
+                // See lockCursorToViewPort() for a description of what this does
+                if(lockCursorToViewPort(mouseX, mouseY))
                 {
                     return;
                 }
-
-               // setCursor(Qt::BlankCursor);
 
                 bool resetCursorPositionX = false;
 
                 bool resetCursorPositionY = false;
 
                 /*
-                 *  The following explanation applies to the y dimension as well. The reasons for the loweBoundX and higherBoundX
-                 *  is to make sure that textures are not moved off screen. There are two scenarios to consider:
-                 *
-                 *  1. The texture fits entirely within the viewport. In this case, to check if the texture is being moved offscreen,
-                 *      check that the cursor does not move beyond the border +/- half the texture width, depending on which side of
-                 *      the atlas the texture is approaching
-                 *
-                 *  2.  The texture does not fit entirely within the viewport. To handle this case, the limits on the texture are
-                 *      those derived from the size of the viewport; the exact answer depends on what side of the texture is being checked.
-                 *      For example, if the texture is being moved to the left, the stop the cursor when the texture is attempted to being moved
-                 *      off screen, limit the position of the cursor to the width of the viewport.
-                 *
-                 *  These cases differ from the above if statements for making sure the cursor does not go offscreen the following code
-                 *  deals with the texture placement behaviour when the borders of the atlas are within the viewport.
+                 * When moving the texture around, check that the cursor does not move beyond the border +/- half
+                 * the texture width, depending on which side of the atlas the texture is approaching
                  */
 
-                int lowerBoundX = textureAtlas->getSelectedTextureSize().width() / 2 > (viewPort.width() - 5) ? (viewPort.width() - 5) : textureAtlas->getSelectedTextureSize().width() / 2;
+                int lowerBoundX = textureAtlas->getSelectedTextureSize().width() / 2;
 
-                int upperBoundX;
-
-                if(textureAtlas->getSelectedTextureSize().width() / 2 > (viewPort.width() - 5))
-                {
-                    upperBoundX = (width() + (width() - viewPort.width())) / 2;
-                }
-                else
-                {
-                    upperBoundX = testPosAgainstAtlasBoundaries.width() - textureAtlas->getSelectedTextureSize().width() / 2;
-                }
+                int upperBoundX = atlasSize.width() - textureAtlas->getSelectedTextureSize().width() / 2;
 
                 if(mouseX < lowerBoundX) // Cursor trying to move texture offscreen to the left
                 {
@@ -150,18 +152,9 @@ namespace GUI
                     resetCursorPositionX = true;
                 }
 
-                int lowerBoundY = textureAtlas->getSelectedTextureSize().height() / 2 > (viewPort.height() - 5) ? (viewPort.height() - 5) : textureAtlas->getSelectedTextureSize().height() / 2;
+                int lowerBoundY = textureAtlas->getSelectedTextureSize().height() / 2;
 
-                int upperBoundY;
-
-                if(textureAtlas->getSelectedTextureSize().height() / 2 > (viewPort.height() - 5))
-                {
-                    upperBoundY = (height() + (height() - viewPort.height())) / 2;
-                }
-                else
-                {
-                    upperBoundY = testPosAgainstAtlasBoundaries.height() - textureAtlas->getSelectedTextureSize().height() / 2;
-                }
+                int upperBoundY = atlasSize.height() - textureAtlas->getSelectedTextureSize().height() / 2;
 
                 if(mouseY < lowerBoundY) // Cursor trying to move texture offscreen to the top
                 {
@@ -169,7 +162,7 @@ namespace GUI
 
                     resetCursorPositionY = true;
                 }
-                else if(mouseY > upperBoundY)
+                else if(mouseY > upperBoundY) // Cursor trying to move texture to the bottom
                 {
                     mouseY = upperBoundY;
 
@@ -177,10 +170,11 @@ namespace GUI
                 }
 
                 // X and Y dimensions are handled separately as, for example, if the cursor is pushing the texture offscreen to the left,
-                // it does not mean that the y position of the cursor is pushing the texture offscreen
-
+                // it does not mean that the y position of the cursor is pushing the texture offscreen. Note that even if the new texture
+                // position is invalid only along one dimension, then it is still considered invalid along both dimensions.
                 if(resetCursorPositionX || resetCursorPositionY)
                 {
+                    // Move the cursor back to a valid position after mapping the valid reset position relative to the widget
                     QCursor c = cursor();
 
                     c.setPos(mapToGlobal(QPoint{mouseX, mouseY}));
@@ -188,6 +182,8 @@ namespace GUI
                     setCursor(c);
                 }
 
+                // Keep track of what the most recent valid mouse position is in case a future invalid move has to be reverted.
+                // See lockCursorToViewPort()
                 previousMouseCoords = QPoint{mouseX, mouseY};
             }
 
@@ -212,6 +208,7 @@ namespace GUI
 
             textureAtlas->mouseReleased(event->x(), event->y(), event->button());
 
+            // Remember that a texture is only placed after the mouse button is released, and only at this point is the texture atlas modified
             emit currentAtlasInformationChanged(::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()});
 
             QWidget::repaint();
@@ -227,12 +224,35 @@ namespace GUI
 
             // Draw a rect showing the border of the texture atlas. If the user zooms out, this is useful to determine
             // how much available space is still left in the atlas
-
             painter.drawRect(0,0, width() - 1, height() - 1);
         }
 
         void AtlasWidget::textureButtonPressed(const TextureLogic::Texture &texture)
         {
+            QSize atlasSize = textureAtlas->getAtlasSize();
+            QSize textureSize = texture.getImage(textureAtlas->getCurrentZoom()).size();
+
+            // A texture bigger than the texture atlas cannot be placed on the atlas
+            if(atlasSize.width() < textureSize.width() || atlasSize.height() < textureSize.height())
+            {
+                std::string errorMessage;
+
+                errorMessage += "The texture cannot be added as it is too big for the current atlas.\n\n";
+                errorMessage += "Atlas Size: " + std::to_string(atlasSize.width()) + " x " + std::to_string(atlasSize.height()) + "\n";
+                errorMessage += "Texture size: " + std::to_string(textureSize.width()) + " x " + std::to_string(textureSize.height());
+
+                QMessageBox::warning(this, tr("Error: Texture Too Large"), errorMessage.c_str(), QMessageBox::Ok);
+
+                return;
+            }
+
+            // Restriction is in-place that only textures that fit entirely within the viewport are placed.
+            // This ensures that checks on valid cursor positions with an open new selected texture remain valid.
+            if(checkTextureNotWithinViewPort(texture.getImage(textureAtlas->getCurrentZoom()).size()))
+            {
+                return;
+            }
+
             try
             {
                 textureAtlas->setSelectedTexture(texture);
@@ -277,27 +297,6 @@ namespace GUI
             textureAtlas->textureLoaded();
         }
 
-        void AtlasWidget::wheelEvent(QWheelEvent *event)
-        {
-            QWidget::wheelEvent(event);
-
-            if(controlKeyDown)
-            {
-                if(event->angleDelta().y() > 0)
-                {
-                    textureAtlas->zoomIn();
-
-                    QWidget::repaint();
-                }
-                else if(event->angleDelta().y() < 0)
-                {
-                    textureAtlas->zoomOut();
-
-                    QWidget::repaint();
-                }
-            }
-        }
-
         void AtlasWidget::zoomIn()
         {
             textureAtlas->zoomIn();
@@ -312,11 +311,6 @@ namespace GUI
             QWidget::repaint();
         }
 
-        AtlasWidget::~AtlasWidget()
-        {
-
-        }
-
         void AtlasWidget::removeTexture(const TextureLogic::Texture *texture)
         {
             textureAtlas->removeTexture(texture);
@@ -324,14 +318,13 @@ namespace GUI
             QWidget::repaint();
         }
 
-        // Update the size of this widget to reflect the fact that the user has zoom in or out
-
         void AtlasWidget::resizeAtlasFactor(float factor)
         {
-            atlasDisplaySize *= factor;
+            // Update the size of this widget to reflect the fact that the user has zoom in or out
+            QSize newAtlasSize = size() * factor;
 
-            setMinimumSize(atlasDisplaySize.width(), atlasDisplaySize.height());
-            setMaximumSize(atlasDisplaySize.width(), atlasDisplaySize.height());
+            setMinimumSize(newAtlasSize.width(), newAtlasSize.height());
+            setMaximumSize(newAtlasSize.width(), newAtlasSize.height());
         }
 
         void AtlasWidget::resizeEvent(QResizeEvent *event)
@@ -341,20 +334,20 @@ namespace GUI
             textureAtlas->setAtlasSize(event->size());
         }
 
-        // This function is used by the TextureAtlas to move the cursor when a texture is about to be dragged.
-        // This prevents the texture from jumping around the texture has begun to be moved, for the most part:
-        // TODO: Figure out why the first time the texture is moved, it still jumps, but not for subsequent texture drags
-
         void AtlasWidget::moveMouseTo(int x, int y)
         {
+            // This function is used by the TextureAtlas to move the cursor when a texture is about to be dragged.
+            // This prevents the texture from jumping around the texture has begun to be move. This is because movement
+            // is done relative to the centre of the texture; if the cursor is not moved to the centre of the texture
+            // then the next movement could cause a jump in texture position.
+
             int mouseX = x;
 
             int mouseY = y;
 
-            // See fn moveCursorToViewPort for a description of what this does.
+            // See lockCursorToViewPort() for a description of what this does.
             // Unlikely this call will change mouseX, or mouseY, but it is a precaution
-
-            moveCursorToViewPort(mouseX, mouseY);
+            lockCursorToViewPort(mouseX, mouseY);
 
             QCursor c = cursor();
 
@@ -363,20 +356,32 @@ namespace GUI
             setCursor(c);
         }
 
-        bool AtlasWidget::moveCursorToViewPort(int &mouseX, int &mouseY)
+        bool AtlasWidget::lockCursorToViewPort(int &mouseX, int &mouseY)
         {
             /*
-            *  The following four if statements make sure that the cursor cannot be moved off the widget containing
-            *  the textures IF a texture is currently being dragged.
-            *
-            *  For example, suppose the viewport of the scroll area is in the middle of the widget within the scroll area.
-            *
-            *  If a texture is being moved, without any restrictions, the texture could continue being moved, say to the left,
-            *  even though the cursor has already left the widget holding the textures.
-            *
-            *  With the restrictions of the if statements, as soon as the cursor tries to move out of the viewport,
-            *  it is moved back to the position right before it left.
-            */
+             *  The following four if statements make sure that the cursor cannot be moved off the widget containing
+             *  the textures IF a texture is currently being dragged. This occurs in the following situation:
+             *
+             *  -------------------------------------------------------
+             *  |          Texture        |                |          |
+             *  |_________________________|   Viewport     |  Widget  |
+             *  |                                          |          |
+             *  |------------------------------------------|          |
+             *  |-----------------------------------------------------|
+             *
+             *  If the texture is being moved to the bottom or down, it will eventually hit the borders of the viewport
+             *  before the borders of the widget. In that case, the checks done in mouseMoveEvent() will not prevent the user from moving
+             *  texture pass where it can be viewed, as the cursor is not locked to the viewport.
+             *
+             *  This function prevents that issue. As soon as the cursor is trying to move past the viewport when dragging
+             *  a texture, it will be moved back to the border of the viewport. Thus the texture cannot be moved offscreen.
+             *
+             *  For example, suppose the viewport of the scroll area is in the middle of the widget within the scroll area.
+             *
+             *  If a texture is being moved, without any restrictions, the texture could continue being moved, say to the left,
+             *  even though the cursor has already left the widget holding the textures.
+             *
+             */
 
             bool returnTrue = false;
 

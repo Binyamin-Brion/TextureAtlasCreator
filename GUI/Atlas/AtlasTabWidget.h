@@ -79,8 +79,8 @@ namespace GUI
                 void removeTexture(const TextureLogic::Texture *texture);
 
                 /**
-                 * Sets the intersection width for ALL textures atlases, regardless if an atlas is currently
-                 * being displayed.
+                 * Checks the new intersection width for ALL textures atlases to see if it is valid (no intersection with other textures,
+                 * regardless if an atlas is currently being displayed.
                  *
                  * @param texture whose intersection width has been resized
                  * @return true if the operation was NOT successful

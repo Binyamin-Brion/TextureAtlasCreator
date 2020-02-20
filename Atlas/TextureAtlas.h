@@ -97,6 +97,13 @@ namespace Atlas
             QSize getSelectedTextureSize() const;
 
             /**
+             * Get the current zoom of the atlas.
+             *
+             * @return zoom that the texture atlas is being displayed at.
+             */
+            TextureLogic::Zoom getCurrentZoom() const;
+
+            /**
              * Exports the texture atlas to the given location using the atlas' internal format and size.
              *
              * @param exportLocation the location the texture atlas should be saved to. This must include the full path,
@@ -175,6 +182,7 @@ namespace Atlas
             /**
              * Sets the selected texture for the atlas. The texture is not placed in the atlas, but the cursor will now
              * be bound to the texture passed in.
+             *
              * Note: This applies to newly selected texture, not a texture already placed in the atlas. Any existing
              *       selected texture, new or already placed in atlas, is unselected.
              *

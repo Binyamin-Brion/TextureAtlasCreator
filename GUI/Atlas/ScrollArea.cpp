@@ -13,31 +13,29 @@ namespace GUI
 {
     namespace Atlas
     {
-        ScrollArea::ScrollArea(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent)
-                                : QScrollArea{parent}, atlasWidget{new AtlasWidget{atlasSize, atlasFormat, this}}
-        {
-            setLayout(new QHBoxLayout{this});
+        // Beginning of public functions
 
+        ScrollArea::ScrollArea(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent)
+                    :
+                        QScrollArea{parent},
+                        atlasWidget{new AtlasWidget{atlasSize, atlasFormat, this}}
+        {
+            // Make this scroll area display the widget holding the atlas
             setWidget(atlasWidget);
 
+            // Keyboard shortcuts to zooming in and out of the atlas. Note that this will only work when the keyboard
+            // focus is with this object; otherwise this object will never be aware that the users used these shortcuts
             new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Equal), this, SLOT(zoomIn()));
 
             new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Minus), this, SLOT(zoomOut()));
 
-            connect(horizontalScrollBar(), &QScrollBar::valueChanged, [this](int newValue)
-            {
-                atlasWidget->setViewPortOffsetX(newValue);
-            });
+            // Connections to handle the user scrolling
+            connect(horizontalScrollBar(), &QScrollBar::valueChanged, [this](int newValue) { atlasWidget->setViewPortOffsetX(newValue); });
 
-            connect(verticalScrollBar(), &QScrollBar::valueChanged, [this](int newValue)
-            {
-                atlasWidget->setViewPortOffsetY(newValue);
-            });
+            connect(verticalScrollBar(), &QScrollBar::valueChanged, [this](int newValue) { atlasWidget->setViewPortOffsetY(newValue); });
 
-            connect(atlasWidget, &AtlasWidget::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle information)
-            {
-                emit currentAtlasInformationChanged(information);
-            });
+            // Connection for when the user modified the atlas displayed in this scroll area
+            connect(atlasWidget, &AtlasWidget::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle information) { emit currentAtlasInformationChanged(information); });
         }
 
         void ScrollArea::addTexture(const TextureLogic::Texture &texture)
@@ -50,7 +48,6 @@ namespace GUI
             // The scroll area takes control of all keyboard input once the cursor has entered it
             // to ensure that the short cuts to change the zoom are received and are not given to another widget.
             // This is not strictly required, but it does not hurt.
-
             QWidget::grabKeyboard();
         }
 
@@ -94,6 +91,9 @@ namespace GUI
 
         void ScrollArea::scrollContentsBy(int dx, int dy)
         {
+            // If the control key is down, then the viewport of this scroll area is not to be changed; it is assumed
+            // that the user wishes to change the atlas zoom. In that case, make sure inherited QScrollArea does not
+            // processes the change in scrollbars should they occur for whatever reason
             if(controlKeyDown)
             {
                 return;
@@ -116,6 +116,8 @@ namespace GUI
         {
             QScrollArea::resizeEvent(event);
 
+            // The atlas widget changes its calculation depending on how much of the atlas is currently visible.
+            // Thus it needs to be aware of any changes to the viewport through which the atlas is being viewed.
             atlasWidget->setViewPort(QSize{viewport()->width(), viewport()->height()});
         }
 
@@ -136,23 +138,22 @@ namespace GUI
 
         void ScrollArea::wheelEvent(QWheelEvent *event)
         {
+            // If the control key is down, then change the zoom. If the user moved the wheel away from themselves (forwards),
+            // then zoom in; otherwise zoom out. The atlas widget ensures that the atlas with the new zoom is painted.
             if(controlKeyDown)
             {
                 if(event->angleDelta().y() > 0)
                 {
                     atlasWidget->zoomIn();
-
-                    QWidget::repaint();
                 }
                 else if(event->angleDelta().y() < 0)
                 {
                     atlasWidget->zoomOut();
-
-                    QWidget::repaint();
                 }
             }
             else
             {
+                // Otherwise process the event as normal, which would move the scroll bars.
                 QScrollArea::wheelEvent(event);
             }
         }
