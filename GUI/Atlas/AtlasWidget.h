@@ -35,6 +35,10 @@ namespace GUI
                 Q_OBJECT
 
             signals:
+
+                /**
+                 *  Emitted when the texture atlas has changed, and statistics about the atlas need to be updated in the GUI.
+                 */
                 void currentAtlasInformationChanged(::Atlas::AtlasInformationBundle);
 
             public:
@@ -87,16 +91,16 @@ namespace GUI
                 void keyPressed(QKeyEvent *event);
 
                 /**
-                 * Handles mouse clicks.
+                 * Handles mouse movement.
                  *
-                 * @param event the mouse button that was clicked
+                 * @param event the mouse position as a result if the cursor moving
                  */
                 void mouseMoveEvent(QMouseEvent *event) override;
 
                 /**
-                 * Handles mouse movement.
+                 * Handles mouse clicks.
                  *
-                 * @param event the mouse position as a result if the cursor moving
+                 * @param event the mouse button that was clicked
                  */
                 void mousePressEvent(QMouseEvent *event) override;
 

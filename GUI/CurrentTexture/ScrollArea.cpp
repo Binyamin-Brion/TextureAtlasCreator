@@ -11,23 +11,18 @@ namespace GUI
 {
     namespace CurrentTexture
     {
-        ScrollArea::ScrollArea(CurrentTextureImage currentTextureImage, QWidget *parent) : QScrollArea{parent}
+        ScrollArea::ScrollArea(CurrentTextureImage currentTextureImage, QWidget *parent)
+                    :
+                        QScrollArea{parent},
+                        renderArea{new RenderArea{currentTextureImage, this}}
         {
-            setLayout(new QHBoxLayout);
-
-            renderArea = new RenderArea{currentTextureImage, this};
-
             setWidget(renderArea);
 
-            connect(renderArea, &RenderArea::repaintSelectedTexture, [this]()
-            {
-                emit repaintSelectedTexture();
-            });
+            // Forwards these signals to the the CurrentTextureTabWidget as this widget does not have the capabilities
+            // to act upon receiving this signals
+            connect(renderArea, &RenderArea::repaintSelectedTexture, [this]() { emit repaintSelectedTexture(); });
 
-            connect(renderArea, &RenderArea::paintedSelectedTexture, [this]()
-            {
-                emit paintedSelectedTexture();
-            });
+            connect(renderArea, &RenderArea::paintedSelectedTexture, [this]() { emit paintedSelectedTexture(); });
         }
 
         void ScrollArea::enterEvent(QEvent *event)
@@ -84,6 +79,8 @@ namespace GUI
 
         void ScrollArea::wheelEvent(QWheelEvent *event)
         {
+            // If the control key is down, then change the zoom. If the user moved the wheel away from themselves (forwards),
+            // then zoom in; otherwise zoom out. The render area ensures that the texture with the new zoom is painted.
             if(controlKeyDown)
             {
                 if(event->angleDelta().y() > 0)
@@ -105,6 +102,7 @@ namespace GUI
             }
             else
             {
+                // Otherwise process the event as normal, which would move the scroll bars.
                 QScrollArea::wheelEvent(event);
             }
         }

@@ -23,10 +23,10 @@ namespace GUI
 
         /**
          *  Provides a scrollable window to view the Atlas widget. Since the atlas widget may be bigger than the
-         *  size of the window, a scroll view is required to view all of the atlas.
+         *  size of the area reserved for it, a scroll view is required to view all of the atlas.
          *
          *  This class, beyond holding an atlas widget to provide with scrolling capabilities, simply forwards
-         *  arguments to the atlas widget. Even if this is not explicitly stated in the function prototype documentation.
+         *  arguments to the atlas widget that are not events. Even if this is not explicitly stated in the function prototype documentation.
          */
 
         class ScrollArea : public QScrollArea
@@ -184,7 +184,7 @@ namespace GUI
                 void zoomOut();
 
             private:
-                // References to the widget that this scroll area holds
+                // Reference to the widget that this scroll area holds
                 AtlasWidget *atlasWidget = nullptr;
                 // Keeps track if the user is holding down the control key on their keyboard
                 bool controlKeyDown = false;

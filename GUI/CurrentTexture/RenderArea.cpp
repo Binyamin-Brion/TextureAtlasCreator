@@ -14,13 +14,25 @@ namespace GUI
 {
     namespace CurrentTexture
     {
-        RenderArea::RenderArea(CurrentTextureImage currentTextureImage, QWidget *parent) : QWidget{parent}, currentTextureImage{currentTextureImage}, previousMousePosition{-1, -1}
+        // Note: any check of "texture != nullptr" is to check that a texture is selected in the texture atlas; ie
+        //       there is a texture to which paint operations can be applied to
+
+        // Note: paintedSelectedTexture signal cannot be combined with repaintSelectedTexture signal as a repaint signal is sent
+        //       once before the user has made any changes to the texture. This incorrectly prematurely updates the information
+        //       in the GUI information panel
+
+        RenderArea::RenderArea(CurrentTextureImage currentTextureImage, QWidget *parent)
+                    :
+                        QWidget{parent},
+                        currentTextureImage{currentTextureImage},
+                        previousMousePosition{-1, -1} // Before cursor is moved with texture selected, there is no previous cursor position
         {
             currentZoom = TextureLogic::Zoom::Normal;
 
-            setFocusPolicy(Qt::StrongFocus);
+            // Widget needs to emit mouse move events
             setMouseTracking(true);
 
+            // Randomly chosen default brush size and colour
             brush.setPaintTypeSolid(currentZoom, QSize{25, 25}, QColor{255, 255, 255});
 
             new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z), this, SLOT(undoPaintOperation()));
@@ -54,6 +66,9 @@ namespace GUI
                 {
                     for(auto zoom : TextureLogic::AllZoomValues)
                     {
+                        // Depending on the zoom, the position of the cursor for each zoom level. This has to be taken into
+                        // account for the paint history so that if paint operations are undone at a different zoom level,
+                        // the paint history will still be valid
                         float zoomFactor = TextureLogic::GetZoomValue(zoom) / TextureLogic::GetZoomValue(currentZoom);
 
                         paintTexture(zoom, event->pos() * zoomFactor, brush.getPaintImage(zoom), const_cast<QImage &>(getReferredToImage(zoom)), false);
@@ -72,8 +87,10 @@ namespace GUI
             {
                 if(texture != nullptr)
                 {
+                    // Note that if a user clicks left mouse button, paint operation is done once at the position of the cursor
                     for(auto zoom : TextureLogic::AllZoomValues)
                     {
+                        // Same reason as mentioned in mouseMoveEvent()
                         float zoomFactor = TextureLogic::GetZoomValue(zoom) / TextureLogic::GetZoomValue(currentZoom);
 
                         paintTexture(zoom, event->pos() * zoomFactor, brush.getPaintImage(zoom), const_cast<QImage &>(getReferredToImage(zoom)), false);
@@ -92,6 +109,7 @@ namespace GUI
             {
                 leftMouseButtonDown = false;
 
+                // End of a paint sequence; the paint operations that make up the sequence have to be stored
                 storePaintHistory();
             }
         }
@@ -111,7 +129,6 @@ namespace GUI
                         // then the exact same texture shown in this widget is shown in the atlas widget. In order to
                         // synchronize the two, after modifying the texture here where the updates are seen visually immediately,
                         // the atlas widget has to be told to visually update the (same) texture it draws
-
                         emit repaintSelectedTexture();
                         break;
 
@@ -120,6 +137,8 @@ namespace GUI
                         break;
                 }
 
+                // If statement to prevent the brush from being drawn the first time a texture is selected; would be
+                // a little bit weird to give a brush a position when the user hasn't moved cursor over render area with texture selected first
                 if(previousMousePosition.x() != -1 && previousMousePosition.y() != -1)
                 {
                     painter.drawImage(previousMousePosition.x() - brush.getPaintImage(currentZoom).width() / 2,
@@ -134,10 +153,11 @@ namespace GUI
 
             if(texture != nullptr)
             {
-                setMinimumSize(texture->getImage(TextureLogic::Zoom::Normal).size());
-                setMaximumSize(texture->getImage(TextureLogic::Zoom::Normal).size());
+                setMinimumSize(texture->getImage(currentZoom).size());
+                setMaximumSize(texture->getImage(currentZoom).size());
 
-                textureFormat = texture->getImage(TextureLogic::Zoom::Normal).format();
+                // The passed in zoom level should not matter here. currentZoom used here for consistency
+                textureFormat = texture->getImage(currentZoom).format();
             }
 
             QWidget::repaint();
@@ -181,9 +201,10 @@ namespace GUI
 
         void RenderArea::undoPaintOperation()
         {
+            // This function is executed once per undo operation shortcut! It does not revert all paint operations at once.
+
             // If no texture is selected and the undo operation is requested, then a crash will occur. Thus a check
             // to make sure that a texture is selected has to be done first.
-
             if(texture == nullptr)
             {
                 return;
@@ -198,9 +219,8 @@ namespace GUI
                     return;
                 }
 
-                // Remember that a paint history could compromise of more than one paint action if the mouse was dragged
+                // Remember that a paint sequence could compromise of more than one paint action if the mouse was dragged
                 // while the left button was done, for example.
-
                 while(!mostRecentPaintHistory->getAppliedAreas().empty())
                 {
                     PaintFunctions::PaintedArea *paintedArea = &mostRecentPaintHistory->getAppliedAreas().top();
@@ -214,7 +234,6 @@ namespace GUI
                 // in the texture class was removed after the call to getReferredToimageHistoy) it must be deleted now or else a memory leak will occur
 
                 // Reminder: This is a raw pointer as when using std::unique_ptr, compilation issues kept arising that could not be solved (error: use of deleted function)
-
                 delete mostRecentPaintHistory;
             }
 
@@ -261,14 +280,12 @@ namespace GUI
              * done by taking half the paint area and applying it to one side of the point, and painting the other half
              * on the other side of the point. This is done in both the x and y dimension.
              */
-
             int halfTextureWidth = applyImage.width() / 2;
 
             int halfTextureHeight = applyImage.height() / 2;
 
             // When iterating the positions to be painted, local variables used may not match actual points on
             // the texture that is to be painted or the source of the paint. Actual usages in loops will clarify this.
-
             int adjustedMouseX;
             int adjustedMouseY;
 
@@ -278,7 +295,6 @@ namespace GUI
             PaintFunctions::PaintedArea paintedArea;
 
             // The above variable should only be used if this function is not being called to redo a paint operation
-
             if(!undoOperation)
             {
                 paintedArea.appliedArea = mousePosition;
@@ -290,7 +306,6 @@ namespace GUI
                 // Determine if the painted area is outside of the dimensions of the target texture. For example, if the painted
                 // area has a width of 10, and the point is at 0, then the points -5, -4, -3, -2 , -1 will be painted. However,
                 // these points do not exist, and therefore this iteration of the loop have to be skipped. Applies to both x and y dimensions.
-
                 adjustedMouseX = mousePosition.x() + i;
 
                 if(adjustedMouseX < 0 || adjustedMouseX > targetImage.width() - 1)
@@ -300,13 +315,11 @@ namespace GUI
 
                 // Same idea as the adjustedMouseX- if the painted area has a width of 10, then the first point on the
                 // applyImage variable is 0, not -5. Applies to both x and y dimension.
-
                 adjustedPixelX = i + halfTextureWidth;
 
                 for(int j = -halfTextureHeight; j < halfTextureHeight; ++j)
                 {
                     // Same ideas the x-dimension
-
                     adjustedMouseY = mousePosition.y() + j;
 
                     if(adjustedMouseY < 0 || adjustedMouseY > targetImage.height() - 1)
@@ -318,23 +331,20 @@ namespace GUI
 
                     // If this function is called to undo a paint operation, it makes no sense to keep track where this paint operation occurred
                     // as that implies a new paint operation is done
-
                     if(!undoOperation)
                     {
                         paintedArea.previousColour.setPixelColor(adjustedPixelX, adjustedPixelY, targetImage.pixelColor(adjustedMouseX, adjustedMouseY));
                     }
 
                     // Finally, time to update (one) pixel in the target texture!
-
                     targetImage.setPixelColor(adjustedMouseX, adjustedMouseY, applyImage.pixelColor(adjustedPixelX, adjustedPixelY));
                 }
             }
 
             // Only store the paintedArea if a new paint operation was done- otherwise it is irrelevant to storing paint history
-
             if(!undoOperation)
             {
-                appliedBrushAreas[TextureLogic::GetZoomIndex(zoom)].push(paintedArea);
+                paintSequence[TextureLogic::GetZoomIndex(zoom)].push(paintedArea);
             }
         }
 
@@ -343,15 +353,15 @@ namespace GUI
             // Since this function is called when the mouse is released over this widget, it is possible for this function
             // to be called even when no painting was done. It should not matter if an empty stack history is passed,
             // but ideally, it should not happen and it is more easy to reason about if no empty stack histories are passed
-
-            if(appliedBrushAreas[0].empty())
+            if(paintSequence[0].empty())
             {
                 return;
             }
 
             for(auto zoom : TextureLogic::AllZoomValues)
             {
-                auto paintHistoryCommand = new PaintFunctions::PaintHistoryCommand{ appliedBrushAreas[TextureLogic::GetZoomIndex(zoom)]};
+                // This empties the paint sequence, and makes it ready to hold a new paint sequence when the user starts painting again
+                auto paintHistoryCommand = new PaintFunctions::PaintHistoryCommand{paintSequence[TextureLogic::GetZoomIndex(zoom)]};
 
                 switch(currentTextureImage)
                 {

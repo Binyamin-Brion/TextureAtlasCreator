@@ -22,19 +22,13 @@ namespace GUI
     {
         class ScrollArea;
 
-        /*
-         *  Holds all of the render areas for the currently selected texture.
+        /**
+         *  Holds all of the scroll areas which in turn hold the render areas for the currently selected texture.
          */
 
         class CurrentTextureTabWidget : public QTabWidget
         {
             Q_OBJECT
-
-            public:
-                explicit CurrentTextureTabWidget(QWidget *parent = nullptr);
-                void setSelectedTexture(TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>);
-                void setTextureBankReference(TextureLogic::TextureBank *textureBank);
-                void setTexturesReference(std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
 
             signals:
                 void changedRenderArea(const PaintFunctions::Brush&);
@@ -42,11 +36,47 @@ namespace GUI
                 void selectedTextureChanged(QSize, QSize);
                 void zoomChanged(TextureLogic::Zoom);
 
+            public:
+
+                /**
+                 * Initializes this object with the parent passed in.
+                 *
+                 * @param parent widget that has ownership over this object.
+                 */
+                explicit CurrentTextureTabWidget(QWidget *parent = nullptr);
+
+                /**
+                 * Set the texture that can be painted. Forwards argument to the scroll area holding the render area.
+                 *
+                 * @param texture to be painted
+                 */
+                void setSelectedTexture(TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>);
+
+                /**
+                 * Sets the reference to the texture bank.
+                 *
+                 * @param textureBank reference where all textures that have been loaded are stored for the program
+                 */
+                void setTextureBankReference(TextureLogic::TextureBank *textureBank);
+
+                /**
+                 * Called when the vector holding the textures may have been resized due to a texture being added to it.
+                 * See internal note at CurrentTextureTabWidget.cpp
+                 *
+                 * @param textures vector containing all of th texture loaded into program
+                 */
+                void setTexturesReference(std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> &textures);
+
             private:
-                std::array<std::pair<QString, ScrollArea*>, 2> currentTexture;
+                // Holds all of the scroll areas holding the render areas
+                std::array<std::pair<QString, ScrollArea*>, 2> currentTextureRenderAreas;
+
+                // See internal note at CurrentTextureTabWidget.cpp
                 std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> *textures = nullptr;
-                TextureLogic::TextureBank *textureBank = nullptr;
+                // Index into the textures vector; indicates if a texture is selected (if no texture is selected, then has value of -1)
                 int currentTextureIndex;
+
+                TextureLogic::TextureBank *textureBank = nullptr;
         };
     }
 }

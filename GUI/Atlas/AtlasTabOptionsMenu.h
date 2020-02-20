@@ -28,8 +28,14 @@ namespace GUI
                  */
                 void addTabActionTriggered();
 
-
+                /**
+                 *  Emitted when the user requests to move the currently viewed tab to the left.
+                 */
                 void moveTabLeft();
+
+                /**
+                 *  Emitted when the user requests to move the currently viewed tab to the right.
+                 */
                 void moveTabRight();
 
                 /**
