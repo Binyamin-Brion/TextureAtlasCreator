@@ -28,12 +28,28 @@ namespace GUI
 
         class CurrentTextureTabWidget : public QTabWidget
         {
-            Q_OBJECT
+                Q_OBJECT
 
             signals:
+
+               /**
+                * Emitted when a different render area is opened, such as specular render area.
+                */
                 void changedRenderArea(const PaintFunctions::Brush&);
+
+                /**
+                 *  Emitted when the selected texture has been modified with a brush.
+                 */
                 void repaintSelectedTexture();
+
+                /**
+                 *  Emitted when the selected texture texture in the atlas changes.
+                 */
                 void selectedTextureChanged(QSize, QSize);
+
+                /**
+                 *  Emitted when the zoom changes. Emits the new zoom level.
+                 */
                 void zoomChanged(TextureLogic::Zoom);
 
             public:

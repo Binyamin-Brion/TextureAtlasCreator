@@ -62,11 +62,6 @@ namespace GUI
             connect(this, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
 
             addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
-
-            // By default there is one tab created, which holds an empty texture atlas.
-            // When this is done, the default name for this tab has to be stored so that other
-            // tabs do not have the same name. The tab with this default name is created at the end of this constructor.
-            addNewAtlasTab->addExistingTabName("Default");
         }
 
         void AtlasTabWidget::addTextureToCurrentAtlas(const TextureLogic::Texture &texture)
@@ -170,6 +165,9 @@ namespace GUI
             addTab(currentTabs.back().first, currentTabs.back().second);
 
             // The name for the tab was checked to make sure it was unique before this function (addAtlasWidget()) was called
+
+            addNewAtlasTab->addExistingTabName(tabName);
+
             renameTab->addNameExistingTab(tabName);
 
             // Make sure that if the just added atlas changes in any way, the statistics are displayed
@@ -212,6 +210,8 @@ namespace GUI
                 removeTab(currentIndex());
 
                 delete currentTabs[previousIndex].first;
+
+                addNewAtlasTab->removeNameExistingTab(currentTabs[previousIndex].second);
 
                 renameTab->removeNameExistingTab(currentTabs[previousIndex].second);
 
@@ -280,6 +280,8 @@ namespace GUI
 
             removeTab(previousIndex);
 
+            addNewAtlasTab->removeNameExistingTab(currentTabs[previousIndex].second);
+
             renameTab->removeNameExistingTab(currentTabs[previousIndex].second);
 
             currentTabs[previousIndex].second = newTabName;
@@ -287,6 +289,8 @@ namespace GUI
             insertTab(previousIndex, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
 
             renameTab->addNameExistingTab(newTabName);
+
+            addNewAtlasTab->addExistingTabName(newTabName);
 
             setCurrentIndex(previousIndex);
         }
