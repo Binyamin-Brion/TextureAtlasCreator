@@ -11,7 +11,8 @@ namespace PaintFunctions
     {
         for(auto &paintImage : paintImages)
         {
-            paintImage = QPixmap{QSize{static_cast<int>(exp2f(TextureLogic::NumberZoomElements())), static_cast<int>(exp2f(TextureLogic::NumberZoomElements()))}}.toImage();
+            // Initialize the resource to a known state; the actual size of the paint image will be calculated in setPaintTypeSolid()
+            paintImage = QPixmap{QSize{1,1}}.toImage();
         }
     }
 
@@ -23,8 +24,7 @@ namespace PaintFunctions
     void Brush::setPaintTypeSolid(TextureLogic::Zoom zoom, QSize drawAreaSize, QColor colour)
     {
         // When a brush size is selected, it is done with respective to a given zoom. The brush size changes
-        // depending on the zoom of the currently selected texture. This is calculated ahead of time for convinience.
-
+        // depending on the zoom of the currently selected texture. This is calculated ahead of time for convenience.
           for(auto currentZoom : TextureLogic::AllZoomValues)
           {
               float zoomFactor = TextureLogic::GetZoomValue(currentZoom) / TextureLogic::GetZoomValue(zoom);
