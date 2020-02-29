@@ -9,7 +9,9 @@ namespace GUI
 {
     namespace LoadResults
     {
-        OptionsMenu::OptionsMenu(bool showDeleteTextureButton,  bool showDeleteTextureButtonArea, QWidget *parent) : QMenu(parent)
+        OptionsMenu::OptionsMenu(bool showDeleteTextureButton,  bool showDeleteTextureButtonArea, QWidget *parent)
+                      :
+                        QMenu(parent)
         {
             addTab.setText("Add New Tab");
             renameTab.setText("Rename Tab");
@@ -27,45 +29,26 @@ namespace GUI
             {
                 addAction(&deleteTab);
 
-                connect(&deleteTab, &QAction::triggered, [this]()
-                {
-                    emit deleteTabTriggered();
-                });
+                connect(&deleteTab, &QAction::triggered, [this]() { emit deleteTabTriggered(); });
             }
 
             if(showDeleteTextureButton)
             {
                 addAction(&deleteTextureButton);
 
-                connect(&deleteTextureButton, &QAction::triggered, [this]()
-                {
-                    emit deleteActionTriggered();
-                });
+                connect(&deleteTextureButton, &QAction::triggered, [this]() { emit deleteTextureButtonTriggered(); });
             }
 
-            connect(&addTab, &QAction::triggered, [this]()
-            {
-                emit addTabActionTriggered();
-            });
+            connect(&addTab, &QAction::triggered, [this]() { emit addTabActionTriggered(); });
 
-            connect(&renameTab, &QAction::triggered, [this]()
-            {
-                emit renameTabActionTriggered();
-            });
+            connect(&renameTab, &QAction::triggered, [this]() { emit renameTabActionTriggered(); });
 
-            connect(&_moveTabLeft, &QAction::triggered, [this]()
-            {
-                emit moveTabLeft();
-            });
+            connect(&_moveTabLeft, &QAction::triggered, [this]() { emit moveTabLeftTriggered(); });
 
-            connect(&_moveTabRight, &QAction::triggered, [this]()
-            {
-                emit moveTabRight();
-            });
-
+            connect(&_moveTabRight, &QAction::triggered, [this]() { emit moveTabRightTriggered(); });
         }
 
-        void OptionsMenu::showDeleteAction(bool value)
+        void OptionsMenu::showTextureButtonDeleteAction(bool value)
         {
             if(value)
             {

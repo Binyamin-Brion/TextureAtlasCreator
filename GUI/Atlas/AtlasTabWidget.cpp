@@ -47,9 +47,9 @@ namespace GUI
 
             connect(atlasTabOptionsMenu, SIGNAL(renameTabActionTriggered()), this, SLOT(showRenameTabDialog()));
 
-            connect(atlasTabOptionsMenu, SIGNAL(moveTabLeft()), this, SLOT(moveTabLeft()));
+            connect(atlasTabOptionsMenu, SIGNAL(moveTabLeftTriggered()), this, SLOT(moveTabLeft()));
 
-            connect(atlasTabOptionsMenu, SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
+            connect(atlasTabOptionsMenu, SIGNAL(moveTabRightTriggered()), this, SLOT(moveTabRight()));
 
             // Following connections ensure that the appropriate function is executed after a dialog was shown to the user after clicking on an action in the context menu
 
@@ -256,7 +256,7 @@ namespace GUI
                 return;
             }
 
-            // Order of operations same as moveTabLeft()
+            // Order of operations same as moveTabLeftTriggered()
             int previousIndex = currentIndex();
 
             removeTab(currentIndex());

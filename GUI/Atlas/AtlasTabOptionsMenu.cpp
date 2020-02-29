@@ -24,30 +24,15 @@ namespace GUI
             addAction(&_moveTabRight);
             addAction(&deleteCurrentTab);
 
-            connect(&addTab, &QAction::triggered, [this]()
-            {
-                emit addTabActionTriggered();
-            });
+            connect(&addTab, &QAction::triggered, [this]() { emit addTabActionTriggered(); });
 
-            connect(&_moveTabLeft, &QAction::triggered, [this]()
-            {
-                emit moveTabLeft();
-            });
+            connect(&_moveTabLeft, &QAction::triggered, [this]() { emit moveTabLeftTriggered(); });
 
-            connect(&_moveTabRight, &QAction::triggered, [this]()
-            {
-                emit moveTabRight();
-            });
+            connect(&_moveTabRight, &QAction::triggered, [this]() { emit moveTabRightTriggered(); });
 
-            connect(&renameTab, &QAction::triggered, [this]()
-            {
-                emit renameTabActionTriggered();
-            });
+            connect(&renameTab, &QAction::triggered, [this]() { emit renameTabActionTriggered(); });
 
-            connect(&deleteCurrentTab, &QAction::triggered, [this]()
-            {
-                emit deleteTabActionTriggered();
-            });
+            connect(&deleteCurrentTab, &QAction::triggered, [this]() { emit deleteTabActionTriggered(); });
         }
     }
 }

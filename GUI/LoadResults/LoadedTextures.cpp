@@ -15,25 +15,35 @@ namespace GUI
 {
     namespace LoadResults
     {
-        LoadedTextures::LoadedTextures(QWidget *parent) : QTabWidget{parent}
+        // For the moveTabXXX and the deleteCurrentTab functions, see the AtlasTabWidget.cpp file for description of how
+        // these functions work. That class uses the same function ti implement the same behaviour. Refer to that class
+        // for comments on how these functions work.
+
+        // Beginning of public functions
+
+        LoadedTextures::LoadedTextures(QWidget *parent)
+                        :
+                            QTabWidget{parent}
         {
             // This widget cannot tell a button area to delete a texture button area, to provide a clear separation of
             // who is responsible for the buttons. Hence the first argument to the optionsMenu is false.
-
+            // See OptionsMenu class for notes.
             optionsMenu = new OptionsMenu{false, true, this};
 
             addNewTab = new Dialogs::AddNewTab{this};
 
             chooseTexture = new Dialogs::ChooseTexture{this};
 
-            connect(chooseTexture, SIGNAL(textureChosen(QString, unsigned int, unsigned int)), this, SLOT(openTexture(QString, unsigned int, unsigned int)));
+            connect(chooseTexture, SIGNAL(textureChosen(QString, QString, unsigned int, unsigned int)), this, SLOT(openTexture(QString, QString, unsigned int, unsigned int)));
 
+            // By default there is always at least one tab to hold texture buttons
             addTextureButtonArea("Default");
 
             // Set up the code so that the context menu with valid actions are shown and that when an action is requested
-            // the appropriate code is executed
-
+            // the appropriate code is executed. This is only required to get the access menu for the tab itself; not the tab contents
             this->setContextMenuPolicy(Qt::CustomContextMenu);
+
+            // These connections are for the tab widget itself; not the contents within
 
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 
@@ -41,46 +51,27 @@ namespace GUI
 
             connect(optionsMenu, SIGNAL(renameTabActionTriggered()), this, SLOT(showRenameTabDialog()));
 
-            connect(optionsMenu, SIGNAL(moveTabLeft()), this, SLOT(moveTabLeft()));
+            connect(optionsMenu, SIGNAL(moveTabLeftTriggered()), this, SLOT(moveTabLeft()));
 
-            connect(optionsMenu, SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
+            connect(optionsMenu, SIGNAL(moveTabRightTriggered()), this, SLOT(moveTabRight()));
+
+            // The logic for renaming and deleting a tab is the same as that of AtlasTabWidget. Refer to that class for more information.
 
             connect(optionsMenu, SIGNAL(deleteTabTriggered()), this, SLOT(deleteCurrentTab()));
 
-            // The logic for renaming and deleting a tab is the same as that of AtlasTabWidget. Refer to that class
-            // for more information.
+            connect(addNewTab, SIGNAL(newTabNameChosen(QString)), this, SLOT(newTabNameChosen(QString)));
 
-            connect(addNewTab, &Dialogs::AddNewTab::newTabNameChosen, [this](QString newTabName)
-            {
-                if(renameTab)
-                {
-                    int previousIndex = currentIndex();
-
-                    removeTab(currentIndex());
-
-                    addNewTab->removeNameExistingTab(currentTabs[previousIndex].second);
-
-                    currentTabs[previousIndex].second = newTabName;
-
-                    insertTab(previousIndex, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
-
-                    addNewTab->addNameExistingTab(newTabName);
-
-                    setCurrentIndex(previousIndex);
-                }
-                else
-                {
-                    addTextureButtonArea(newTabName);
-                }
-            });
         }
 
-        void LoadedTextures::setTextureBankReference(const TextureLogic::TextureBank *textureBank)
+        void LoadedTextures::setTextureBankReference(TextureLogic::TextureBank *textureBank)
         {
+            // This should only be called once; the reference to the texture bank should never become invalid
             if(this->textureBank == nullptr)
             {
                 this->textureBank = textureBank;
 
+                // If there are tabs loaded when this is called (and there will always be at least one, as if none are specified by the user
+                // then a default tab is given) then make sure they all have a reference to the texture bank
                 for(auto &i : currentTabs)
                 {
                     i.first->setTextureBankReference(this->textureBank);
@@ -88,10 +79,15 @@ namespace GUI
             }
         }
 
+        // Beginning of public slots
+
         void LoadedTextures::showAddTabDialog()
         {
+            // Since the dialog is used for both adding and renaming a dialog, the window title should be changed
+            // depending on what the dialog is being used for
             addNewTab->setWindowTitle("Add New Tab");
 
+            // Mark what the dialog that is about to be shown is being used for
             renameTab = false;
 
             addNewTab->open();
@@ -109,56 +105,22 @@ namespace GUI
 
         void LoadedTextures::showRenameTabDialog()
         {
+            // Since the dialog is used for both adding and renaming a dialog, the window title should be changed
+            // depending on what the dialog is being used for
             addNewTab->setWindowTitle("Rename Current Tab");
 
+            // Mark what the dialog that is about to be shown is being used for
             renameTab = true;
 
             addNewTab->show();
         }
 
-        void LoadedTextures::openTexture(QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
-        {
-            currentTabs[currentIndex()].first->addTextureButton(textureLocation, intersectionBorderWidth, selectionBorderWidth);
-        }
-
-        void LoadedTextures::moveTabLeft()
-        {
-            if(currentIndex() == 0)
-            {
-                return;
-            }
-
-            int previousIndex = currentIndex();
-
-            removeTab(previousIndex);
-
-            insertTab(previousIndex - 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
-
-            std::swap(currentTabs[previousIndex], currentTabs[previousIndex - 1]);
-
-            setCurrentIndex(previousIndex - 1);
-        }
-
-        void LoadedTextures::moveTabRight()
-        {
-            if(currentIndex() == currentTabs.size() - 1)
-            {
-                return;
-            }
-
-            int previousIndex = currentIndex();
-
-            removeTab(currentIndex());
-
-            insertTab(previousIndex + 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
-
-            std::swap(currentTabs[previousIndex], currentTabs[previousIndex + 1]);
-
-            setCurrentIndex(previousIndex + 1);
-        }
+        // Beginning of private slots
 
         void LoadedTextures::deleteCurrentTab()
         {
+            // See note at the top of this file
+
             if(currentIndex() != -1)
             {
                 int previousIndex = currentIndex();
@@ -180,19 +142,108 @@ namespace GUI
             }
         }
 
+        void LoadedTextures::moveTabLeft()
+        {
+            // See note at the top of this file
+
+            if(currentIndex() == 0)
+            {
+                return;
+            }
+
+            int previousIndex = currentIndex();
+
+            removeTab(previousIndex);
+
+            insertTab(previousIndex - 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+            std::swap(currentTabs[previousIndex], currentTabs[previousIndex - 1]);
+
+            setCurrentIndex(previousIndex - 1);
+        }
+
+        void LoadedTextures::moveTabRight()
+        {
+            // See note at the top of this file
+
+            // Realistically the maximum number of tabs will not exceed max value of int, and the cast removes a warning
+            // that can be distracting and cause other warnings to be missed
+            if(currentIndex() == static_cast<int>(currentTabs.size() - 1))
+            {
+                return;
+            }
+
+            int previousIndex = currentIndex();
+
+            removeTab(currentIndex());
+
+            insertTab(previousIndex + 1, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+            std::swap(currentTabs[previousIndex], currentTabs[previousIndex + 1]);
+
+            setCurrentIndex(previousIndex + 1);
+        }
+
+        void LoadedTextures::newTabNameChosen(QString newTabName)
+        {
+            // Remember that depending on the action selected in the context menu, the result of the AddNewTab dialog changes
+
+            if(renameTab)
+            {
+                // In order to rename a tab, the current tab has to be removed and inserted back in with the new name
+
+                int previousIndex = currentIndex();
+
+                removeTab(currentIndex());
+
+                addNewTab->removeNameExistingTab(currentTabs[previousIndex].second);
+
+                currentTabs[previousIndex].second = newTabName;
+
+                insertTab(previousIndex, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
+
+                addNewTab->addNameExistingTab(newTabName);
+
+                setCurrentIndex(previousIndex);
+            }
+            else
+            {
+                addTextureButtonArea(newTabName);
+            }
+        }
+
+        void LoadedTextures::openTexture(QString textureButtonAreaName, QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
+        {
+            // Remember that the user can choose into what button area to load a texture button into; therefore that
+            // area has to be found first before it can be added there
+            for(auto &i : currentTabs)
+            {
+                if(i.second == textureButtonAreaName)
+                {
+                    i.first->addTextureButton(textureLocation, intersectionBorderWidth, selectionBorderWidth);
+
+                    return;
+                }
+            }
+
+            Q_ASSERT_X(true, __PRETTY_FUNCTION__, "\n Unable to find tab requested in which to place texture button\n");
+        }
+
+        // Beginning of private functions
+
         void LoadedTextures::addTextureButtonArea(const QString &tabName)
         {
             auto *scrollArea = new ScrollArea;
 
             scrollArea->setTextureBankReference(textureBank);
 
-            connect(scrollArea->getTextureArea(), SIGNAL(addNewTabRequest()), this, SLOT(showAddTabDialog()));
+            // These connections are for the tab contents, unlike the connections in the constructor
 
             connect(scrollArea->getTextureArea(), SIGNAL(renameTabRequest()), this, SLOT(showRenameTabDialog()));
 
-            connect(scrollArea->getTextureArea(), SIGNAL(moveTabLeft()), this, SLOT(moveTabLeft()));
+            connect(scrollArea->getTextureArea(), SIGNAL(moveTabLeftTriggered()), this, SLOT(moveTabLeft()));
 
-            connect(scrollArea->getTextureArea(), SIGNAL(moveTabRight()), this, SLOT(moveTabRight()));
+            connect(scrollArea->getTextureArea(), SIGNAL(moveTabRightTriggered()), this, SLOT(moveTabRight()));
 
             currentTabs.emplace_back(scrollArea, tabName);
 

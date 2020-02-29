@@ -522,10 +522,6 @@ namespace Atlas
                 selectedExistingTexture->getImage();
             }
         }
-        else
-        {
-            Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Unable to find the texture to remove from the atlas!");
-        }
     }
 
     void TextureAtlas::setAtlasSize(QSize size)

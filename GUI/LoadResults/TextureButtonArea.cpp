@@ -35,15 +35,17 @@ namespace GUI
          *   [widget] [widget] [widget] ->  * A texture button is added * -> [button] [widget] [widget]
          */
 
-        TextureButtonArea::TextureButtonArea(QWidget *parent) : QWidget{parent}
+        // Beginning of public functions
+
+        TextureButtonArea::TextureButtonArea(QWidget *parent)
+                            :
+                                QWidget{parent}
         {
             // Minimum width is set so that there is no horizontal scrolling when the window is made full screen
-
             setMinimumSize(500, 900);
 
             // Determine how many buttons can be fit, along with spacing, given the above minimum width
-
-            maxColumnCount = minimumWidth() / TextureButton::buttonSizeLength;
+            maxColumnCount = minimumWidth() / TextureButton::BUTTON_SIZE_LENGTH;
 
             createLayout();
 
@@ -53,35 +55,22 @@ namespace GUI
 
             // A button area cannot be deleted from a texture button area (through a context menu). The problem is that once the button area
             // is deleted through that action, the 'this' pointer is now invalid, but the control flow returns to the function that requested
-            // the button area to be deleted. That function is a slot in this object- but this object no longer exists. Hence a seg fault would occur.
-
+            // the button area to be deleted. That function is a slot in 'this' (ie the calling texture button) object- but this object no longer exists.
+            // Hence a seg fault would occur.
             optionsMenu = new OptionsMenu{true, false, this};
 
-            connect(optionsMenu, &OptionsMenu::addTabActionTriggered, [this]()
-            {
-                emit addNewTabRequest();
-            });
+            connect(optionsMenu, &OptionsMenu::moveTabLeftTriggered, [this]() { emit moveTabLeftTriggered(); });
 
-            connect(optionsMenu, &OptionsMenu::moveTabLeft, [this]()
-            {
-                emit moveTabLeft();
-            });
+            connect(optionsMenu, &OptionsMenu::moveTabRightTriggered, [this]() { emit moveTabRightTriggered(); });
 
-            connect(optionsMenu, &OptionsMenu::moveTabRight, [this]()
-            {
-                emit moveTabRight();
-            });
+            connect(optionsMenu, &OptionsMenu::renameTabActionTriggered, [this]() { emit renameTabRequest(); });
 
-            connect(optionsMenu, &OptionsMenu::renameTabActionTriggered, [this]()
-            {
-                emit renameTabRequest();
-            });
-
-            connect(optionsMenu, SIGNAL(deleteActionTriggered()), this, SLOT(deleteTextureButton()));
+            connect(optionsMenu, SIGNAL(deleteTextureButtonTriggered()), this, SLOT(deleteTextureButton()));
         }
 
         void TextureButtonArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
         {
+            // A texture button cannot more than one texture button representing the same texture, as that is redundant
             for(const auto &i : textureButtons)
             {
                 if(i->getTextureLocation() == textureLocation)
@@ -99,17 +88,14 @@ namespace GUI
             }
 
             // Try loading the image first; if that operation fails, then there is no point continuing to create
-            // a texture pushbutton for that image
-
+            // a texture pushbutton for that image.
             textureBank->storeNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
 
-            // Swap the place holder widget with the newly created plcae holder; see the description at the top of
+            // The newly created button will be swapped the place holder widget with the newly created place-holder; see the description at the top of
             // this file for more information.
-
             textureButtons.push_back(new TextureButton{textureLocation, intersectionBorderWidth, selectionBorderWidth, this});
 
-            connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&, unsigned int, unsigned int)),
-                    this, SLOT(textureButtonClicked(const QString&, unsigned int, unsigned int)));
+            connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&, unsigned int, unsigned int)), this, SLOT(textureButtonClicked(const QString&, unsigned int, unsigned int)));
 
             placeTextureButton(textureButtons.back());
         }
@@ -118,12 +104,22 @@ namespace GUI
         {
             for(auto &i : textureButtons)
             {
-                textureBank->removeTexture(i->getTextureLocation());
+                // Only delete the texture if there is only one more texture button representing the texture
+                if(TextureButton::getTextureRepresentationCount()[i->getTextureLocation()] == TextureButton::MINIMUM_TEXTURE_REPRESENTATION_COUNT)
+                {
+                    textureBank->removeTexture(i->getTextureLocation());
+                }
+
+                // Texture button that represents button no longer exists; update count accordingly
+                TextureButton::decrementTextureRepresentation(i->getTextureLocation());
             }
         }
 
         void TextureButtonArea::mousePressEvent(QMouseEvent *event)
         {
+            // When a right-click occurs, before offering the option of deleting a texture button in the context menu,
+            // first it must be seen if the cursor is actually over a button. If it is, only then offer an option to delete
+            // a texture button.
             if(event->button() == Qt::RightButton)
             {
                 cursorOverButtonIndex = -1;
@@ -137,7 +133,7 @@ namespace GUI
                     {
                         cursorOverButtonIndex = index;
 
-                        optionsMenu->showDeleteAction(true);
+                        optionsMenu->showTextureButtonDeleteAction(true);
 
                         foundTexture = true;
 
@@ -149,43 +145,58 @@ namespace GUI
 
                 if(!foundTexture)
                 {
-                    optionsMenu->showDeleteAction(false);
+                    optionsMenu->showTextureButtonDeleteAction(false);
                 }
             }
         }
 
         void TextureButtonArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
         {
+            // This function logically should only be called once
             if(this->textureBank == nullptr)
             {
                 this->textureBank = textureBank;
             }
         }
 
+        // Beginning of private slots
+
         void TextureButtonArea::deleteTextureButton()
         {
-            int questionResponse = QMessageBox::question(this, tr("Confirmation Required"), "Are you sure you wish to delete this texture button? \n"
-                                                                                            "\n This will remove all instances of this texture in all atlases!",
-                                                                                            QMessageBox::Yes | QMessageBox::Cancel);
-
-            if(questionResponse == QMessageBox::Cancel)
+            // Only delete the texture if there is only one more texture button representing the texture
+            if(TextureButton::getTextureRepresentationCount()[textureButtons[cursorOverButtonIndex]->getTextureLocation()] == TextureButton::MINIMUM_TEXTURE_REPRESENTATION_COUNT)
             {
-                return;
+                int questionResponse = QMessageBox::question(this, tr("Confirmation Required"), "Are you sure you wish to delete this texture button? \n"
+                                                                                                "\n This will remove all instances of this texture in all atlases!",
+                                                             QMessageBox::Yes | QMessageBox::Cancel);
+
+                if(questionResponse != QMessageBox::Yes)
+                {
+                    return;
+                }
+
+                textureBank->removeTexture(textureButtons[cursorOverButtonIndex]->getTextureLocation());
             }
 
-            textureBank->removeTexture(textureButtons[cursorOverButtonIndex]->getTextureLocation());
+            // Texture button that represents button no longer exists; update count accordingly
+            TextureButton::decrementTextureRepresentation(textureButtons[cursorOverButtonIndex]->getTextureLocation());
 
+            // Logically makes sense to delete the button now rather than wait until this button area is deleted
             delete textureButtons[cursorOverButtonIndex];
 
             textureButtons.erase(textureButtons.begin() + cursorOverButtonIndex);
 
+            // Remember that any texture button at an arbitrary place could be deleted. Because of this, it is easier to
+            // just recreate the layout for the buttons.
             for(auto &i : textureButtonPlaceHolders)
             {
+                // Don't wait until this button area is deleted for memory to be released
                 delete i;
             }
 
             textureButtonPlaceHolders.clear();
 
+            // Recreate the layout and add the other buttons that still remain into the layout
             createLayout();
 
             for(auto &i : textureButtons)
@@ -203,6 +214,8 @@ namespace GUI
         {
             textureBank->textureButtonPressed(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
         }
+
+        // Beginning of private functions
 
         void TextureButtonArea::addTextureButtonPlaceHolders(int addRows)
         {
@@ -232,7 +245,7 @@ namespace GUI
 
             maxRowCount = 0;
 
-            gridHorizontalSpacing = (minimumWidth() - (maxColumnCount * TextureButton::buttonSizeLength)) / maxColumnCount;
+            gridHorizontalSpacing = (minimumWidth() - (maxColumnCount * TextureButton::BUTTON_SIZE_LENGTH)) / maxColumnCount;
 
             gridLayout = new QGridLayout;
 
@@ -241,20 +254,18 @@ namespace GUI
             gridLayout->setHorizontalSpacing(gridHorizontalSpacing);
 
             // By default there are 5 rows of maxColumnCount available slots for textures to be placed
-
             addTextureButtonPlaceHolders(5);
         }
 
-        void TextureButtonArea::placeTextureButton(const TextureButton *button)
+        void TextureButtonArea::placeTextureButton(TextureButton *button)
         {
+            // This will in effect give space to add the button to
             textureButtonPlaceHolders.front()->hide();
 
-            gridLayout->addWidget(const_cast<TextureButton*>(button), currentRow, currentColumn, Qt::AlignLeft | Qt::AlignTop);
+            gridLayout->addWidget(button, currentRow, currentColumn, Qt::AlignLeft | Qt::AlignTop);
 
-            // The below erase call will not all the destructor as the vector storing the placeholders stores raw pointers
-
+            // The below erase call will not call the destructor as the vector storing the placeholders stores raw pointers
             delete textureButtonPlaceHolders.front();
-
             textureButtonPlaceHolders.erase(textureButtonPlaceHolders.begin());
 
             currentColumn += 1;
@@ -266,7 +277,7 @@ namespace GUI
              *  the current row and column variable so that the next button is added at the next (newly added) place holder
              *
              *  2. The end of the row is reached. Update the current row and column variables so that the next button
-             *  is added onto the next row
+             *  is added into the next row
              */
 
             if(currentColumn == maxColumnCount && (currentRow + 1) == maxRowCount)

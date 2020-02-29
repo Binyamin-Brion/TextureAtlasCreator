@@ -106,7 +106,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="atlasChooser">
+      <widget class="QComboBox" name="textureButtonAreaChooser">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>

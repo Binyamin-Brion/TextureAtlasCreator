@@ -26,7 +26,7 @@ namespace GUI
             // Otherwise, if the user cancels the dialog, reset the dialog to a default state
             connect(ui->buttonBox, &QDialogButtonBox::accepted, [this]()
             {
-                emit textureChosen(ui->fileButton->text(), intersectionBorderWidth, selectionBorderWidth);
+                emit textureChosen(ui->textureButtonAreaChooser->currentText(), ui->fileButton->text(), intersectionBorderWidth, selectionBorderWidth);
 
                 resetDialog();
             });
@@ -40,7 +40,7 @@ namespace GUI
 
         void ChooseTexture::addTab(const QString &tabName)
         {
-            ui->atlasChooser->addItem(tabName);
+            ui->textureButtonAreaChooser->addItem(tabName);
         }
 
         void ChooseTexture::closeEvent(QCloseEvent *event)
@@ -155,6 +155,8 @@ namespace GUI
             ui->intersectionWidthLineEdit->setText("5");
 
             ui->selectionBorderWidth->setText("2");
+
+            // These are the default values chosen for the respective border widths
 
             intersectionBorderWidth = 5;
 

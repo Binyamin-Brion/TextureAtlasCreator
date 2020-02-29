@@ -31,12 +31,12 @@ namespace GUI
                 /**
                  *  Emitted when the user requests to move the currently viewed tab to the left.
                  */
-                void moveTabLeft();
+                void moveTabLeftTriggered();
 
                 /**
                  *  Emitted when the user requests to move the currently viewed tab to the right.
                  */
-                void moveTabRight();
+                void moveTabRightTriggered();
 
                 /**
                  *  Emitted wen user right clicks and selects option to delete the current tab.

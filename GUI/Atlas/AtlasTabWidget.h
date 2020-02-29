@@ -52,7 +52,7 @@ namespace GUI
                 /**
                  * Initializes this object with the parent passed in.
                  *
-                 * @param parent widget that has ownership over this object.
+                 * @param parent widget that has ownership over this object
                  */
                 explicit AtlasTabWidget(QWidget *parent = nullptr);
 

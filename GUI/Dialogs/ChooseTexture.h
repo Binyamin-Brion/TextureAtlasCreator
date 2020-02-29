@@ -25,11 +25,12 @@ namespace GUI
                  *  Emitted when the user confirms the selection of a texture from the file system.
                  *
                  *  The parameters are:
-                 *   1. location to the texture chosen on the file system
-                 *   2. Intersection width for the texture chosen
-                 *   3. Selection width for the texture chosen
+                 *   1. Name of the tab holding the texture button area to place the texture button associated with the chosen texture
+                 *   2. Location to the texture chosen on the file system
+                 *   3. Intersection width for the texture chosen
+                 *   4. Selection width for the texture chosen
                  */
-                void textureChosen(QString, unsigned int, unsigned int);
+                void textureChosen(QString, QString, unsigned int, unsigned int);
 
             public:
 
@@ -56,8 +57,20 @@ namespace GUI
                 void closeEvent(QCloseEvent *event) override;
 
             private slots:
+
+                /**
+                 *  Opens a dialog to allow the user to pick a image from the file system, and updates the dialog as required.
+                 */
                 void fileLocationButtonClicked();
+
+                /**
+                 *  Checks to make sure that the intersection width written by the user is valid and updates the dialog as required.
+                 */
                 void intersectionWidthTextChanged(const QString&);
+
+                /**
+                 *  Checks to make sure that the selection width written by the user is valid and updates the dialog as required.
+                 */
                 void selectionWidthTextChanged(const QString&);
 
             private:

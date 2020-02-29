@@ -11,15 +11,12 @@ namespace GUI
 {
     namespace LoadResults
     {
-        ScrollArea::ScrollArea(QWidget *parent) : QScrollArea{parent}
+        // Beginning of public functions
+
+        ScrollArea::ScrollArea(QWidget *parent)
+                    :
+                        QScrollArea{parent}
         {
-            setLayout(new QHBoxLayout);
-
-            if(textureButtonArea != nullptr)
-            {
-                return;
-            }
-
             textureButtonArea = new TextureButtonArea{this};
 
             setWidget(textureButtonArea);
@@ -40,9 +37,9 @@ namespace GUI
             return textureButtonArea;
         }
 
-        void ScrollArea::setTextureBankReference(const TextureLogic::TextureBank *textureBank)
+        void ScrollArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
         {
-            textureButtonArea->setTextureBankReference(const_cast<TextureLogic::TextureBank*>(textureBank));
+            textureButtonArea->setTextureBankReference(textureBank);
         }
     }
 }
