@@ -9,7 +9,6 @@
 #include "SelectedTextureInformation.h"
 #include "TextureLogic/Texture.h"
 
-
 namespace GUI
 {
     namespace TextureInformation
@@ -24,129 +23,42 @@ namespace GUI
 
             ui->setupUi(this);
 
-            // Whenever the text of the texture description area changes, then it usually means that the user
-            // typed a description in. However, because internally the texture does not store a "No Description"
-            // description internally, the texture's description should only be updated when it is a different description.
-            // Note that when a texture with no description is selected, the plaintextedit is updated to show "No Description"
-            // which would inadvertently set the texture's description. Hence the check in the connect function.
+           connect(ui->textureDescription, SIGNAL(textChanged()), this, SLOT(textureDescriptionChanged()));
 
-           connect(ui->textureDescription, &QPlainTextEdit::textChanged, [this]()
-           {
-               // This check should not be needed as the texture description is disabled if no texture is selected, but just in case.
-               // Note that an assert in an else statement cannot be placed as during initialization this connect is called, and no texture is set yet.
-               // This leads to an errorneous assert.
+           connect(ui->textureNameLineEdit, SIGNAL(returnPressed()), this, SLOT(textureNameChanged()));
 
-               if(texture != nullptr)
-               {
-                   if(ui->textureDescription->toPlainText() != "No Description")
-                   {
-                        texture->setTextureDescription(ui->textureDescription->toPlainText(), {});
-                   }
-               }
-           });
+           connect(ui->saveTextureToButton, SIGNAL(pressed()), this, SLOT(saveTexturePressed()));
 
-           // Note that even if return is pressed, the texture is not changed until the texture is saved.
-           // This is because due to how textures are loaded when a texture button is pressed (texture location is given to find an image)
-           // the user will still not be able to load the old texture with the old name in. Therefore there is no point in doing so now.
+           connect(ui->intersectionBorderWidthLineEdit, SIGNAL(returnPressed()), this, SLOT(intersectionBorderWidthChanged()));
 
-           connect(ui->textureNameLineEdit, &QLineEdit::returnPressed, [this]()
-           {
-                if(ui->textureNameLineEdit->text().contains("Modified"))
-                {
-                    QMessageBox::warning(this, tr("Error: Invalid Texture Name"), "Cannot have a texture name with the word Modified.", QMessageBox::Ok);
-                }
-                else if(ui->textureNameLineEdit->text() == texture->textureName())
-                {
-                    QMessageBox::warning(this, tr("Error: Invalid Texture Name"), "You must choose unique name, different than an existing texture's!.", QMessageBox::Ok);
-                }
-           });
+           connect(ui->selectionBorderWidthLineEdit, SIGNAL(returnPressed()), this, SLOT(selectionBorderWidthChanged()));
 
-           // TODO: Change where the file save dialog opens to- doubtful that every computer where this program runs has a user called BinyBrion
+            // Next two connect statements ensure that the line edit controlling the export image quality
+            // and the associated slider are synchronized in the values they are showing
 
-           connect(ui->saveTextureToButton, &QPushButton::pressed, [this]()
-           {
-               if(ui->textureNameLineEdit->text().isEmpty())
-               {
-                   QMessageBox::warning(this, tr("Error: No texture name given."), "Enter a texture name first before trying to save.", QMessageBox::Ok);
-               }
-               else if(texture == nullptr) // This if statement should not occur as the push button is disabled when there is no texture selected. But just in case.
-               {
-                   QMessageBox::warning(this, tr("Error: No Texture Selected"), "You must first selected a texture.", QMessageBox::Ok);
+            connect(ui->saveQualitySlider, &QSlider::sliderMoved, [this](int newValue) { ui->saveQualityLineEdit->setText(QString::number(newValue)); });
 
-                   Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Invalid if branch taken");
-               }
-               else
-               {
-                   QString newFileLocation = QFileDialog::getSaveFileName(this, tr("Save Image"), "C:/Users/BinyBrion/Pictures/" + ui->textureNameLineEdit->text(), tr("Image ()"));
+            connect(ui->saveQualitySlider, &SaveQualitySlider::sliderValueDifferent, [this](int value) { ui->saveQualityLineEdit->setText(QString::number(value)); });
 
-                   if(!newFileLocation.isEmpty())
-                   {
-                       newFileLocation += '.';
-                       newFileLocation += ui->formatComboBox->currentText();
+            // Ensure valid quality factor is entered into the line edit associated with texture save quality
+            connect(ui->saveQualityLineEdit, SIGNAL(returnPressed()), this, SLOT(saveQualityChanged()));
 
-                       if(QFileInfo::exists(newFileLocation) && QFileInfo(newFileLocation).isFile())
-                       {
-                          int response = QMessageBox::warning(this, tr("Error: Image Already Exists"), "An image by the selected name already exists. \n"
-                                                                                         "Do you wish to overwrite it?", QMessageBox::Ok | QMessageBox::Cancel);
+            connect(ui->intersectionZoomComboxBox, SIGNAL(currentIndexChanged(int)), this, SLOT(intersectionZoomComboBoxChanged(int)));
 
-                            if(response == QMessageBox::Ok)
-                            {
-                                QFile file{newFileLocation};
+            connect(ui->selectionZoomComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectionZoomComboBoxChanged(int)));
 
-                                if(!file.remove())
-                                {
-                                    QMessageBox::critical(this, tr("Error: Unable to write image"), "Failed to overwrite the existing file.", QMessageBox::Ok);
-                                }
-                                else
-                                {
-                                    saveImage(newFileLocation);
-                                }
-                            }
-                       }
-                       else
-                       {
-                           saveImage(newFileLocation);
-                       }
-                   }
-               }
-           });
+            for(auto &i : zoomPairs)
+            {
+                 ui->intersectionZoomComboxBox->addItem(i.zoomStringRepresentation);
+                 ui->selectionZoomComboBox->addItem(i.zoomStringRepresentation);
+            }
 
-           connect(ui->intersectionBorderWidthLineEdit, &QLineEdit::returnPressed, [this]()
-           {
-               int chosenWidth = checkValidBorderWidth(ui->intersectionBorderWidthLineEdit, 50.f * normalZoomFactorValue(zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom));
+            // Display the selected texture border widths at Normal zoom
+            ui->intersectionZoomComboxBox->setCurrentIndex(2);
+            ui->selectionZoomComboBox->setCurrentIndex(2);
 
-               if(chosenWidth == -1)
-               {
-                   return;
-               }
-
-                emit newIntersectionBorderWidth(texture, zoomPairs[ui->intersectionZoomComboxBox->currentIndex()].zoom, ui->intersectionBorderWidthLineEdit->text().toUInt());
-           });
-
-           connect(ui->selectionBorderWidthLineEdit, &QLineEdit::returnPressed, [this]()
-           {
-                int chosenWidth = checkValidBorderWidth(ui->selectionBorderWidthLineEdit, 10.f * normalZoomFactorValue(zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom));
-
-                if(chosenWidth == -1)
-                {
-                    return;
-                }
-
-                emit newSelectionBorderWidth(texture, zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom, chosenWidth);
-           });
-
-           for(auto &i : zoomPairs)
-           {
-                ui->intersectionZoomComboxBox->addItem(i.zoomStringRepresentation);
-                ui->selectionZoomComboBox->addItem(i.zoomStringRepresentation);
-           }
-
-           ui->intersectionZoomComboxBox->setCurrentIndex(2);
-           ui->selectionZoomComboBox->setCurrentIndex(2);
-
-           // When adding the internal format representations, the format "Invalid Format" is a weird option to be able to select.
-           // Therefore the user should not be able to select it.
-
+            // When adding the internal format representations, the format "Invalid Format" is a weird option to be able to select.
+            // Therefore the user should not be able to select it.
             for(auto i = internalFormatPairs.cbegin() + 1; i != internalFormatPairs.cend(); ++i)
             {
                 ui->interalFormatComboBox->addItem(i->formatStringRepresentation);
@@ -154,7 +66,6 @@ namespace GUI
 
             // By default, set the texture format that a texture is saved as RGB32- since the first format was not
             // not added to the combo box, the index of RGB32 is 3, not 4
-
             ui->interalFormatComboBox->setCurrentIndex(3);
 
             for(const auto &i : imageExtensions)
@@ -163,52 +74,11 @@ namespace GUI
             }
 
             // By default the export texture quality should be 100
-
             ui->saveQualityLineEdit->setText("100");
-
-            // Next two connect statements ensure that the line edit controlling the export image quality
-            // and the associated slider are synchronized in the values they are showing
-
-            connect(ui->saveQualitySlider, &QSlider::sliderMoved, [this](int newValue)
-            {
-                ui->saveQualityLineEdit->setText(QString::number(newValue));
-            });
-
-            connect(ui->saveQualitySlider, &SaveQualitySlider::sliderValueDifferent, [this](int value)
-            {
-                ui->saveQualityLineEdit->setText(QString::number(value));
-            });
-
-            // Ensure valid quality factor is entered into the line edit associated with texture save quality
-
-            connect(ui->saveQualityLineEdit, &QLineEdit::returnPressed, [this]()
-            {
-                bool ok;
-
-                int value = ui->saveQualityLineEdit->text().toInt(&ok);
-
-                if(!ok || (value < 0 || value > 100))
-                {
-                    QMessageBox::warning(this, tr("Error: Invalid Quality Value"), "Enter a quality value between and including 0 to 100", QMessageBox::Ok);
-                }
-                else
-                {
-                    ui->saveQualitySlider->setValue(ui->saveQualityLineEdit->text().toInt());
-                }
-            });
-
-            connect(ui->intersectionZoomComboxBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
-            {
-                ui->intersectionBorderWidthLineEdit->setText(QString::number(texture->getIntersectionBorderWidth(zoomPairs[index].zoom)));
-            });
-
-            connect(ui->selectionZoomComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
-            {
-                ui->selectionBorderWidthLineEdit->setText(QString::number(texture->getSelectedBorderWidth(zoomPairs[index].zoom)));
-            });
 
             resetDefaultLabels();
 
+            // With no texture selected there is no format right now
             selectedTextureFormat = QImage::Format_Invalid;
         }
 
@@ -226,7 +96,6 @@ namespace GUI
         {
             // This check should not be needed as the render area and this widget are synchronized in the widget that is selected.
             // The only way for a texture to be modified is if the render area holds a selected texture, in which case so does this widget
-
             if(texture != nullptr)
             {
                 QString currentTextureName = texture->textureName();
@@ -253,8 +122,7 @@ namespace GUI
             this->texture = const_cast<TextureLogic::Texture*>(texture);
 
             // No texture is selected, in which case reset to the default state of showing texture information
-            // (Clear any texture-specific text and disable
-
+            // (Clear any texture-specific text and disable)
             if(texture == nullptr)
             {
                 resetDefaultLabels();
@@ -266,7 +134,6 @@ namespace GUI
 
             // Valid texture is selected, and therefore the texture information area widgets
             // should be enabled so the user can interact with them
-
             ui->textureDescription->setEnabled(true);
 
             ui->saveTextureToButton->setEnabled(true);
@@ -284,7 +151,6 @@ namespace GUI
             // can be queried from. For everything but the image dimensions, any zoom can be selected, as the
             // texture format is the same. However, to be consistent with what the user loaded form disk, the
             // normal zoom is selected to ensure that the dimensions shown reflect what is on the disk.
-
             const QImage& textureImage = texture->getImage(TextureLogic::Zoom::Normal);
 
             ui->intersectionBorderWidthLineEdit->setText(QString::number(texture->getIntersectionBorderWidth(zoomPairs[ui->intersectionZoomComboxBox->currentIndex()].zoom)));
@@ -299,7 +165,6 @@ namespace GUI
 
             // Get the last time the selected texture was modified and display it to the user.
             // Note that the location of the texture used for loading the image is queried.
-
             QFileInfo fileInfo{texture->textureLocation()};
 
             ui->lastSavedLabel->setText("Last Saved To: " + fileInfo.lastModified().toString());
@@ -314,7 +179,6 @@ namespace GUI
             }
 
             // Find and display format information to the user
-
             auto texturePixelInternalFormat = std::find_if(internalFormatPairs.begin(), internalFormatPairs.end(), [texture](const TextureHelperFunctions::InternalFormatPair &internalFormatPair)
             {
                 return internalFormatPair.format == texture->getImage(TextureLogic::Zoom::Normal).format();
@@ -332,6 +196,145 @@ namespace GUI
 
             selectedTextureFormat = texture->getImage(TextureLogic::Zoom::Normal).format();
         }
+
+        // Beginning of private slots
+
+        void SelectedTextureInformation::intersectionBorderWidthChanged()
+        {
+            int chosenWidth = checkValidBorderWidth(ui->intersectionBorderWidthLineEdit, 50.f * normalZoomFactorValue(zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom));
+
+            if(chosenWidth == -1)
+            {
+                return;
+            }
+
+            emit newIntersectionBorderWidth(texture, zoomPairs[ui->intersectionZoomComboxBox->currentIndex()].zoom, ui->intersectionBorderWidthLineEdit->text().toUInt());
+        }
+
+        void SelectedTextureInformation::intersectionZoomComboBoxChanged(int index)
+        {
+            // See textureDescriptionChanged() for why this check exists
+            if(texture != nullptr)
+            {
+                ui->intersectionBorderWidthLineEdit->setText(QString::number(texture->getIntersectionBorderWidth(zoomPairs[index].zoom)));
+            }
+        }
+
+        void SelectedTextureInformation::saveQualityChanged()
+        {
+            bool ok;
+
+            int value = ui->saveQualityLineEdit->text().toInt(&ok);
+
+            if(!ok || (value < 0 || value > 100))
+            {
+                QMessageBox::warning(this, tr("Error: Invalid Quality Value"), "Enter a quality value between and including 0 to 100", QMessageBox::Ok);
+            }
+            else
+            {
+                ui->saveQualitySlider->setValue(ui->saveQualityLineEdit->text().toInt());
+            }
+        }
+
+        void SelectedTextureInformation::saveTexturePressed()
+        {
+            if(ui->textureNameLineEdit->text().isEmpty())
+            {
+                QMessageBox::warning(this, tr("Error: No texture name given."), "Enter a texture name first before trying to save.", QMessageBox::Ok);
+            }
+            else if(texture == nullptr) // This if statement should not occur as the push button is disabled when there is no texture selected. But just in case.
+            {
+                QMessageBox::warning(this, tr("Error: No Texture Selected"), "You must first selected a texture.", QMessageBox::Ok);
+
+                Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Invalid if branch taken");
+            }
+            else
+            {
+                QString newFileLocation = QFileDialog::getSaveFileName(this, tr("Save Image"), "C:/Users/BinyBrion/Pictures/" + ui->textureNameLineEdit->text(), tr("Image ()"));
+
+                if(!newFileLocation.isEmpty())
+                {
+                    newFileLocation += '.';
+                    newFileLocation += ui->formatComboBox->currentText();
+
+                    if(QFileInfo::exists(newFileLocation) && QFileInfo(newFileLocation).isFile())
+                    {
+                        int response = QMessageBox::warning(this, tr("Error: Image Already Exists"), "An image by the selected name already exists. \n"
+                                                                                                     "Do you wish to overwrite it?", QMessageBox::Ok | QMessageBox::Cancel);
+
+                        if(response == QMessageBox::Ok)
+                        {
+                            QFile file{newFileLocation};
+
+                            if(!file.remove())
+                            {
+                                QMessageBox::critical(this, tr("Error: Unable to write image"), "Failed to overwrite the existing file.", QMessageBox::Ok);
+                            }
+                            else
+                            {
+                                saveImage(newFileLocation);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        saveImage(newFileLocation);
+                    }
+                }
+            }
+        }
+
+        void SelectedTextureInformation::selectionBorderWidthChanged()
+        {
+            int chosenWidth = checkValidBorderWidth(ui->selectionBorderWidthLineEdit, 10.f * normalZoomFactorValue(zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom));
+
+            if(chosenWidth == -1)
+            {
+                return;
+            }
+
+            emit newSelectionBorderWidth(texture, zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom, chosenWidth);
+        }
+
+        void SelectedTextureInformation::selectionZoomComboBoxChanged(int index)
+        {
+            // See textureDescriptionChanged() for why this check exists
+            if(texture != nullptr)
+            {
+                ui->selectionBorderWidthLineEdit->setText(QString::number(texture->getSelectedBorderWidth(zoomPairs[index].zoom)));
+            }
+        }
+
+        void SelectedTextureInformation::textureDescriptionChanged()
+        {
+            // The line-edit calls this function as the text "No Description" during program startup is made after the creation of this connection.
+            // Rather than reordering the code in the constructor, just make this function more robust by only allowing this function's logic to
+            // be executed after checking that a texture is selected.
+            if(texture != nullptr)
+            {
+                if(ui->textureDescription->toPlainText() != "No Description")
+                {
+                    texture->setTextureDescription(ui->textureDescription->toPlainText(), {});
+                }
+            }
+        }
+
+        void SelectedTextureInformation::textureNameChanged()
+        {
+            // Note that even if return is pressed, the texture is not changed until the texture is saved.
+            // This is because due to how textures are loaded when a texture button is pressed (texture location is given to find an image)
+            // the user will still not be able to load the old texture with the old name in. Therefore there is no point in doing so now.
+            if(ui->textureNameLineEdit->text().contains("Modified"))
+            {
+                QMessageBox::warning(this, tr("Error: Invalid Texture Name"), "Cannot have a texture name with the word Modified.", QMessageBox::Ok);
+            }
+            else if(ui->textureNameLineEdit->text() == texture->textureName())
+            {
+                QMessageBox::warning(this, tr("Error: Invalid Texture Name"), "You must choose unique name, different than an existing texture's!.", QMessageBox::Ok);
+            }
+        }
+
+        // Beginning of private functions
 
         int SelectedTextureInformation::checkValidBorderWidth(QLineEdit *lineEdit, int maxValue)
         {
@@ -399,7 +402,6 @@ namespace GUI
             // If the selected texture has a different format different than what the the user selected to save as,
             // then convert the selected texture to that chosen format. Note however, that this means converting
             // all of the zoom textures as well, as that is "part" of the selected texture.
-
             if(texturePixelInternalFormat->format != texture->getImage(TextureLogic::Zoom::Normal).format())
             {
                 for(auto &i : TextureLogic::AllZoomValues)
@@ -438,7 +440,7 @@ namespace GUI
                 // After saving the texture, it now has a new texture name and location. However, this effectively "erased"
                 // the old texture that a texture button refers to. Thus when that button is pressed again, an error saying
                 // no texture of that location was loaded will appear. To deal with that, the old texture has to be reuploaded
-                // so that in the texturebank a texture with the old details is present
+                // so that in the texturebank a texture with the old details is present.
 
                 unsigned int intersectionBorderWidth = texture->getIntersectionBorderWidth(TextureLogic::Zoom::Normal);
 

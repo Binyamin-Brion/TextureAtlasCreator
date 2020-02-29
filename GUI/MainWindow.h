@@ -16,17 +16,27 @@ namespace TextureLogic
 
 namespace GUI
 {
-    /*
+    /**
      * The main window for this program. Holds all of the other widgets and their resources.
      * Also sets up the connections between those widgets.
      */
 
     class MainWindow : public QMainWindow
     {
-        Q_OBJECT
+            Q_OBJECT
 
         public:
+
+            /**
+             * Initializes this object with the parent passed in.
+             *
+             * @param parent widget that has ownership over this object.
+             */
             explicit MainWindow(QWidget *parent = nullptr);
+
+            /**
+             * See internal note at MainWindow.cpp.
+             */
             ~MainWindow();
         private:
             Ui::MainWindow *ui = nullptr;

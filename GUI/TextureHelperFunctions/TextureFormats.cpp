@@ -81,7 +81,6 @@ namespace GUI
         {
             // This is for convenience- whenever a new image extension needs to be added, just add it to this
             // vector which will ensure it is shown in the GUI
-
             std::vector<QString> imageExtensions;
 
             imageExtensions.push_back("png");
