@@ -44,10 +44,21 @@ namespace TextureLogic
 {
     class TextureBank
     {
+            using UnusedSpotIndexes = unsigned int;
+
         public:
 
+            /**
+             * Initializes required internal variables.
+             */
             TextureBank();
-            const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& getTextures() const;
+
+            /**
+             * Gets the
+             *
+             * @return
+             */
+            const std::vector<std::pair<std::vector<Texture>, std::vector<UnusedSpotIndexes>>>& getTextures() const;
             const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>);
             void removeTexture(const QString &textureLocation);
             void selectedTextureChanged();
@@ -70,7 +81,7 @@ namespace TextureLogic
             GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea = nullptr;
 
             // See TextureBank.cpp for more details of these two variables
-            std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>> textures;
+            std::vector<std::pair<std::vector<Texture>, std::vector<UnusedSpotIndexes>>> textures;
             std::unordered_map<std::string, std::pair<unsigned int, unsigned int>> originalTextureUploadLocation;
     };
 }

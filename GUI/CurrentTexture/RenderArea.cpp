@@ -258,6 +258,10 @@ namespace GUI
                 case CurrentTextureImage::SpecularTexture:
                     return texture->getSpecularTexture(zoom, {});
             }
+
+            // This should never be reached, as the switch statement should cover all of the possible enum values. But
+            // in case an enum value is added.
+            Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\nInvalid code path taken\n");
         }
 
         PaintFunctions::PaintHistoryCommand* RenderArea::getReferredToImageHistory(TextureLogic::Zoom zoom) const
@@ -270,6 +274,10 @@ namespace GUI
                 case CurrentTextureImage::SpecularTexture:
                     return texture->removeRecentPaintHistorySpecular(zoom, {});
             }
+
+            // This should never be reached, as the switch statement should cover all of the possible enum values. But
+            // in case an enum value is added.
+            Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\nInvalid code path taken\n");
         }
 
         void RenderArea::paintTexture(TextureLogic::Zoom zoom, QPoint mousePosition, const QImage &applyImage, QImage &targetImage, bool undoOperation)

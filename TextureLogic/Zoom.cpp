@@ -6,10 +6,10 @@
 
 namespace TextureLogic
 {
-    // Calculate the next zoom if zooming in, if there is one.
-
     Zoom zoomIn(Zoom currentZoom)
     {
+        // Calculate the next zoom if zooming in, if there is one.
+
         switch(currentZoom)
         {
             case TextureLogic::Zoom::Out25:
@@ -28,6 +28,7 @@ namespace TextureLogic
                 currentZoom = TextureLogic::Zoom::In400;
                 break;
 
+            // No more zoom in values possible.
             case TextureLogic::Zoom::In400:
                 break;
 
@@ -38,10 +39,10 @@ namespace TextureLogic
         return currentZoom;
     }
 
-    // Calculate the next zoom if zooming out, if there is one.
-
     Zoom zoomOut(Zoom currentZoom)
     {
+        // Calculate the next zoom if zooming out, if there is one.
+
         switch (currentZoom)
         {
             case TextureLogic::Zoom::Out50:
@@ -60,6 +61,7 @@ namespace TextureLogic
                 currentZoom = TextureLogic::Zoom::In200;
                 break;
 
+            // No more zoom out values possible.
             case TextureLogic::Zoom::Out25:
                 break;
 
@@ -70,10 +72,10 @@ namespace TextureLogic
         return currentZoom;
     }
 
-    // Convenience function for use with a GUI.
-
     std::vector<ZoomPair> getZoomPairs()
     {
+        // Convenience function for use with a GUI.
+
         std::vector<ZoomPair> zoomPairs;
 
         zoomPairs.push_back(ZoomPair{Zoom::In400, "400%"});

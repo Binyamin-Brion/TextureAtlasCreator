@@ -43,7 +43,7 @@ namespace GUI
             {
                 std::string errorMessage;
 
-                errorMessage += "The texture cannot be added as it is too big for the viewport. You must zoom out.\n\n";
+                errorMessage += "The texture cannot be added or selected as it is too big for the viewport. You must zoom out.\n\n";
                 errorMessage += "Viewport Size: " + std::to_string(viewPort.width()) + " x " + std::to_string(viewPort.height()) + "\n";
                 errorMessage += "Texture size: " + std::to_string(textureSize.width()) + " x " + std::to_string(textureSize.height());
 

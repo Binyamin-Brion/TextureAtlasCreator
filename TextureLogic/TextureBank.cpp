@@ -34,7 +34,7 @@ namespace TextureLogic
         // is not format that when a texture has, the texture of that format is stored. In that case, an error message
         // needs to be shown to the user to indicate that the texture could not be loaded.
 
-        unsigned numberInternalFormats = GUI::TextureHelperFunctions::internalFormatPairRepresentations().size() - 1;
+        unsigned int numberInternalFormats = GUI::TextureHelperFunctions::internalFormatPairRepresentations().size() - 1;
 
         // The vectors holding the textures of different formats have to be created first- otherwise a crash
         // will occur when trying to access them!

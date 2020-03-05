@@ -7,19 +7,29 @@
 
 namespace TextureLogic
 {
-    Texture::Texture(const QString &texturePath, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth) : _textureLocation{texturePath}
+    Texture::Texture(const QString &texturePath, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
+                :
+                    _textureLocation{texturePath}
     {
+        // Since the scaled textures are stored in an array, if they do not have default constructors then initialization
+        // the array becomes hard, as the array, and therefore the scaled textures, are created before this constructor body is run.
+        // Having the scaled texture have an initialize function is a solution to this problem.
+
         for(auto &i : AllZoomValues)
         {
             _texture[GetZoomIndex(i)].initialize(_textureLocation, i, intersectionBorderWidth, selectionBorderWidth);
         }
 
+        // To ensure everything works as expected on Windows and Linux, ensure only forward slashes in file system locations.
         _textureLocation.replace('\\', '/');
 
+        // The texture name is any text after the last slash, minus text after the period denoting the file type.
         _textureName = _textureLocation.right(_textureLocation.size() - _textureLocation.lastIndexOf('/') - 1);
 
+        // File type (and therefore texture type here) is everything after the period in a file location.
         _textureFormat = _textureName.right(_textureLocation.size() - _textureLocation.lastIndexOf('.') - 1);
 
+        // File type not part of texture name.
         _textureName.chop(_textureFormat.size() + 1);
     }
 
@@ -35,6 +45,7 @@ namespace TextureLogic
 
     void Texture::convertToFormat(QImage::Format newFormat)
     {
+        // Since the scaled textures represent the original texture, they must have the same format.
         for(auto &i : AllZoomValues)
         {
             _texture[GetZoomIndex(i)].convertToFormat(newFormat);
@@ -78,6 +89,8 @@ namespace TextureLogic
 
     void Texture::setIntersectionBorderWidth(unsigned int newWidth, TextureLogic::Zoom zoom, AccessRestriction::PassKey<TextureBank>)
     {
+        // The scaled textures representing different zooms that what was passed in have to be updated so that they remain relative
+        // to one another.
         for(auto &i : AllZoomValues)
         {
             float zoomFactor = TextureLogic::GetZoomValue(i) / TextureLogic::GetZoomValue(zoom);
@@ -90,6 +103,8 @@ namespace TextureLogic
 
     void Texture::setSelectionBorderWidth(unsigned int newWidth, TextureLogic::Zoom zoom, AccessRestriction::PassKey<TextureBank>)
     {
+        // The scaled textures representing different zooms that what was passed in have to be updated so that they remain relative
+        // to one another.
         for(auto &i : AllZoomValues)
         {
             float zoomFactor = TextureLogic::GetZoomValue(i) / TextureLogic::GetZoomValue(zoom);
@@ -102,20 +117,12 @@ namespace TextureLogic
 
     void Texture::setTextureDescription(const QString &description, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)
     {
-        int descriptionLengthDifference = description.size() - textureDescription.size();
-
-        if(descriptionLengthDifference > 0)
-        {
-            textureDescription += description[description.size() - 1];
-        }
-        else
-        {
-            textureDescription.chop(1);
-        }
+        textureDescription = description;
     }
 
     void Texture::setTextureLocation(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)
     {
+        // Same idea as what is done in constructor
         _textureLocation = textureLocation;
 
         _textureLocation.replace('\\', '/');
