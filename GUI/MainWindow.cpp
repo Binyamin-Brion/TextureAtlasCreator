@@ -33,7 +33,7 @@ namespace GUI
 
         textureBank->setAtlasTabWidgetReference(ui->atlasWidget);
 
-        textureBank->setCurrentTextureTabWidgetReference(ui->currentTexture);
+        textureBank->setSelectedTextureTabWidgetReference(ui->currentTexture);
 
         textureBank->setTextureInfoScrollAreaReference(ui->selectedTextureInformation);
 

@@ -87,7 +87,7 @@ namespace GUI
             // The texture within the texture vector can still be safely accessed through an index. That index has to be found first.
             int index = 0;
 
-            for(const auto &i : textureBank->getTexturesTextureInfo({})[formatIndex].first)
+            for(const auto &i : textureBank->getTextures()[formatIndex].first)
             {
                 if(texture == &i)
                 {
@@ -101,7 +101,7 @@ namespace GUI
 
             // Update the reference to the currently selected texture to make sure that it still points to a valid texture in the texture vector,
             // in case it got reallocated.
-            selectedTextureInformation->setTexture(&textureBank->getTexturesTextureInfo({})[formatIndex].first[index]);
+            selectedTextureInformation->setTexture(&textureBank->getTextures()[formatIndex].first[index]);
         }
     }
 }

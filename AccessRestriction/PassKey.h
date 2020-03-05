@@ -7,6 +7,12 @@
 
 namespace AccessRestriction
 {
+    /**
+     *  Idiom to allow only certain classes to call a function, even if it is public.
+     *
+     * @tparam T the class to allow calling this function
+     */
+
     template<typename T>
     class PassKey
     {

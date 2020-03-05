@@ -10,6 +10,9 @@
 
 // For every type of format, there are two vectors associated with it: the first vector holds the
 // textures of a given format; the other one holds free spots the new textures can be inserted to.
+// Since a texture may be large, erasing a texture that is not at the end of the specific could be costly, and a vector
+// is used as it is otherwise a good data structure to store all of the textures.
+// Note: In hindsight, this not needed due to amount of texture realistically used in program. Not worth rewriting however.
 
 /*
  *  The purpose of the originalTextureUploadLocation is as follows. Each texture has its original format,
@@ -21,7 +24,7 @@
  *  To deal with this, whenever a new texture is upload, it is stored in the vector representing the
  *  texture's original format. Whenever the texture needs to be converted to a different format, it
  *  is done so from this version of the texture. The variable originalTextureUploadLocation keeps track
- *  of the vector of where this original texture is. The program must however iterate over that texture to
+ *  of the vector of where this original texture is. The program must however iterate over that texture vector to
  *  find that texture though- there is no promise in the future that all textures uploaded into a vector will
  *  always have the same index.
  */
@@ -33,12 +36,10 @@ namespace TextureLogic
         // The number of internal formats has a subtraction of 1 as the first internal format specified- Format_Invalid -
         // is not format that when a texture has, the texture of that format is stored. In that case, an error message
         // needs to be shown to the user to indicate that the texture could not be loaded.
-
         unsigned int numberInternalFormats = GUI::TextureHelperFunctions::internalFormatPairRepresentations().size() - 1;
 
         // The vectors holding the textures of different formats have to be created first- otherwise a crash
         // will occur when trying to access them!
-
         for(int i = 0; i < numberInternalFormats; ++i)
         {
             textures.push_back(std::make_pair<std::vector<Texture>, std::vector<unsigned int>>({}, {}));
@@ -46,11 +47,6 @@ namespace TextureLogic
     }
 
     const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& TextureBank::getTextures() const
-    {
-        return textures;
-    }
-
-    const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& TextureBank::getTexturesTextureInfo(AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>)
     {
         return textures;
     }
@@ -69,19 +65,10 @@ namespace TextureLogic
         // Make sure that any GUI parts referencing the texture about to be deleted no longer reference them.
         // While in the current version of this program the texture is still in the vector, this may not always
         // be the case in the future and logically makes no sense to keep referencing that texture.
-
         textureSelected(nullptr);
-
-        originalTextureLocation->second.second -= 1;
-
-        if(originalTextureLocation->second.second != 0)
-        {
-            return;
-        }
 
         // Iterate through all of the textures, including those of different formats, and remove that texture
         // from any of the texture atlases, and mark the texture's place in the vector as free
-
         for(auto i = textures.begin(); i != textures.end(); ++i)
         {
             for(auto j = i->first.cbegin(); j != i->first.cend(); ++j)
@@ -96,11 +83,10 @@ namespace TextureLogic
         }
     }
 
-    // This function is called when a selected texture is painted; when that occurs, certain information
-    // about the texture that is shown, such as the texture name, is changed
-
     void TextureBank::selectedTextureChanged()
     {
+        // This function is called when a selected texture is painted; when that occurs, certain information
+        // about the texture that is shown, such as the texture name, is changed
         textureInfoScrollArea->selectedTextureModified();
     }
 
@@ -112,7 +98,7 @@ namespace TextureLogic
         }
     }
 
-    void TextureBank::setCurrentTextureTabWidgetReference(GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget)
+    void TextureBank::setSelectedTextureTabWidgetReference(GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget)
     {
         if(this->currentTextureTabWidget == nullptr)
         {
@@ -122,10 +108,6 @@ namespace TextureLogic
 
     bool TextureBank::setIntersectionBorderWidth(Texture *texture, Zoom zoom, unsigned int newBorderWidth)
     {
-       // unsigned int formatIndex = GUI::TextureHelperFunctions::indexFormatString(texture->textureFormat(), true);
-
-        bool foundTexture = false;
-
         unsigned int previousIntersectionWidth = texture->getIntersectionBorderWidth(Zoom::Normal);
 
         texture->setIntersectionBorderWidth(newBorderWidth, zoom, {});
@@ -133,8 +115,6 @@ namespace TextureLogic
         if(atlasTabWidget->setIntersectionWidth(texture))
         {
             texture->setIntersectionBorderWidth(previousIntersectionWidth, Zoom::Normal, {});
-
-            atlasTabWidget->setIntersectionWidth(texture);
 
             return true;
         }
@@ -161,8 +141,6 @@ namespace TextureLogic
     {
         loadNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth);
     }
-
-    // Note that fn reuploadTexture is called when a texture is saved. See the TextureInfo classes in GUI for more info
 
     void TextureBank::reuploadTexture(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::TextureInformation::TextureInfoScrollArea>)
     {
@@ -211,7 +189,6 @@ namespace TextureLogic
 
                 // Remember that the texture vectors has been added to at the back (its size increased).
                 // A reseating of references to the vector is needed (see fn resetTextureReference for more details)
-
                 resetTextureReference();
 
                 atlasTabWidget->addTextureToCurrentAtlas(textures[formatIndex].first.back());
@@ -249,8 +226,6 @@ namespace TextureLogic
 
         if(originalTextureLocation != originalTextureUploadLocation.end())
         {
-            originalTextureLocation->second.second += 1;
-
             return;
         }
 
@@ -261,10 +236,9 @@ namespace TextureLogic
 
         unsigned int RGB32_Index = GUI::TextureHelperFunctions::indexFormat(QImage::Format_RGB32, true);
 
-        originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), std::make_pair(RGB32_Index, 1)));
+        originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), RGB32_Index));
 
         // If there are no free places to insert a new texture, it is inserted at the back of a format texture
-
         if(textures[RGB32_Index].second.empty())
         {
             textures[RGB32_Index].first.push_back(Texture{textureLocation, intersectionBorderWidth, selectionBorderWidth});
@@ -297,7 +271,7 @@ namespace TextureLogic
 
                 originalTextureUploadLocation.erase(textureLocation.toStdString());
 
-                originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), std::make_pair(newTextureVectorIndex, 1)));
+                originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), newTextureVectorIndex));
             }
         }
         else // Same logic as the above branch; the only difference is that the original texture is not loaded into the back of the RGB32 format vector
@@ -323,7 +297,7 @@ namespace TextureLogic
 
                 originalTextureUploadLocation.erase(textureLocation.toStdString());
 
-                originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), std::make_pair(newTextureVectorIndex, 1)));
+                originalTextureUploadLocation.insert(std::make_pair(textureLocation.toStdString(), newTextureVectorIndex));
             }
             else
             {
@@ -333,7 +307,6 @@ namespace TextureLogic
 
         // The vectors have been modified and the resources of the format vector may not be in the sample place in
         // memory as they were before. Any objects referring to those regions of memory have to be updated.
-
         resetTextureReference();
     }
 
