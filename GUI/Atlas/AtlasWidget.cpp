@@ -37,6 +37,11 @@ namespace GUI
             viewPortOffset = QPoint{0, 0};
         }
 
+        void AtlasWidget::changesSaved()
+        {
+            textureAtlas->changesSaved();
+        }
+
         bool AtlasWidget::checkTextureNotWithinViewPort(QSize textureSize)
         {
             if(viewPort.width() < textureSize.width() || viewPort.height() < textureSize.height())
@@ -63,6 +68,11 @@ namespace GUI
         ::Atlas::AtlasInformationBundle AtlasWidget::getAtlasInformation() const
         {
             return ::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()};
+        }
+
+        bool AtlasWidget::getUnsavedChanges()
+        {
+            return textureAtlas->getUnsavedChanges();
         }
 
         void AtlasWidget::exportTexture()

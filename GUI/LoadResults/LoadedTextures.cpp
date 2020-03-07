@@ -16,7 +16,7 @@ namespace GUI
     namespace LoadResults
     {
         // For the moveTabXXX and the deleteCurrentTab functions, see the AtlasTabWidget.cpp file for description of how
-        // these functions work. That class uses the same function ti implement the same behaviour. Refer to that class
+        // these functions work. That class uses the same function it implement the same behaviour. Refer to that class
         // for comments on how these functions work.
 
         // Beginning of public functions
@@ -61,6 +61,41 @@ namespace GUI
 
             connect(addNewTab, SIGNAL(newTabNameChosen(QString)), this, SLOT(newTabNameChosen(QString)));
 
+        }
+
+        void LoadedTextures::addTextureButtonArea(const QString &tabName)
+        {
+            auto *scrollArea = new ScrollArea;
+
+            scrollArea->setTextureBankReference(textureBank);
+
+            // These connections are for the tab contents, unlike the connections in the constructor
+
+            connect(scrollArea->getTextureArea(), SIGNAL(renameTabRequest()), this, SLOT(showRenameTabDialog()));
+
+            connect(scrollArea->getTextureArea(), SIGNAL(moveTabLeftTriggered()), this, SLOT(moveTabLeft()));
+
+            connect(scrollArea->getTextureArea(), SIGNAL(moveTabRightTriggered()), this, SLOT(moveTabRight()));
+
+            currentTabs.emplace_back(scrollArea, tabName);
+
+            addTab(currentTabs.back().first, currentTabs.back().second);
+
+            addNewTab->addNameExistingTab(tabName);
+
+            chooseTexture->addTab(currentTabs.back().second);
+        }
+
+        void LoadedTextures::closeAllTabs()
+        {
+            for(unsigned int i = 0; i < currentTabs.size(); ++i)
+            {
+                deleteCurrentTab();
+            }
+
+            // Deleting all of the tabs in the above loop will put in a default tab, which is not required as this function
+            // is called when a project is to be opened. When that happens, there will be tabs to be placed.
+            removeTab(0);
         }
 
         void LoadedTextures::setTextureBankReference(TextureLogic::TextureBank *textureBank)
@@ -227,31 +262,6 @@ namespace GUI
             }
 
             Q_ASSERT_X(true, __PRETTY_FUNCTION__, "\n Unable to find tab requested in which to place texture button\n");
-        }
-
-        // Beginning of private functions
-
-        void LoadedTextures::addTextureButtonArea(const QString &tabName)
-        {
-            auto *scrollArea = new ScrollArea;
-
-            scrollArea->setTextureBankReference(textureBank);
-
-            // These connections are for the tab contents, unlike the connections in the constructor
-
-            connect(scrollArea->getTextureArea(), SIGNAL(renameTabRequest()), this, SLOT(showRenameTabDialog()));
-
-            connect(scrollArea->getTextureArea(), SIGNAL(moveTabLeftTriggered()), this, SLOT(moveTabLeft()));
-
-            connect(scrollArea->getTextureArea(), SIGNAL(moveTabRightTriggered()), this, SLOT(moveTabRight()));
-
-            currentTabs.emplace_back(scrollArea, tabName);
-
-            addTab(currentTabs.back().first, currentTabs.back().second);
-
-            addNewTab->addNameExistingTab(tabName);
-
-            chooseTexture->addTab(currentTabs.back().second);
         }
     }
 }

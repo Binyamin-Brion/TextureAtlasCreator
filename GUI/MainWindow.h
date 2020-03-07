@@ -38,9 +38,13 @@ namespace GUI
              * See internal note at MainWindow.cpp.
              */
             ~MainWindow();
+
         private:
+            void closeProject();
+
             Ui::MainWindow *ui = nullptr;
             std::unique_ptr<::TextureLogic::TextureBank> textureBank;
+            const QString projectExtension = ".tac";
     };
 }
 

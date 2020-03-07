@@ -69,9 +69,33 @@ namespace GUI
             currentTabs[currentIndex()].first->addTexture(texture);
         }
 
+        void AtlasTabWidget::closeAllTabs()
+        {
+            for(int i = 0; i < currentTabs.size(); ++i)
+            {
+                deleteCurrentTab();
+            }
+
+            // Deleting all of the tabs in the above loop will put in a default tab, which is not required as this function
+            // is called when a project is to be opened. When that happens, there will be tabs to be placed.
+            removeTab(0);
+        }
+
         QImage::Format AtlasTabWidget::getCurrentAtlasFormat() const
         {
             return currentTabs[currentIndex()].first->getAtlasFormat();
+        }
+
+        bool AtlasTabWidget::getUnsavedAtlases() const
+        {
+            bool unsavedAtlases = false;
+
+            for(const auto &i : currentTabs)
+            {
+                unsavedAtlases |= i.first->getUnsavedChanges();
+            }
+
+            return unsavedAtlases;
         }
 
         void AtlasTabWidget::removeTexture(const TextureLogic::Texture *texture)

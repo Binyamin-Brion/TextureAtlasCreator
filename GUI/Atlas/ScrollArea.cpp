@@ -43,6 +43,11 @@ namespace GUI
             atlasWidget->textureButtonPressed(texture);
         }
 
+        void ScrollArea::changesSaved()
+        {
+            atlasWidget->changesSaved();
+        }
+
         void ScrollArea::enterEvent(QEvent *event)
         {
             // The scroll area takes control of all keyboard input once the cursor has entered it
@@ -59,6 +64,11 @@ namespace GUI
         QImage::Format ScrollArea::getAtlasFormat() const
         {
             return atlasWidget->getAtlasFormat();
+        }
+
+        bool ScrollArea::getUnsavedChanges() const
+        {
+            return atlasWidget->getUnsavedChanges();
         }
 
         void ScrollArea::keyPressEvent(QKeyEvent *event)

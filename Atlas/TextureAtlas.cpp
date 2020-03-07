@@ -27,6 +27,11 @@ namespace Atlas
         currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
     }
 
+    void TextureAtlas::changesSaved()
+    {
+        unsavedChanges = false;
+    }
+
     bool TextureAtlas::checkIntersection()
     {
         // A texture can only intersect with other textures if it's moving, in which case a texture must have
@@ -133,6 +138,11 @@ namespace Atlas
         }
 
         return QSize{-1, -1};
+    }
+
+    bool TextureAtlas::getUnsavedChanges() const
+    {
+        return unsavedChanges;
     }
 
     TextureLogic::Zoom TextureAtlas::getCurrentZoom() const
@@ -522,6 +532,8 @@ namespace Atlas
                 selectedExistingTexture->getImage();
             }
         }
+
+        unsavedChanges = true;
     }
 
     void TextureAtlas::setAtlasSize(QSize size)
@@ -733,6 +745,8 @@ namespace Atlas
                 Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Selected texture has a location not found in texture bank!");
             }
         }
+
+        unsavedChanges = true;
     }
 
     void TextureAtlas::updateSelectedTexturesZoom(TextureLogic::Zoom newZoom, float zoomFactor)

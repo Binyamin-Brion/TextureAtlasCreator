@@ -70,7 +70,7 @@ namespace GUI
 
         void TextureButtonArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
         {
-            // A texture button cannot more than one texture button representing the same texture, as that is redundant
+            // A texture button cannot be present more than one texture button representing the same texture, as that is redundant
             for(const auto &i : textureButtons)
             {
                 if(i->getTextureLocation() == textureLocation)
@@ -102,6 +102,26 @@ namespace GUI
 
         void TextureButtonArea::deleteTextureButtons()
         {
+            // Before actually modifying the texture buttons, check if deleting the texture buttons would result in texture
+            // being removed from the program. If such a texture(s) exist, ask the user if this function should continue.
+            for(const auto &i : textureButtons)
+            {
+                int currentTextureCount = TextureButton::getTextureRepresentationCount()[i->getTextureLocation()];
+
+                if(currentTextureCount == TextureButton::MINIMUM_TEXTURE_REPRESENTATION_COUNT)
+                {
+                    int questionResponse = QMessageBox::question(this, tr("Confirmation Required"), "Deleting this texture area will results in texture being permanently deleted. "
+                                                                                                    "All instances of this texture in ALL atlases will be removed. \n\n"
+                                                                                                    "\nContinue, and apply this response to all other textures that would be deleted if this operation finishes?",
+                                                                 QMessageBox::Yes | QMessageBox::Cancel);
+
+                    if(questionResponse != QMessageBox::Yes)
+                    {
+                        return;
+                    }
+                }
+            }
+
             for(auto &i : textureButtons)
             {
                 // Only delete the texture if there is only one more texture button representing the texture

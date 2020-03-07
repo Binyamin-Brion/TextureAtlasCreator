@@ -46,6 +46,19 @@ namespace GUI
                 explicit LoadedTextures(QWidget *parent = nullptr);
 
                 /**
+                 * Adds a new area in which texture buttons can be placed after loading a texture.
+                 *
+                 * @param tabName that the new tab should have
+                 */
+                void addTextureButtonArea(const QString &tabName);
+
+                /**
+                 *  Goes through every texture button area, deletes all of the textures within them, and then deletes
+                 *  all of the tabs.
+                 */
+                void closeAllTabs();
+
+                /**
                  * Sets the reference to the texture bank. The reference is passed to the areas that will buttons of the
                  * loaded textures so that when a texture button is pressed, the texture bank can be notified of this
                  * action and add the clicked texture to the currently opened atlas.
@@ -122,13 +135,6 @@ namespace GUI
                 void openTexture(QString textureButtonAreaName, QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
 
             private:
-
-                /**
-                 * Adds a new area in which texture buttons can be placed after loading a texture.
-                 *
-                 * @param tabName that the new tab should have
-                 */
-                void addTextureButtonArea(const QString &tabName);
 
                 // See internal note for the variable currentTabs in LoadedTextures.cpp
                 std::vector<std::pair<GUI::LoadResults::ScrollArea*, QString>> currentTabs;

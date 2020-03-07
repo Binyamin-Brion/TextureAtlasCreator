@@ -60,6 +60,8 @@ namespace GUI
                  */
                 void addTexture(const TextureLogic::Texture &texture);
 
+                void changesSaved();
+
                 /**
                  * When the cursor enters this widget, it automatically grabs the focus of the keyboard so that
                  * zoom shortcuts are received and processed as expected
@@ -86,6 +88,8 @@ namespace GUI
                  * @return information about the atlas currently being displayed
                  */
                 ::Atlas::AtlasInformationBundle getAtlasInformation() const;
+
+                bool getUnsavedChanges() const;
 
                 /**
                  * Handles key presses made to this widget.

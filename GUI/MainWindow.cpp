@@ -3,6 +3,8 @@
 //
 
 #include <QtWidgets/QShortcut>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QFileDialog>
 #include "MainWindow.h"
 #include "TextureLogic/TextureBank.h"
 
@@ -71,5 +73,26 @@ namespace GUI
     MainWindow::~MainWindow()
     {
         // For some reason, this destructor is required in order for the unique_ptr in use with the TextureBank to compile.
+    }
+
+    void MainWindow::closeProject()
+    {
+        if(ui->atlasWidget->getUnsavedAtlases())
+        {
+            int response = QMessageBox::warning(this, "Unsaved Changes", "Would you like to save changes made?", QMessageBox::Yes | QMessageBox::No);
+
+            if(response == QMessageBox::Yes)
+            {
+                QString saveDestination = QFileDialog::getSaveFileName(this, "Save Project",  QDir::homePath(),  "*." + projectExtension);
+
+                // Save project
+            }
+        }
+
+        textureBank->textureSelected(nullptr);
+
+        ui->atlasWidget->closeAllTabs();
+
+        ui->loadedTextures->closeAllTabs();
     }
 }

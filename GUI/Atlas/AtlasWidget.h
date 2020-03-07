@@ -53,6 +53,8 @@ namespace GUI
                  */
                 explicit AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
 
+                void changesSaved();
+
                 /**
                  * Determines if a given texture cannot be displayed entirely within the viewport.
                  *
@@ -74,6 +76,8 @@ namespace GUI
                  * @return information about the atlas currently being displayed
                  */
                 ::Atlas::AtlasInformationBundle getAtlasInformation() const;
+
+                bool getUnsavedChanges();
 
                 /**
                  *  Forward the request to the texture atlas to export itself.

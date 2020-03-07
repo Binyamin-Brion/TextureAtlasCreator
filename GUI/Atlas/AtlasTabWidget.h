@@ -64,11 +64,19 @@ namespace GUI
                 void addTextureToCurrentAtlas(const TextureLogic::Texture &texture);
 
                 /**
+                 *  Goes through every atlas and closes it. Any unsaved changes will be lost, hence a warning will appear
+                 *  if there are modified atlases that are not saved.
+                 */
+                void closeAllTabs();
+
+                /**
                  * Get the format of the current atlas being displayed.
                  *
                  * @return format of the current atlas
                  */
                 QImage::Format getCurrentAtlasFormat() const;
+
+                bool getUnsavedAtlases() const;
 
                 /**
                  * Removes the passed in textures from ALL texture atlases, regardless if an atlas is currently

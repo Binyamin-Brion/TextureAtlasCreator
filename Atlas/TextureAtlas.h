@@ -45,6 +45,8 @@ namespace Atlas
              */
             explicit TextureAtlas(QImage::Format atlasFormat);
 
+            void changesSaved();
+
             /**
              *
              * @return
@@ -95,6 +97,8 @@ namespace Atlas
              * @return the size of the selected texture. Negative dimensions if no texture is selected
              */
             QSize getSelectedTextureSize() const;
+
+            bool getUnsavedChanges() const;
 
             /**
              * Get the current zoom of the atlas.
@@ -279,6 +283,8 @@ namespace Atlas
             // Variables used when exporting the atlas and determining if a new texture can be placed in the atlas
             QSize atlasSize;
             QImage::Format atlasFormat;
+
+            bool unsavedChanges = false;
     };
 }
 
