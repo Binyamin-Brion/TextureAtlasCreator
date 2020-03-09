@@ -12,6 +12,7 @@
 #include <QGridLayout>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QMenu>
+#include <QtCore/QTextStream>
 
 namespace GUI
 {
@@ -168,6 +169,29 @@ namespace GUI
                     optionsMenu->showTextureButtonDeleteAction(false);
                 }
             }
+        }
+
+        void TextureButtonArea::saveLoadedTextures(const QString &textureButtonAreaName, const QString &saveLocation) const
+        {
+            QFile saveFile{saveLocation};
+
+            if(!saveFile.open(QIODevice::WriteOnly | QIODevice::Append))
+            {
+                throw std::runtime_error{"Failed to open the specified save location for writing."};
+            }
+
+            QTextStream saveStream{&saveFile};
+
+            saveStream << "Texture Button Area: " << textureButtonAreaName << "\n\n";
+
+            for(const auto &i : textureButtons)
+            {
+                saveStream << i->getTextureLocation() << '\n';
+            }
+
+            saveStream << "\n=======================================\n\n";
+
+            saveFile.close();
         }
 
         void TextureButtonArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)

@@ -60,8 +60,6 @@ namespace GUI
                  */
                 void addTexture(const TextureLogic::Texture &texture);
 
-                void changesSaved();
-
                 /**
                  * When the cursor enters this widget, it automatically grabs the focus of the keyboard so that
                  * zoom shortcuts are received and processed as expected
@@ -89,6 +87,11 @@ namespace GUI
                  */
                 ::Atlas::AtlasInformationBundle getAtlasInformation() const;
 
+                /**
+                 * Checks if there are any unsaved changes in the atlas.
+                 *
+                 * @return true if there are unsaved changes
+                 */
                 bool getUnsavedChanges() const;
 
                 /**
@@ -112,6 +115,14 @@ namespace GUI
                  * @param event unused
                  */
                 void leaveEvent(QEvent *event) override;
+
+                /**
+                 * Forwards request to save the atlas to the widget holding the atlas widget.
+                 *
+                 * @param atlasName name of the atlas being saved
+                 * @param saveLocation location to save the atlas to
+                 */
+                void saveAtlas(const QString &atlasName, const QString &saveLocation) const;
 
                 /**
                  * Handles scroll events made to this widget. Ensures that if a scroll event is received, it is not

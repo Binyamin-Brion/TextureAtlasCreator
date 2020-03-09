@@ -49,6 +49,12 @@ namespace GUI
 
         connect(ui->currentTexture, SIGNAL(zoomChanged(TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChanged(TextureLogic::Zoom)));
 
+        // Action connections
+
+        connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveProject()));
+
+        connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsProject()));
+
         connect(ui->atlasWidget, &Atlas::AtlasTabWidget::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle atlasInformation)
         {
             ui->atlasFormatLabel->setText("Atlas Format: " + TextureHelperFunctions::convertToString(atlasInformation.textureFormat));
@@ -65,6 +71,7 @@ namespace GUI
 
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), ui->atlasWidget, SLOT(exportTexture()));
+        new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveProject()));
 
         // Below this size and things look weird
         setMinimumSize(1280, 720);
@@ -74,6 +81,61 @@ namespace GUI
     {
         // For some reason, this destructor is required in order for the unique_ptr in use with the TextureBank to compile.
     }
+
+    // Beginning of private slots
+
+    void MainWindow::saveAsProject()
+    {
+        previousSaveLocation = QFileDialog::getSaveFileName(this, "Save Project As", QDir::homePath(), projectExtension) + projectExtension;
+
+        QFile saveFile{previousSaveLocation};
+
+        if(saveFile.exists())
+        {
+            saveFile.remove();
+        }
+
+        try
+        {
+            ui->loadedTextures->saveLoadedTextures(previousSaveLocation);
+
+            ui->atlasWidget->saveAtlases(previousSaveLocation);
+        }
+        catch(std::runtime_error &e)
+        {
+            QMessageBox::critical(this, "Error Saving Project", e.what(), QMessageBox::Ok);
+        }
+    }
+
+    void MainWindow::saveProject()
+    {
+        if(previousSaveLocation.isEmpty())
+        {
+            saveAsProject();
+
+            return;
+        }
+
+        QFile saveFile{previousSaveLocation};
+
+        if(saveFile.exists())
+        {
+            saveFile.remove();
+        }
+
+        try
+        {
+            ui->loadedTextures->saveLoadedTextures(previousSaveLocation);
+
+            ui->atlasWidget->saveAtlases(previousSaveLocation);
+        }
+        catch(std::runtime_error &e)
+        {
+            QMessageBox::critical(this, "Error Saving Project", e.what(), QMessageBox::Ok);
+        }
+    }
+
+    // Beginning of private functions
 
     void MainWindow::closeProject()
     {

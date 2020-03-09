@@ -37,6 +37,11 @@ namespace GUI
             return textureButtonArea;
         }
 
+        void ScrollArea::saveLoadedTextures(const QString &textureButtonAreaName, const QString &saveLocation) const
+        {
+            textureButtonArea->saveLoadedTextures(textureButtonAreaName, saveLocation);
+        }
+
         void ScrollArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
         {
             textureButtonArea->setTextureBankReference(textureBank);

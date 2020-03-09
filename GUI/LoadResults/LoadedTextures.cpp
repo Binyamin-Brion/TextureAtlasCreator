@@ -98,6 +98,14 @@ namespace GUI
             removeTab(0);
         }
 
+        void LoadedTextures::saveLoadedTextures(const QString &saveLocation) const
+        {
+            for(const auto &i : currentTabs)
+            {
+                i.first->saveLoadedTextures(i.second, saveLocation);
+            }
+        }
+
         void LoadedTextures::setTextureBankReference(TextureLogic::TextureBank *textureBank)
         {
             // This should only be called once; the reference to the texture bank should never become invalid

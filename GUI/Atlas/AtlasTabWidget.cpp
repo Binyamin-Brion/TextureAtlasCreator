@@ -106,6 +106,14 @@ namespace GUI
             }
         }
 
+        void AtlasTabWidget::saveAtlases(const QString &saveLocation) const
+        {
+            for(const auto &i : currentTabs)
+            {
+                i.first->saveAtlas(i.second, saveLocation);
+            }
+        }
+
         bool AtlasTabWidget::setIntersectionWidth(TextureLogic::Texture *texture)
         {
             // When a new intersection width is specified for a texture, that new intersection width is checked

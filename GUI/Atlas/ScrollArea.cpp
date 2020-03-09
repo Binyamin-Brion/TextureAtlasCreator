@@ -43,11 +43,6 @@ namespace GUI
             atlasWidget->textureButtonPressed(texture);
         }
 
-        void ScrollArea::changesSaved()
-        {
-            atlasWidget->changesSaved();
-        }
-
         void ScrollArea::enterEvent(QEvent *event)
         {
             // The scroll area takes control of all keyboard input once the cursor has entered it
@@ -97,6 +92,11 @@ namespace GUI
         ::Atlas::AtlasInformationBundle ScrollArea::getAtlasInformation() const
         {
             return atlasWidget->getAtlasInformation();
+        }
+
+        void ScrollArea::saveAtlas(const QString &atlasName, const QString &saveLocation) const
+        {
+            atlasWidget->saveAtlas(atlasName, saveLocation);
         }
 
         void ScrollArea::scrollContentsBy(int dx, int dy)

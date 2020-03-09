@@ -45,11 +45,10 @@ namespace Atlas
              */
             explicit TextureAtlas(QImage::Format atlasFormat);
 
-            void changesSaved();
-
             /**
+             *  Checks if the currently selected texture position intersects with another texture in the atlas.
              *
-             * @return
+             * @return true if there is an intersection
              */
             bool checkIntersection();
 
@@ -98,6 +97,11 @@ namespace Atlas
              */
             QSize getSelectedTextureSize() const;
 
+            /**
+             * Checks if there are any unsaved changes made in the atlas.
+             *
+             * @return true if there are unsaved changes
+             */
             bool getUnsavedChanges() const;
 
             /**
@@ -168,6 +172,14 @@ namespace Atlas
              * @param texture the texture to remove from the atlas
              */
             void removeTexture(const TextureLogic::Texture *texture);
+
+            /**
+             * Saves the atlas to the specified location.
+             *
+             * @param atlasName name of the atlas being saved
+             * @param saveLocation location to save the atlas to
+             */
+            void saveAtlas(const QString &atlasName, const QString &saveLocation) const;
 
             /**
              * Sets the size of the atlas. It should match the widget holding the atlas.
@@ -284,7 +296,7 @@ namespace Atlas
             QSize atlasSize;
             QImage::Format atlasFormat;
 
-            bool unsavedChanges = false;
+            mutable bool unsavedChanges = false;
     };
 }
 

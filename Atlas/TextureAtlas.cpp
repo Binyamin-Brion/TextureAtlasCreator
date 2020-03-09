@@ -11,6 +11,8 @@
 #include <QPainter>
 #include "GUI/Atlas/AtlasWidget.h"
 #include <fstream>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 namespace Atlas
 {
@@ -25,11 +27,6 @@ namespace Atlas
         currentZoom = TextureLogic::Zoom::Normal;
 
         currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
-    }
-
-    void TextureAtlas::changesSaved()
-    {
-        unsavedChanges = false;
     }
 
     bool TextureAtlas::checkIntersection()
@@ -534,6 +531,51 @@ namespace Atlas
         }
 
         unsavedChanges = true;
+    }
+
+    void TextureAtlas::saveAtlas(const QString &atlasName, const QString &saveLocation) const
+    {
+        QFile saveFile{saveLocation};
+
+        if(!saveFile.open(QIODevice::WriteOnly | QIODevice::Append))
+        {
+            throw std::runtime_error{"Failed to open the specified save location for writing."};
+        }
+
+        QTextStream saveStream{&saveFile};
+
+        float zoomFactor = TextureLogic::GetZoomValue(TextureLogic::Zoom::Normal) / TextureLogic::GetZoomValue(currentZoom);
+
+        saveStream << "Atlas Name: " << atlasName << '\n';
+        saveStream << "Dimensions: " << atlasSize.width() * zoomFactor << " , " << atlasSize.height() * zoomFactor << '\n';
+        saveStream << "Format: " << ::GUI::TextureHelperFunctions::convertToString(atlasFormat) << "\n\n";
+
+        for(const auto &i : textureDrawingPositions)
+        {
+            float xDrawingPosition = i.drawingPosition.x();
+
+            float yDrawPosition = i.drawingPosition.y();
+
+            xDrawingPosition *= zoomFactor;
+
+            yDrawPosition *= zoomFactor;
+
+            saveStream << "Texture: " << i.texture->textureLocation() << " -> Position: " << xDrawingPosition << " , " << yDrawPosition << '\n';
+        }
+
+        saveStream << "\n\n=======================================\n\n";
+
+
+        if(selectedExistingTexture->isOpen())
+        {
+            float xDrawingPosition = selectedExistingTexture->getDrawingCoordinates().x() * zoomFactor;
+
+            float yDrawingPosition = selectedExistingTexture->getDrawingCoordinates().y() * zoomFactor;
+
+            saveStream << "Texture: " << selectedExistingTexture->getTextureLocation() << " -> Position: " << xDrawingPosition << " , " << yDrawingPosition << '\n';
+        }
+
+        unsavedChanges = false;
     }
 
     void TextureAtlas::setAtlasSize(QSize size)

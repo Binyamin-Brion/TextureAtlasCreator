@@ -37,11 +37,6 @@ namespace GUI
             viewPortOffset = QPoint{0, 0};
         }
 
-        void AtlasWidget::changesSaved()
-        {
-            textureAtlas->changesSaved();
-        }
-
         bool AtlasWidget::checkTextureNotWithinViewPort(QSize textureSize)
         {
             if(viewPort.width() < textureSize.width() || viewPort.height() < textureSize.height())
@@ -280,6 +275,11 @@ namespace GUI
             QWidget::repaint();
 
             return result;
+        }
+
+        void AtlasWidget::saveAtlas(const QString &atlasName, const QString &saveLocation) const
+        {
+            textureAtlas->saveAtlas(atlasName, saveLocation);
         }
 
         void AtlasWidget::setViewPort(QSize viewPort)

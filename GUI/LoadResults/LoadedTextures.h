@@ -59,6 +59,13 @@ namespace GUI
                 void closeAllTabs();
 
                 /**
+                 * Saves the location of the textures loaded. It does NOT create copies of the textures themselves.
+                 *
+                 * @param saveLocation location to save the texture locations to
+                 */
+                void saveLoadedTextures(const QString &saveLocation) const;
+
+                /**
                  * Sets the reference to the texture bank. The reference is passed to the areas that will buttons of the
                  * loaded textures so that when a texture button is pressed, the texture bank can be notified of this
                  * action and add the clicked texture to the currently opened atlas.

@@ -81,6 +81,14 @@ namespace GUI
                 void mousePressEvent(QMouseEvent *event) override;
 
                 /**
+                 * Saves the location of the loaded textures to the specified location.
+                 *
+                 * @param textureButtonAreaName name of the texture button area holding the texture buttons
+                 * @param saveLocation location to save the texture locations to
+                 */
+                void saveLoadedTextures(const QString &textureButtonAreaName, const QString &saveLocation) const;
+
+                /**
                  * Set the reference to the texture bank, so that the texture bank can be notified of loading new textures
                  * or marking a texture as selected.
                  *

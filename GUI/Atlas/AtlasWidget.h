@@ -53,8 +53,6 @@ namespace GUI
                  */
                 explicit AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent = nullptr);
 
-                void changesSaved();
-
                 /**
                  * Determines if a given texture cannot be displayed entirely within the viewport.
                  *
@@ -77,6 +75,11 @@ namespace GUI
                  */
                 ::Atlas::AtlasInformationBundle getAtlasInformation() const;
 
+                /**
+                 * Checks if there are any unsaved changes in the atlas.
+                 *
+                 * @return true if there are unsaved changes
+                 */
                 bool getUnsavedChanges();
 
                 /**
@@ -153,6 +156,14 @@ namespace GUI
                  * @param event
                  */
                 void resizeEvent(QResizeEvent *event) override;
+
+                /**
+                 *  Forwards the save request to the texture atlas.
+                 *
+                 * @param atlasName name of the atlas being saved
+                 * @param saveLocation location that the atlas is to be saved to
+                 */
+                void saveAtlas(const QString &atlasName, const QString &saveLocation) const;
 
                 /**
                  * Forwards request to atlas widget to check if the new intersection width given to the passed in

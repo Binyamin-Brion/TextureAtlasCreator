@@ -58,6 +58,14 @@ namespace GUI
                 const TextureButtonArea* getTextureArea() const;
 
                 /**
+                 * Forwards request to save the loaded textures to the texture button area.
+                 *
+                 * @param textureButtonAreaName name of the texture button area holding the texture buttons
+                 * @param saveLocation location to save the texture locations to
+                 */
+                void saveLoadedTextures(const QString &textureButtonAreaName, const QString &saveLocation) const;
+
+                /**
                  * Set the reference to the texture bank area. Forwards argument to the texture button area.
                  *
                  * @param textureBank reference to the texture bank that holds all textures

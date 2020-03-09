@@ -39,11 +39,16 @@ namespace GUI
              */
             ~MainWindow();
 
+        private slots:
+            void saveAsProject();
+            void saveProject();
+
         private:
             void closeProject();
 
             Ui::MainWindow *ui = nullptr;
             std::unique_ptr<::TextureLogic::TextureBank> textureBank;
+            QString previousSaveLocation;
             const QString projectExtension = ".tac";
     };
 }

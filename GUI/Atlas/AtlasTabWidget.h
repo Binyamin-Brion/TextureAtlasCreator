@@ -76,6 +76,11 @@ namespace GUI
                  */
                 QImage::Format getCurrentAtlasFormat() const;
 
+                /**
+                 * Checks if there are any unsaved changes in the atlas.
+                 *
+                 * @return true if there are unsaved changes
+                 */
                 bool getUnsavedAtlases() const;
 
                 /**
@@ -85,6 +90,13 @@ namespace GUI
                  * @param texture to remove from all atlases
                  */
                 void removeTexture(const TextureLogic::Texture *texture);
+
+                /**
+                 *  Saves all of the atlases to the specified location.
+                 *
+                 *  @param saveLocation location that the atlases should be saved to
+                 */
+                void saveAtlases(const QString &saveLocation) const;
 
                 /**
                  * Checks the new intersection width for ALL textures atlases to see if it is valid (no intersection with other textures,
