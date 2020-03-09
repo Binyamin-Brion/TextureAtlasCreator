@@ -99,6 +99,8 @@ namespace GUI
             connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&, unsigned int, unsigned int)), this, SLOT(textureButtonClicked(const QString&, unsigned int, unsigned int)));
 
             placeTextureButton(textureButtons.back());
+
+            unsavedChanges = true;
         }
 
         void TextureButtonArea::deleteTextureButtons()
@@ -134,6 +136,11 @@ namespace GUI
                 // Texture button that represents button no longer exists; update count accordingly
                 TextureButton::decrementTextureRepresentation(i->getTextureLocation());
             }
+        }
+
+        bool TextureButtonArea::getUnsavedChanges() const
+        {
+            return unsavedChanges;
         }
 
         void TextureButtonArea::mousePressEvent(QMouseEvent *event)
@@ -191,7 +198,7 @@ namespace GUI
 
             saveStream << "\n=======================================\n\n";
 
-            saveFile.close();
+            unsavedChanges = false;
         }
 
         void TextureButtonArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
@@ -247,6 +254,8 @@ namespace GUI
             {
                 placeTextureButton(i);
             }
+
+            unsavedChanges = true;
         }
 
         void TextureButtonArea::showContextMenu(const QPoint &pos)

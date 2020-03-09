@@ -77,7 +77,7 @@ namespace GUI
                 QImage::Format getCurrentAtlasFormat() const;
 
                 /**
-                 * Checks if there are any unsaved changes in the atlas.
+                 * Checks if there are any unsaved changes in the atlases.
                  *
                  * @return true if there are unsaved changes
                  */

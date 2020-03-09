@@ -58,6 +58,13 @@ namespace GUI
                 const TextureButtonArea* getTextureArea() const;
 
                 /**
+              * Checks if there are any unsaved changes in the texture button area.
+              *
+              * @return true if there are unsaved changes
+              */
+                bool getUnsavedChanges() const;
+
+                /**
                  * Forwards request to save the loaded textures to the texture button area.
                  *
                  * @param textureButtonAreaName name of the texture button area holding the texture buttons

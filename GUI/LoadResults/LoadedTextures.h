@@ -59,6 +59,13 @@ namespace GUI
                 void closeAllTabs();
 
                 /**
+                 * Checks if there are any unsaved changes to any of the texture button areas.
+                 *
+                 * @return true if there are unsaved changes
+                 */
+                bool getUnsavedTextureButtonAreas() const;
+
+                /**
                  * Saves the location of the textures loaded. It does NOT create copies of the textures themselves.
                  *
                  * @param saveLocation location to save the texture locations to

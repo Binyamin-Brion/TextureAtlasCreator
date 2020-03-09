@@ -74,6 +74,13 @@ namespace GUI
                 void deleteTextureButtons();
 
                 /**
+                 * Checks if there are any unsaved changes in the atlas.
+                 *
+                 * @return true if there are unsaved changes
+                 */
+                bool getUnsavedChanges() const;
+
+                /**
                  * Handles cursor input.
                  *
                  * @param event unused
@@ -164,6 +171,8 @@ namespace GUI
                 // Keeps track of what button the cursor is located on at the time of cursor receiving a right-click
                 // while it is over this button area
                 int cursorOverButtonIndex = -1;
+
+                mutable bool unsavedChanges = false;
         };
     }
 }

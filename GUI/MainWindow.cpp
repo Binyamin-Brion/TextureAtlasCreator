@@ -139,7 +139,7 @@ namespace GUI
 
     void MainWindow::closeProject()
     {
-        if(ui->atlasWidget->getUnsavedAtlases())
+        if(ui->atlasWidget->getUnsavedAtlases() || ui->loadedTextures->getUnsavedTextureButtonAreas())
         {
             int response = QMessageBox::warning(this, "Unsaved Changes", "Would you like to save changes made?", QMessageBox::Yes | QMessageBox::No);
 
@@ -147,7 +147,7 @@ namespace GUI
             {
                 QString saveDestination = QFileDialog::getSaveFileName(this, "Save Project",  QDir::homePath(),  "*." + projectExtension);
 
-                // Save project
+                saveProject();
             }
         }
 

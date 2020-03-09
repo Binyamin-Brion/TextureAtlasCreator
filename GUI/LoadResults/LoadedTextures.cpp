@@ -98,6 +98,18 @@ namespace GUI
             removeTab(0);
         }
 
+        bool LoadedTextures::getUnsavedTextureButtonAreas() const
+        {
+            bool unsavedButtonAreas = false;
+
+            for(const auto &i : currentTabs)
+            {
+                unsavedButtonAreas |= i.first->getUnsavedChanges();
+            }
+
+            return unsavedButtonAreas;
+        }
+
         void LoadedTextures::saveLoadedTextures(const QString &saveLocation) const
         {
             for(const auto &i : currentTabs)

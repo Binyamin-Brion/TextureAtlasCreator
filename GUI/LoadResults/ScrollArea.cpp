@@ -37,6 +37,11 @@ namespace GUI
             return textureButtonArea;
         }
 
+        bool ScrollArea::getUnsavedChanges() const
+        {
+            return textureButtonArea->getUnsavedChanges();
+        }
+
         void ScrollArea::saveLoadedTextures(const QString &textureButtonAreaName, const QString &saveLocation) const
         {
             textureButtonArea->saveLoadedTextures(textureButtonAreaName, saveLocation);
