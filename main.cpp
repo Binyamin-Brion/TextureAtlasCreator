@@ -4,8 +4,11 @@
 #include <QtTest/qtestcase.h>
 #include <Tests/TestSuite.h>
 #include <QtCore/QTextStream>
+#include "Tests/EnableTests.h"
 
 int main(int argc, char *argv[]) {
+
+#ifdef ENABLE_TESTS
 
     auto suite = Tests::TestSuite::suite();
 
@@ -14,6 +17,9 @@ int main(int argc, char *argv[]) {
         QTest::qExec(i, argc, argv);
     }
 
+    return 0;
+
+#else
     QApplication app{argc, argv};
 
     QDir dir = QDir::current();
@@ -36,4 +42,7 @@ int main(int argc, char *argv[]) {
     mainWindow.show();
 
     return app.exec();
+
+#endif
+
 }

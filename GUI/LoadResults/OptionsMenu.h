@@ -64,7 +64,7 @@ namespace GUI
                  * @param showDeleteTextureButtonArea true if the action to delete a texture button area should appear
                  * @param parent widget that has ownership over this object
                  */
-                OptionsMenu(bool showDeleteTextureButton, bool showDeleteTextureButtonArea, QWidget *parent = nullptr);
+                OptionsMenu(bool showDeleteTextureButton, bool showAddTextureButtonArea, bool showDeleteTextureButtonArea, QWidget *parent = nullptr);
 
                 /**
                  * Called by the TextureButtonArea to dynamically choose if the action to delete a texture button should appear.

@@ -56,6 +56,8 @@ namespace GUI
                  */
                 void closeEvent(QCloseEvent *event) override;
 
+                void removeTab(const QString &tabName);
+
             private slots:
 
                 /**
@@ -114,6 +116,8 @@ namespace GUI
 
                 // Keeps track if the user selected a path to a texture
                 bool validTexturePathSelected = false;
+
+                std::vector<QString> tabNames;
         };
     }
 }

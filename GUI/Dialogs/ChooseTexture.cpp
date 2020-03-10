@@ -41,6 +41,8 @@ namespace GUI
         void ChooseTexture::addTab(const QString &tabName)
         {
             ui->textureButtonAreaChooser->addItem(tabName);
+
+            tabNames.push_back(tabName);
         }
 
         void ChooseTexture::closeEvent(QCloseEvent *event)
@@ -48,6 +50,18 @@ namespace GUI
             QDialog::closeEvent(event);
 
             resetDialog();
+        }
+
+        void ChooseTexture::removeTab(const QString &tabName)
+        {
+            auto tabNameLocation = std::find(tabNames.begin(), tabNames.end(), tabName);
+
+
+            Q_ASSERT_X(tabNameLocation != tabNames.end(), __PRETTY_FUNCTION__, "\n\nUnable to find tab name to remove.\n\n");
+
+            ui->textureButtonAreaChooser->removeItem(std::distance(tabNames.begin(), tabNameLocation));
+
+            tabNames.erase(tabNameLocation);
         }
 
         // Beginning of private slots

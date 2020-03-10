@@ -5,8 +5,10 @@
 #include <QtWidgets/QShortcut>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
+#include <QtCore/QTextStream>
 #include "MainWindow.h"
 #include "TextureLogic/TextureBank.h"
+#include "ProjectLoader/ProjectParser.h"
 
 namespace GUI
 {
@@ -51,6 +53,8 @@ namespace GUI
 
         // Action connections
 
+        connect(ui->actionOpen_Project, SIGNAL(triggered()), this, SLOT(openProject()));
+
         connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveProject()));
 
         connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsProject()));
@@ -72,6 +76,7 @@ namespace GUI
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), ui->atlasWidget, SLOT(exportTexture()));
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveProject()));
+        new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(openProject()));
 
         // Below this size and things look weird
         setMinimumSize(1280, 720);
@@ -84,9 +89,28 @@ namespace GUI
 
     // Beginning of private slots
 
+    void MainWindow::openProject()
+    {
+        QString openProjectLocation = QFileDialog::getOpenFileName(this, "Open Project", QDir::homePath());
+
+        // User closed the file selection dialog without choosing anything
+        if(openProjectLocation.isEmpty())
+        {
+            return;
+        }
+
+       // ::ProjectLoader::ProjectParser::parseFile(openProjectLocation);
+    }
+
     void MainWindow::saveAsProject()
     {
         previousSaveLocation = QFileDialog::getSaveFileName(this, "Save Project As", QDir::homePath(), projectExtension) + projectExtension;
+
+        // User closed the file selection dialog without choosing anything
+        if(previousSaveLocation.isEmpty())
+        {
+            return;
+        }
 
         QFile saveFile{previousSaveLocation};
 

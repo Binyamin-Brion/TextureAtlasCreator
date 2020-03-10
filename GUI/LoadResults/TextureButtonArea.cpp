@@ -11,7 +11,6 @@
 
 #include <QGridLayout>
 #include <QtWidgets/QMessageBox>
-#include <QtWidgets/QMenu>
 #include <QtCore/QTextStream>
 
 namespace GUI
@@ -58,7 +57,7 @@ namespace GUI
             // is deleted through that action, the 'this' pointer is now invalid, but the control flow returns to the function that requested
             // the button area to be deleted. That function is a slot in 'this' (ie the calling texture button) object- but this object no longer exists.
             // Hence a seg fault would occur.
-            optionsMenu = new OptionsMenu{true, false, this};
+            optionsMenu = new OptionsMenu{true, false, false, this};
 
             connect(optionsMenu, &OptionsMenu::moveTabLeftTriggered, [this]() { emit moveTabLeftTriggered(); });
 

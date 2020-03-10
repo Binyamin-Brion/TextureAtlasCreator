@@ -34,6 +34,6 @@ add_executable(TextureAtlasCreator main.cpp TextureLogic/ScaledTexture.cpp Textu
         GUI/TextureInformation/SelectedTextureInformation.h GUI/TextureInformation/SaveQualitySlider.cpp GUI/TextureInformation/SaveQualitySlider.h GUI/LoadResults/OptionsMenu.cpp
         GUI/LoadResults/OptionsMenu.h GUI/Dialogs/AddNewTab.cpp GUI/Dialogs/AddNewTab.h GUI/Atlas/AtlasTabOptionsMenu.cpp GUI/Atlas/AtlasTabOptionsMenu.h GUI/Dialogs/AddNewAtlasTab.cpp
         GUI/Dialogs/AddNewAtlasTab.h GUI/TextureHelperFunctions/TextureFormats.cpp GUI/TextureHelperFunctions/TextureFormats.h TextureLogic/Zoom.cpp Atlas/AtlasInformationBundle.h
-        Atlas/AtlasInformationBundle.cpp)
+        Atlas/AtlasInformationBundle.cpp ProjectLoader/TextureAtlasLoader.h ProjectLoader/TextureButtonAreaLoader.h ProjectLoader/ProjectParser.cpp ProjectLoader/ProjectParser.h Tests/ProjectLoader/TestProjectLoader.cpp Tests/ProjectLoader/TestProjectLoader.h)
 
 target_link_libraries(TextureAtlasCreator ${Qt5Widgets_LIBRARIES} ${Qt5Test_LIBRARIES})

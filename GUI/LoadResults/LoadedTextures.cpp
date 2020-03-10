@@ -28,7 +28,7 @@ namespace GUI
             // This widget cannot tell a button area to delete a texture button area, to provide a clear separation of
             // who is responsible for the buttons. Hence the first argument to the optionsMenu is false.
             // See OptionsMenu class for notes.
-            optionsMenu = new OptionsMenu{false, true, this};
+            optionsMenu = new OptionsMenu{false, true,true, this};
 
             addNewTab = new Dialogs::AddNewTab{this};
 
@@ -182,6 +182,8 @@ namespace GUI
 
                 currentTabs[currentIndex()].first->deleteTextureButtons();
 
+                chooseTexture->removeTab(currentTabs[previousIndex].second);
+
                 removeTab(currentIndex());
 
                 delete currentTabs[previousIndex].first;
@@ -253,6 +255,8 @@ namespace GUI
 
                 addNewTab->removeNameExistingTab(currentTabs[previousIndex].second);
 
+                chooseTexture->removeTab(currentTabs[previousIndex].second);
+
                 currentTabs[previousIndex].second = newTabName;
 
                 insertTab(previousIndex, currentTabs[previousIndex].first, currentTabs[previousIndex].second);
@@ -260,6 +264,8 @@ namespace GUI
                 addNewTab->addNameExistingTab(newTabName);
 
                 setCurrentIndex(previousIndex);
+
+                chooseTexture->addTab(newTabName);
             }
             else
             {

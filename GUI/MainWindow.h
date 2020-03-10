@@ -40,6 +40,7 @@ namespace GUI
             ~MainWindow();
 
         private slots:
+            void openProject();
             void saveAsProject();
             void saveProject();
 

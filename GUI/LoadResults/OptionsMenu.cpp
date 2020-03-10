@@ -9,7 +9,7 @@ namespace GUI
 {
     namespace LoadResults
     {
-        OptionsMenu::OptionsMenu(bool showDeleteTextureButton,  bool showDeleteTextureButtonArea, QWidget *parent)
+        OptionsMenu::OptionsMenu(bool showDeleteTextureButton, bool showAddTextureButtonArea, bool showDeleteTextureButtonArea, QWidget *parent)
                       :
                         QMenu(parent)
         {
@@ -20,10 +20,12 @@ namespace GUI
             deleteTab.setText("Delete Current Tab");
             deleteTextureButton.setText("Delete Texture Button");
 
-            addAction(&addTab);
-            addAction(&renameTab);
-            addAction(&_moveTabLeft);
-            addAction(&_moveTabRight);
+            if(showAddTextureButtonArea)
+            {
+                addAction(&addTab);
+
+                connect(&addTab, &QAction::triggered, [this]() { emit addTabActionTriggered(); });
+            }
 
             if(showDeleteTextureButtonArea)
             {
@@ -32,14 +34,16 @@ namespace GUI
                 connect(&deleteTab, &QAction::triggered, [this]() { emit deleteTabTriggered(); });
             }
 
+            addAction(&renameTab);
+            addAction(&_moveTabLeft);
+            addAction(&_moveTabRight);
+
             if(showDeleteTextureButton)
             {
                 addAction(&deleteTextureButton);
 
                 connect(&deleteTextureButton, &QAction::triggered, [this]() { emit deleteTextureButtonTriggered(); });
             }
-
-            connect(&addTab, &QAction::triggered, [this]() { emit addTabActionTriggered(); });
 
             connect(&renameTab, &QAction::triggered, [this]() { emit renameTabActionTriggered(); });
 

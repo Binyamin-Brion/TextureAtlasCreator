@@ -565,7 +565,6 @@ namespace Atlas
 
         saveStream << "\n\n=======================================\n\n";
 
-
         if(selectedExistingTexture->isOpen())
         {
             float xDrawingPosition = selectedExistingTexture->getDrawingCoordinates().x() * zoomFactor;
