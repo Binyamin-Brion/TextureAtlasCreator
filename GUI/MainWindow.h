@@ -42,6 +42,31 @@ namespace GUI
         private slots:
 
             /**
+             *  Initialize the actions in the Atlas submenu with the appropriate connections.
+             */
+            void initializeAtlasActionsConnections();
+
+            /**
+             * Initialize the actions in the File submenu with the appropriate connections.
+             */
+            void initializeFileConnections();
+
+            /**
+             *  Initialize keyboard shortcuts with the appropriate connections.
+             */
+            void initializeKeyboardShortcutsConnections();
+
+            /**
+             * Initialize the actions in the 'Loaded Texture' submenu with the appropriate connections.
+             */
+            void initializeTextureButtonAreaActionsConnections();
+
+            /**
+             *  Initialize the connections between the UI widgets.
+             */
+            void initializeWidgetConnections();
+
+            /**
              *  Called when user requests to create a new project. This will close the previous project.
              */
             void newProject();
@@ -62,6 +87,11 @@ namespace GUI
              */
             void saveProject();
 
+            /**
+             *  Updates widgets that display information about the current texture atlas.
+             *
+             * @param atlasInformationBundle information used to update the widgets showing texture statistics
+             */
             void showPercentageUsed(::Atlas::AtlasInformationBundle atlasInformationBundle);
 
         private:

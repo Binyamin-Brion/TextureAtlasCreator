@@ -116,8 +116,6 @@ namespace GUI
                  */
                 void showRenameTabDialog();
 
-            private slots:
-
                 /**
                  *  Removes and deletes a tab along with the atlas inside. After this operation, the texture buttons
                  *  to load a texture into an atlas are gone unless they existed in a different tab.
@@ -126,7 +124,10 @@ namespace GUI
                  *        deleted from the texture bank AND all opened textures that have that texture. A warning will
                  *        be given in such a scenario.
                  */
-                void deleteCurrentTab(bool closingProgram);
+                void deleteCurrentTab(bool closingProgram = false);
+
+
+        private slots:
 
                 /**
                  *  Moves the current tab to the left in the list of open tabs.

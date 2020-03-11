@@ -95,8 +95,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>252</width>
-           <height>241</height>
+           <width>254</width>
+           <height>248</height>
           </rect>
          </property>
         </widget>
@@ -112,7 +112,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -129,7 +129,39 @@
     <addaction name="separator"/>
     <addaction name="actionSave_As"/>
    </widget>
+   <widget class="QMenu" name="menuAtlas">
+    <property name="title">
+     <string>Atlas</string>
+    </property>
+    <addaction name="actionNew_Atlas"/>
+    <addaction name="separator"/>
+    <addaction name="actionMove_Current_Atlas_Left"/>
+    <addaction name="separator"/>
+    <addaction name="actionMove_Current_Atlas_Right"/>
+    <addaction name="separator"/>
+    <addaction name="actionRename_Atlas"/>
+    <addaction name="separator"/>
+    <addaction name="actionDelete_Current_Atlas"/>
+   </widget>
+   <widget class="QMenu" name="menuLoaded_Texture">
+    <property name="title">
+     <string>Loaded Textures</string>
+    </property>
+    <addaction name="actionNew_Texutre_Button_Area"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoad_Texture"/>
+    <addaction name="separator"/>
+    <addaction name="actionMove_Current_Button_Area_Left"/>
+    <addaction name="separator"/>
+    <addaction name="actionMove_Current_Button_Area_Right"/>
+    <addaction name="separator"/>
+    <addaction name="actionRename_Button_Area"/>
+    <addaction name="separator"/>
+    <addaction name="actionDelete_Current_Button_Area"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuAtlas"/>
+   <addaction name="menuLoaded_Texture"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionExport_Current_Atlas">
@@ -155,6 +187,61 @@
   <action name="actionNew_Project">
    <property name="text">
     <string>New Project</string>
+   </property>
+  </action>
+  <action name="actionNew_Atlas">
+   <property name="text">
+    <string>New Atlas</string>
+   </property>
+  </action>
+  <action name="actionMove_Current_Atlas_Left">
+   <property name="text">
+    <string>Move Current Atlas Left</string>
+   </property>
+  </action>
+  <action name="actionMove_Current_Atlas_Right">
+   <property name="text">
+    <string>Move Current Atlas Right</string>
+   </property>
+  </action>
+  <action name="actionRename_Atlas">
+   <property name="text">
+    <string>Rename Atlas</string>
+   </property>
+  </action>
+  <action name="actionDelete_Current_Atlas">
+   <property name="text">
+    <string>Delete Current Atlas</string>
+   </property>
+  </action>
+  <action name="actionNew_Texutre_Button_Area">
+   <property name="text">
+    <string>New Texutre Button Area</string>
+   </property>
+  </action>
+  <action name="actionLoad_Texture">
+   <property name="text">
+    <string>Load Texture</string>
+   </property>
+  </action>
+  <action name="actionMove_Current_Button_Area_Left">
+   <property name="text">
+    <string>Move Current Button Area Left</string>
+   </property>
+  </action>
+  <action name="actionMove_Current_Button_Area_Right">
+   <property name="text">
+    <string>Move Current Button Area Right</string>
+   </property>
+  </action>
+  <action name="actionDelete_Current_Button_Area">
+   <property name="text">
+    <string>Delete Current Button Area</string>
+   </property>
+  </action>
+  <action name="actionRename_Button_Area">
+   <property name="text">
+    <string>Rename Button Area</string>
    </property>
   </action>
  </widget>

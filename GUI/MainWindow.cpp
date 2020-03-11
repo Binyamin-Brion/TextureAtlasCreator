@@ -41,18 +41,51 @@ namespace GUI
 
         textureBank->setTextureInfoScrollAreaReference(ui->selectedTextureInformation);
 
-        // Connections between widgets
+        // For some reason is required in order for the brush colour to be the default colour upon start for the "Texture" Render area (not the specular area)
+        ui->currentTexture->setCurrentIndex(1);
+        ui->currentTexture->setCurrentIndex(0);
 
-        connect(ui->currentTexture, SIGNAL(repaintSelectedTexture()), ui->atlasWidget, SLOT(repaintSelectedTexture()));
+        // By default the brush has a default size and cannot currently paint on anyting as no texture is selected
+        ui->brushSettings->updateSelectedTextureSize(QSize{-1, 1}, QSize{25, 25});
 
-        connect(ui->currentTexture, SIGNAL(changedRenderArea(const PaintFunctions::Brush&)), ui->brushSettings, SLOT(showDifferentBrush(const PaintFunctions::Brush&)));
+        // Below this size and things look weird
+        setMinimumSize(1280, 720);
 
-        connect(ui->currentTexture, SIGNAL(selectedTextureChanged(QSize, QSize)), ui->brushSettings, (SLOT(updateSelectedTextureSize(QSize, QSize))));
+        // Initialize all of the connections for the program
 
-        connect(ui->currentTexture, SIGNAL(zoomChanged(TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChanged(TextureLogic::Zoom)));
+        initializeAtlasActionsConnections();
 
-        // Action connections
+        initializeFileConnections();
 
+        initializeKeyboardShortcutsConnections();
+
+        initializeTextureButtonAreaActionsConnections();
+
+        initializeWidgetConnections();
+    }
+
+    MainWindow::~MainWindow()
+    {
+        // For some reason, this destructor is required in order for the unique_ptr in use with the TextureBank to compile.
+    }
+
+    // Beginning of private slots
+
+    void MainWindow::initializeAtlasActionsConnections()
+    {
+        connect(ui->actionNew_Atlas, SIGNAL(triggered()), ui->atlasWidget, SLOT(showAddNewAtlasTab()));
+
+        connect(ui->actionMove_Current_Atlas_Left, SIGNAL(triggered()), ui->atlasWidget, SLOT(moveTabLeft()));
+
+        connect(ui->actionMove_Current_Atlas_Right, SIGNAL(triggered()), ui->atlasWidget, SLOT(moveTabRight()));
+
+        connect(ui->actionRename_Atlas, SIGNAL(triggered()), ui->atlasWidget, SLOT(showRenameTabDialog()));
+
+        connect(ui->actionDelete_Current_Atlas, SIGNAL(triggered()), ui->atlasWidget, SLOT(deleteCurrentTab()));
+    }
+
+    void MainWindow::initializeFileConnections()
+    {
         connect(ui->actionExport_Current_Atlas, SIGNAL(triggered()), ui->atlasWidget, SLOT(exportTexture()));
 
         connect(ui->actionNew_Project, SIGNAL(triggered()), this, SLOT(newProject()));
@@ -65,29 +98,42 @@ namespace GUI
 
         connect(ui->atlasWidget, SIGNAL(currentAtlasInformationChanged(::Atlas::AtlasInformationBundle)), this, SLOT(showPercentageUsed(::Atlas::AtlasInformationBundle)));
 
-        // For some reason is required in order for the brush colour to be the default colour upon start for the "Texture" Render area (not the specular area)
-        ui->currentTexture->setCurrentIndex(1);
-        ui->currentTexture->setCurrentIndex(0);
+    }
 
-        // By default the brush has a default size and cannot currently paint on anyting as no texture is selected
-        ui->brushSettings->updateSelectedTextureSize(QSize{-1, 1}, QSize{25, 25});
+    void MainWindow::initializeTextureButtonAreaActionsConnections()
+    {
+        connect(ui->actionNew_Texutre_Button_Area, SIGNAL(triggered()), ui->loadedTextures, SLOT(showAddTabDialog()));
 
+        connect(ui->actionLoad_Texture, SIGNAL(triggered()), ui->loadedTextures, SLOT(showLoadTextureDialog()));
+
+        connect(ui->actionMove_Current_Button_Area_Left, SIGNAL(triggered()), ui->loadedTextures, SLOT(moveTabLeft()));
+
+        connect(ui->actionMove_Current_Button_Area_Right, SIGNAL(triggered()), ui->loadedTextures, SLOT(moveTabRight()));
+
+        connect(ui->actionRename_Button_Area, SIGNAL(triggered()), ui->loadedTextures, SLOT(showRenameTabDialog()));
+
+        connect(ui->actionDelete_Current_Button_Area, &QAction::triggered, [this]() { ui->loadedTextures->deleteCurrentTab(false); });
+    }
+
+    void MainWindow::initializeKeyboardShortcutsConnections()
+    {
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), ui->atlasWidget, SLOT(exportTexture()));
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveProject()));
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(openProject()));
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(newProject()));
-
-        // Below this size and things look weird
-        setMinimumSize(1280, 720);
     }
 
-    MainWindow::~MainWindow()
+    void MainWindow::initializeWidgetConnections()
     {
-        // For some reason, this destructor is required in order for the unique_ptr in use with the TextureBank to compile.
-    }
+        connect(ui->currentTexture, SIGNAL(repaintSelectedTexture()), ui->atlasWidget, SLOT(repaintSelectedTexture()));
 
-    // Beginning of private slots
+        connect(ui->currentTexture, SIGNAL(changedRenderArea(const PaintFunctions::Brush&)), ui->brushSettings, SLOT(showDifferentBrush(const PaintFunctions::Brush&)));
+
+        connect(ui->currentTexture, SIGNAL(selectedTextureChanged(QSize, QSize)), ui->brushSettings, (SLOT(updateSelectedTextureSize(QSize, QSize))));
+
+        connect(ui->currentTexture, SIGNAL(zoomChanged(TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChanged(TextureLogic::Zoom)));
+    }
 
     void MainWindow::newProject()
     {

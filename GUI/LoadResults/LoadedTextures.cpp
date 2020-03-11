@@ -177,8 +177,6 @@ namespace GUI
             addNewTab->show();
         }
 
-        // Beginning of private slots
-
         void LoadedTextures::deleteCurrentTab(bool closingProgram)
         {
             // See note at the top of this file
@@ -205,6 +203,8 @@ namespace GUI
                 }
             }
         }
+
+        // Beginning of private slots
 
         void LoadedTextures::moveTabLeft()
         {
