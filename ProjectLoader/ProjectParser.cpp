@@ -3,6 +3,8 @@
 //
 
 #include <QtCore/QFile>
+#include <c++/fstream>
+#include <c++/sstream>
 #include "ProjectParser.h"
 
 namespace ProjectLoader
@@ -19,16 +21,27 @@ namespace ProjectLoader
 
     bool ProjectParser::parseFile(const QString &projectFileLocation)
     {
-        QFile openProjectFile{projectFileLocation};
+        // Reading and processing of file contents are done using std::strings instead of QStrings as using QStrings
+        // causes this function to fail in tests on certain computers.
+        std::ifstream fileReader{projectFileLocation.toStdString()};
 
-        if(!openProjectFile.open(QIODevice::ReadOnly))
+        if(!fileReader.is_open())
         {
             return false;
         }
 
-        QString projectFileContents{openProjectFile.readAll()};
+        std::stringstream fileContentsBuffer;
 
-        QStringList splitContents = projectFileContents.split('\n');
+        fileContentsBuffer << fileReader.rdbuf();
+
+        std::vector<std::string> splitContents;
+
+        std::string fileSegment;
+
+        while(std::getline(fileContentsBuffer, fileSegment, '\n'))
+        {
+            splitContents.push_back(fileSegment);
+        }
 
         textureAtlases.clear();
         textureButtonAreas.clear();
@@ -43,12 +56,14 @@ namespace ProjectLoader
 
         for(const auto &i : splitContents)
         {
-            if(i.isEmpty())
+            QString qString = QString::fromStdString(i);
+
+            if(qString.isEmpty())
             {
                 continue;
             }
 
-            if(i.contains('='))
+            if(qString.contains('='))
             {
                 processingAtlas = false;
                 processingButtonArea = false;
@@ -72,24 +87,24 @@ namespace ProjectLoader
 
             // Handle Button Area
 
-            if(i.contains("Texture Button Area"))
+            if(qString.contains("Texture Button Area"))
             {
                 processingButtonArea = true;
 
-                textureButtonAreaLoader.areaName = i.split(": ")[1];
+                textureButtonAreaLoader.areaName = qString.split(": ")[1];
             }
             else if(processingButtonArea)
             {
-                textureButtonAreaLoader.textures.push_back(i);
+                textureButtonAreaLoader.textures.push_back(qString);
             }
 
             // Handle Atlas
 
-            if(i.contains("Atlas Name"))
+            if(qString.contains("Atlas Name"))
             {
                 processingAtlas = true;
 
-                textureAtlasLoader.atlasName = i.split(": ")[1];
+                textureAtlasLoader.atlasName = qString.split(": ")[1];
 
                 atlasInformationIndex += 1;
             }
@@ -97,7 +112,7 @@ namespace ProjectLoader
             {
                 if(atlasInformationIndex == 1)
                 {
-                    QStringList dimensions = i.split(' ');
+                    QStringList dimensions = qString.split(' ');
 
                     textureAtlasLoader.atlasSize = QSize{dimensions[1].toInt(), dimensions[3].toInt()};
 
@@ -105,13 +120,13 @@ namespace ProjectLoader
                 }
                 else if(atlasInformationIndex == 2)
                 {
-                    textureAtlasLoader.format = i.split(": ")[1];
+                    textureAtlasLoader.format = qString.split(": ")[1];
 
                     atlasInformationIndex += 1;
                 }
                 else
                 {
-                    QStringList textureInformation = i.split(' ' );
+                    QStringList textureInformation = qString.split(' ' );
 
                     TexturePos texturePos;
                     texturePos.textureLocation = textureInformation[1];
