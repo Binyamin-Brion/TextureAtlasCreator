@@ -2,8 +2,8 @@
 // Created by BinyBrion on 2019-09-26.
 //
 
-#ifndef TEXTUREATLASCREATOR_RENDERAREA_H
-#define TEXTUREATLASCREATOR_RENDERAREA_H
+#ifndef TEXTUREATLASCREATOR_PAINTAREA_H
+#define TEXTUREATLASCREATOR_PAINTAREA_H
 
 #include <QtWidgets/QWidget>
 #include "CurrentTextureImage.h"
@@ -35,7 +35,7 @@ namespace GUI
          *   to edit the specular properties of the dimension.
          */
 
-        class RenderArea : public QWidget
+        class PaintArea : public QWidget
         {
                 Q_OBJECT
 
@@ -60,7 +60,7 @@ namespace GUI
                   * @param currentTextureImage whether the current render area is used for specular editing or to edit the texture as is
                   * @param parent widget that has ownership over this object.
                   */
-                explicit RenderArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
+                explicit PaintArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
 
                 /**
                  * Get the brush that is currently being used for painting.
@@ -200,4 +200,4 @@ namespace GUI
     }
 }
 
-#endif //TEXTUREATLASCREATOR_RENDERAREA_H
+#endif //TEXTUREATLASCREATOR_PAINTAREA_H

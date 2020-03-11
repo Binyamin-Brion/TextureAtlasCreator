@@ -14,7 +14,7 @@ namespace GUI
 {
     namespace CurrentTexture
     {
-        class RenderArea;
+        class PaintArea;
     }
 
     namespace TextureInformation
@@ -58,7 +58,7 @@ namespace TextureLogic
              * @param zoom at which the paint operation occurred
              * @param paintHistoryCommand history of the paint operation
              */
-            void addPaintHistorySpecular(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
+            void addPaintHistorySpecular(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>);
 
             /**
              * Add a paint operation done on the diffuse map for this texture at the given zoom to the history stack.
@@ -66,7 +66,7 @@ namespace TextureLogic
              * @param zoom at which the paint operation occurred
              * @param paintHistoryCommand history of the paint operation
              */
-            void addPaintHistoryTexture(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
+            void addPaintHistoryTexture(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>);
 
             /**
              * Converts the texture (and as a result all of the scaled textures) to the passed in format.
@@ -105,7 +105,7 @@ namespace TextureLogic
              * @param zoom at which the specular map should be at
              * @return reference to the specular map resource at the given zoom
              */
-            QImage& getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
+            QImage& getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>);
 
             /**
              * Get the description associated with this texture.
@@ -120,7 +120,7 @@ namespace TextureLogic
              * @param zoom at which the paint operation was applied
              * @return history of paint operation at the given zoom
              */
-            PaintFunctions::PaintHistoryCommand* removeRecentPaintHistorySpecular(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
+            PaintFunctions::PaintHistoryCommand* removeRecentPaintHistorySpecular(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>);
 
             /**
              * Returns the most recent paint operation for the diffuse map at the given zoom.
@@ -128,7 +128,7 @@ namespace TextureLogic
              * @param zoom at which the paint operation was applied
              * @return history of paint operation at the given zoom
              */
-            PaintFunctions::PaintHistoryCommand* removeRecentPaintHistoryTexture(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>);
+            PaintFunctions::PaintHistoryCommand* removeRecentPaintHistoryTexture(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>);
 
             /**
              * Updates the texture's intersection width at the given zoom. This will update the intersection width of the

@@ -8,7 +8,7 @@
 #include <QtWidgets/QTabWidget>
 #include <array>
 #include "AccessRestriction/PassKey.h"
-#include "RenderArea.h"
+#include "PaintArea.h"
 
 namespace TextureLogic
 {
@@ -85,7 +85,7 @@ namespace GUI
 
             private:
                 // Holds all of the scroll areas holding the render areas
-                std::array<std::pair<QString, ScrollArea*>, 2> currentTextureRenderAreas;
+                ScrollArea *paintAreaScrollArea = nullptr;
 
                 // See internal note at CurrentTextureTabWidget.cpp
                 std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> *textures = nullptr;

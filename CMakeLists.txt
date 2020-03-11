@@ -32,7 +32,7 @@ add_executable(TextureAtlasCreator main.cpp TextureLogic/ScaledTexture.cpp Textu
         GUI/LoadResults/ScrollArea.cpp GUI/LoadResults/ScrollArea.h GUI/LoadResults/TextureButtonArea.cpp GUI/LoadResults/TextureButtonArea.h
         GUI/LoadResults/TextureButton.cpp GUI/LoadResults/TextureButton.h GUI/Dialogs/ChooseTexture.cpp GUI/Dialogs/ChooseTexture.h GUI/Atlas/AtlasTabWidget.cpp
         GUI/Atlas/AtlasTabWidget.h GUI/Atlas/ScrollArea.cpp GUI/Atlas/ScrollArea.h GUI/Atlas/AtlasWidget.cpp GUI/Atlas/AtlasWidget.h
-        GUI/CurrentTexture/CurrentTextureTabWidget.cpp GUI/CurrentTexture/CurrentTextureTabWidget.h GUI/CurrentTexture/RenderArea.cpp GUI/CurrentTexture/RenderArea.h
+        GUI/CurrentTexture/CurrentTextureTabWidget.cpp GUI/CurrentTexture/CurrentTextureTabWidget.h GUI/CurrentTexture/PaintArea.cpp GUI/CurrentTexture/PaintArea.h
         GUI/CurrentTexture/CurrentTextureImage.h PaintFunctions/Brush.cpp PaintFunctions/Brush.h PaintFunctions/PaintHistoryCommand.cpp PaintFunctions/PaintHistoryCommand.h
         PaintFunctions/PaintedArea.h GUI/BrushSettings/CurrentBrushSettings.cpp GUI/BrushSettings/CurrentBrushSettings.h GUI/CurrentTexture/ScrollArea.cpp
         GUI/CurrentTexture/ScrollArea.h GUI/TextureInformation/TextureInfoScrollArea.cpp GUI/TextureInformation/TextureInfoScrollArea.h GUI/TextureInformation/SelectedTextureInformation.cpp

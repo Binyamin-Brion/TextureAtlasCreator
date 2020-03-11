@@ -53,6 +53,8 @@ namespace GUI
 
         // Action connections
 
+        connect(ui->actionExport_Current_Atlas, SIGNAL(triggered()), ui->atlasWidget, SLOT(exportTexture()));
+
         connect(ui->actionNew_Project, SIGNAL(triggered()), this, SLOT(newProject()));
 
         connect(ui->actionOpen_Project, SIGNAL(triggered()), this, SLOT(openProject()));

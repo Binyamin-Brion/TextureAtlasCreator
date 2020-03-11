@@ -33,26 +33,20 @@ namespace GUI
             currentTextureIndex = -1;
 
             // These are not created in the initialized list as it is more readable to create these here
-            currentTextureRenderAreas[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].first = "Selected Texture";
-            currentTextureRenderAreas[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second = new ScrollArea{CurrentTextureImage::SelectedTexture, this};
+            paintAreaScrollArea = new ScrollArea{CurrentTextureImage::SelectedTexture, this};
 
-            currentTextureRenderAreas[GetCurrentTextureImageValue(CurrentTextureImage::SpecularTexture)].first = "Specular Texture";
-            currentTextureRenderAreas[GetCurrentTextureImageValue(CurrentTextureImage::SpecularTexture)].second = new ScrollArea{CurrentTextureImage::SpecularTexture, this};
-
-            for(auto &i : currentTextureRenderAreas)
-            {
-                addTab(i.second, i.first);
+            addTab(paintAreaScrollArea, "Selected Texture");
 
                 // When the zoom, changes, the brush needs to know so that it can change its size so that its size remains constant
                 // relative to the adjusted size of the texture
-                connect(i.second, &ScrollArea::zoomChanged, [this](TextureLogic::Zoom newZoom) { emit zoomChanged(newZoom); });
-            }
+            connect(paintAreaScrollArea, &ScrollArea::zoomChanged, [this](TextureLogic::Zoom newZoom) { emit zoomChanged(newZoom); });
+
 
             // Have to let texture atlas to know to repaint the selected texture as changes made in the render area are not automatically visible in the texture atlas
-            connect(currentTextureRenderAreas[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second, &ScrollArea::repaintSelectedTexture, [this]() { emit repaintSelectedTexture(); });
+            connect(paintAreaScrollArea, &ScrollArea::repaintSelectedTexture, [this]() { emit repaintSelectedTexture(); });
 
             // When the user is done a paint operation, then mark the texture as having been modified in the information panel
-            connect(currentTextureRenderAreas[GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second, &ScrollArea::paintedSelectedTexture, [this]()
+            connect(paintAreaScrollArea, &ScrollArea::paintedSelectedTexture, [this]()
             {
                 if(textureBank != nullptr)
                 {
@@ -61,7 +55,7 @@ namespace GUI
             });
 
             // If a different render area is being shown, then display the brush it has stored (brush that should be used with painting for that render area)
-            connect(this, &QTabWidget::currentChanged, [this](int index) { emit changedRenderArea(currentTextureRenderAreas[index].second->getBrush()); });
+            connect(this, &QTabWidget::currentChanged, [this](int index) { emit changedRenderArea(paintAreaScrollArea->getBrush()); });
         }
 
         void CurrentTextureTabWidget::setSelectedTexture(TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>)
@@ -70,10 +64,8 @@ namespace GUI
             int index = -1;
 
             // Update the render areas so that they show and modify the new selected texture
-            for(auto &i : currentTextureRenderAreas)
-            {
-                i.second->setTexture(texture);
-            }
+            paintAreaScrollArea->setTexture(texture);
+
 
             // If a texture was selected, check that it indeed exists, and if it does, update the brush to reflect that
             // a new texture has been selected that may have a different size than the previous selected texture
@@ -99,20 +91,14 @@ namespace GUI
                     Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
                 }
 
-                // Convenience variable
-                const ScrollArea *currentScrollArea = currentTextureRenderAreas[currentIndex()].second;
-
                 // Make the brush be aware of the new size restrictions when changing the brush size as a result of the selected texture size changing,
                 // and give it a brush size to display
-                emit selectedTextureChanged(texture->getImage(TextureLogic::Zoom::Normal).size(), currentScrollArea->getBrush().getPaintImage(currentScrollArea->getZoom()).size());
+                emit selectedTextureChanged(texture->getImage(TextureLogic::Zoom::Normal).size(), paintAreaScrollArea->getBrush().getPaintImage(paintAreaScrollArea->getZoom()).size());
             }
             else // No texture is selected
             {
-                // Convenience variable
-                const ScrollArea *currentScrollArea = currentTextureRenderAreas[currentIndex()].second;
-
                 // Inform the brush to disable any modifications to it until a texture is selected again
-                emit selectedTextureChanged(QSize{-1, -1}, currentTextureRenderAreas[currentIndex()].second->getBrush().getPaintImage(currentScrollArea->getZoom()).size());
+                emit selectedTextureChanged(QSize{-1, -1}, paintAreaScrollArea->getBrush().getPaintImage(paintAreaScrollArea->getZoom()).size());
             }
 
             currentTextureIndex = index;
@@ -132,17 +118,13 @@ namespace GUI
             this->textures = &textures;
 
             // Required to index into vector in texture bank. See TextureBank.cpp for more details.
-            unsigned int formatIndex = TextureHelperFunctions::indexFormat(currentTextureRenderAreas[
-                                       GetCurrentTextureImageValue(CurrentTextureImage::SelectedTexture)].second->getCurrentTextureFormat(), true);
+            unsigned int formatIndex = TextureHelperFunctions::indexFormat(paintAreaScrollArea->getCurrentTextureFormat(), true);
 
             // if there is a texture selected, update the references held in render area to ensure they are still pointing to
             // a valid memory location
             if(currentTextureIndex != -1)
             {
-                for(auto &i : currentTextureRenderAreas)
-                {
-                    i.second->setTexture(&(*this->textures)[formatIndex].first[currentTextureIndex]);
-                }
+                paintAreaScrollArea->setTexture(&(*this->textures)[formatIndex].first[currentTextureIndex]);
             }
         }
     }

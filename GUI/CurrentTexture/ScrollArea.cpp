@@ -4,7 +4,7 @@
 
 #include <QtWidgets/QHBoxLayout>
 #include "ScrollArea.h"
-#include "RenderArea.h"
+#include "PaintArea.h"
 #include <QKeyEvent>
 
 namespace GUI
@@ -13,16 +13,16 @@ namespace GUI
     {
         ScrollArea::ScrollArea(CurrentTextureImage currentTextureImage, QWidget *parent)
                     :
-                        QScrollArea{parent},
-                        renderArea{new RenderArea{currentTextureImage, this}}
+                QScrollArea{parent},
+                paintArea{new PaintArea{currentTextureImage, this}}
         {
-            setWidget(renderArea);
+            setWidget(paintArea);
 
             // Forwards these signals to the the CurrentTextureTabWidget as this widget does not have the capabilities
             // to act upon receiving this signals
-            connect(renderArea, &RenderArea::repaintSelectedTexture, [this]() { emit repaintSelectedTexture(); });
+            connect(paintArea, &PaintArea::repaintSelectedTexture, [this]() { emit repaintSelectedTexture(); });
 
-            connect(renderArea, &RenderArea::paintedSelectedTexture, [this]() { emit paintedSelectedTexture(); });
+            connect(paintArea, &PaintArea::paintedSelectedTexture, [this]() { emit paintedSelectedTexture(); });
         }
 
         void ScrollArea::enterEvent(QEvent *event)
@@ -34,17 +34,17 @@ namespace GUI
 
         const PaintFunctions::Brush &ScrollArea::getBrush() const
         {
-            return renderArea->getBrush();
+            return paintArea->getBrush();
         }
 
         QImage::Format ScrollArea::getCurrentTextureFormat() const
         {
-            return renderArea->getCurrentTextureFormat();
+            return paintArea->getCurrentTextureFormat();
         }
 
         TextureLogic::Zoom ScrollArea::getZoom() const
         {
-            return renderArea->getZoom();
+            return paintArea->getZoom();
         }
 
         void ScrollArea::keyPressEvent(QKeyEvent *event)
@@ -72,7 +72,7 @@ namespace GUI
 
         void ScrollArea::setTexture(TextureLogic::Texture *texture)
         {
-            renderArea->setTexture(texture);
+            paintArea->setTexture(texture);
 
             QWidget::repaint();
         }
@@ -85,17 +85,17 @@ namespace GUI
             {
                 if(event->angleDelta().y() > 0)
                 {
-                    renderArea->zoomIn();
+                    paintArea->zoomIn();
 
-                    emit zoomChanged(renderArea->getZoom());
+                    emit zoomChanged(paintArea->getZoom());
 
                     QWidget::repaint();
                 }
                 else if(event->angleDelta().y() < 0)
                 {
-                    renderArea->zoomOut();
+                    paintArea->zoomOut();
 
-                    emit zoomChanged(renderArea->getZoom());
+                    emit zoomChanged(paintArea->getZoom());
 
                     QWidget::repaint();
                 }

@@ -23,7 +23,7 @@ namespace GUI
 {
     namespace CurrentTexture
     {
-        class RenderArea;
+        class PaintArea;
 
         /**
          *  Provides a scrollable window to view the RenderArea. Since the RenderArea scales with the size of the
@@ -134,7 +134,7 @@ namespace GUI
 
             private:
                 // Reference to the render area that this scroll area holds
-                RenderArea *renderArea = nullptr;
+                PaintArea *paintArea = nullptr;
                 // Keeps track if the user is holding down the control key on their keyboard
                 bool controlKeyDown = false;
         };

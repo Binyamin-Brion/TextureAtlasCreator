@@ -3,7 +3,7 @@
 //
 
 #include <QtGui/QPainter>
-#include "RenderArea.h"
+#include "PaintArea.h"
 #include "TextureLogic/Texture.h"
 #include "PaintFunctions/PaintHistoryCommand.h"
 
@@ -21,7 +21,7 @@ namespace GUI
         //       once before the user has made any changes to the texture. This incorrectly prematurely updates the information
         //       in the GUI information panel
 
-        RenderArea::RenderArea(CurrentTextureImage currentTextureImage, QWidget *parent)
+        PaintArea::PaintArea(CurrentTextureImage currentTextureImage, QWidget *parent)
                     :
                         QWidget{parent},
                         currentTextureImage{currentTextureImage},
@@ -38,12 +38,12 @@ namespace GUI
             new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z), this, SLOT(undoPaintOperation()));
         }
 
-        const PaintFunctions::Brush& RenderArea::getBrush() const
+        const PaintFunctions::Brush& PaintArea::getBrush() const
         {
             return brush;
         }
 
-        QImage::Format RenderArea::getCurrentTextureFormat() const
+        QImage::Format PaintArea::getCurrentTextureFormat() const
         {
             if(texture == nullptr)
             {
@@ -53,12 +53,12 @@ namespace GUI
             return textureFormat;
         }
 
-        TextureLogic::Zoom RenderArea::getZoom() const
+        TextureLogic::Zoom PaintArea::getZoom() const
         {
             return currentZoom;
         }
 
-        void RenderArea::mouseMoveEvent(QMouseEvent *event)
+        void PaintArea::mouseMoveEvent(QMouseEvent *event)
         {
             if(texture != nullptr)
             {
@@ -81,7 +81,7 @@ namespace GUI
             }
         }
 
-        void RenderArea::mousePressEvent(QMouseEvent *event)
+        void PaintArea::mousePressEvent(QMouseEvent *event)
         {
             if(event->button() == Qt::LeftButton)
             {
@@ -103,7 +103,7 @@ namespace GUI
             }
         }
 
-        void RenderArea::mouseReleaseEvent(QMouseEvent *event)
+        void PaintArea::mouseReleaseEvent(QMouseEvent *event)
         {
             if(event->button() == Qt::LeftButton)
             {
@@ -114,7 +114,7 @@ namespace GUI
             }
         }
 
-        void RenderArea::paintEvent(QPaintEvent *event)
+        void PaintArea::paintEvent(QPaintEvent *event)
         {
             QPainter painter{this};
 
@@ -147,7 +147,7 @@ namespace GUI
             }
         }
 
-        void RenderArea::setTexture(TextureLogic::Texture *texture)
+        void PaintArea::setTexture(TextureLogic::Texture *texture)
         {
             this->texture = texture;
 
@@ -163,7 +163,7 @@ namespace GUI
             QWidget::repaint();
         }
 
-        void RenderArea::zoomIn()
+        void PaintArea::zoomIn()
         {
             TextureLogic::Zoom oldZoom = currentZoom;
 
@@ -181,7 +181,7 @@ namespace GUI
             }
         }
 
-        void RenderArea::zoomOut()
+        void PaintArea::zoomOut()
         {
             TextureLogic::Zoom oldZoom = currentZoom;
 
@@ -199,7 +199,7 @@ namespace GUI
             }
         }
 
-        void RenderArea::undoPaintOperation()
+        void PaintArea::undoPaintOperation()
         {
             // This function is executed once per undo operation shortcut! It does not revert all paint operations at once.
 
@@ -248,7 +248,7 @@ namespace GUI
          *  the amount of changes needed and reduces the change of error.
          */
 
-        const QImage& RenderArea::getReferredToImage(TextureLogic::Zoom zoom) const
+        const QImage& PaintArea::getReferredToImage(TextureLogic::Zoom zoom) const
         {
             switch(currentTextureImage)
             {
@@ -264,7 +264,7 @@ namespace GUI
             Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\nInvalid code path taken\n");
         }
 
-        PaintFunctions::PaintHistoryCommand* RenderArea::getReferredToImageHistory(TextureLogic::Zoom zoom) const
+        PaintFunctions::PaintHistoryCommand* PaintArea::getReferredToImageHistory(TextureLogic::Zoom zoom) const
         {
             switch(currentTextureImage)
             {
@@ -280,7 +280,7 @@ namespace GUI
             Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\nInvalid code path taken\n");
         }
 
-        void RenderArea::paintTexture(TextureLogic::Zoom zoom, QPoint mousePosition, const QImage &applyImage, QImage &targetImage, bool undoOperation)
+        void PaintArea::paintTexture(TextureLogic::Zoom zoom, QPoint mousePosition, const QImage &applyImage, QImage &targetImage, bool undoOperation)
         {
             /*
              * When painting a texture, the area that is to be painted is centred around the input given to this function.
@@ -356,7 +356,7 @@ namespace GUI
             }
         }
 
-        void RenderArea::storePaintHistory()
+        void PaintArea::storePaintHistory()
         {
             // Since this function is called when the mouse is released over this widget, it is possible for this function
             // to be called even when no painting was done. It should not matter if an empty stack history is passed,

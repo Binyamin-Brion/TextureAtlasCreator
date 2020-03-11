@@ -33,12 +33,12 @@ namespace TextureLogic
         _textureName.chop(_textureFormat.size() + 1);
     }
 
-    void Texture::addPaintHistorySpecular(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    void Texture::addPaintHistorySpecular(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>)
     {
         _texture[GetZoomIndex(zoom)].addPaintHistorySpecular(paintHistoryCommand);
     }
 
-    void Texture::addPaintHistoryTexture(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    void Texture::addPaintHistoryTexture(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>)
     {
         _texture[GetZoomIndex(zoom)].addPaintHistoryTexture(paintHistoryCommand);
     }
@@ -67,7 +67,7 @@ namespace TextureLogic
         return _texture[GetZoomIndex(zoom)].getSelectionBorderWidth();
     }
 
-    QImage& Texture::getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    QImage& Texture::getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>)
     {
         return _texture[GetZoomIndex(zoom)].getSpecularTexture();
     }
@@ -77,12 +77,12 @@ namespace TextureLogic
         return textureDescription;
     }
 
-    PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistorySpecular(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistorySpecular(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>)
     {
         return _texture[GetZoomIndex(zoom)].removePaintHistorySpecular();
     }
 
-    PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistoryTexture(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::RenderArea>)
+    PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistoryTexture(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>)
     {
         return _texture[GetZoomIndex(zoom)].removePaintHistoryTexture();
     }
