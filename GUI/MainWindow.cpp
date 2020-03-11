@@ -118,9 +118,13 @@ namespace GUI
     void MainWindow::initializeKeyboardShortcutsConnections()
     {
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->loadedTextures, SLOT(showLoadTextureDialog()));
+
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), ui->atlasWidget, SLOT(exportTexture()));
+
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveProject()));
+
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(openProject()));
+
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(newProject()));
     }
 

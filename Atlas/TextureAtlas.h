@@ -237,6 +237,12 @@ namespace Atlas
             bool textureSelected() const;
 
             /**
+             *  Undoes the most recent movement made to a texture. If there are no previous move histories (either no
+             *  movements made at all or entire history is used up) then no action is taken.
+             */
+            void undoTextureMovement();
+
+            /**
              * Update the drawing positions of the textures in the atlas to account for the change in zoom.
              * Note: zoom is in done in steps, ie from 100% to 200%, not from 100% to 400%. This negates the need to
              *       pass in the new zoom value in to this function.
@@ -306,6 +312,20 @@ namespace Atlas
             QImage::Format atlasFormat;
 
             mutable bool unsavedChanges = false;
+
+            /*
+             *  Combines the required information needed to revert a movement made to a texture.
+             */
+            struct TextureMovement
+            {
+                QString textureLocation;
+                QPointF previousLocation;
+            };
+
+            // Keeps track of the last known position of the selected texture- used for movement history
+            QPointF previousTexturePositionHistory;
+
+            std::stack<TextureMovement> textureMovementHistory;
     };
 }
 

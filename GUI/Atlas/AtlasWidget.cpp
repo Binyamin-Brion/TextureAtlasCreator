@@ -318,6 +318,14 @@ namespace GUI
             textureAtlas->textureLoaded();
         }
 
+        void AtlasWidget::undoTextureMovement()
+        {
+            textureAtlas->undoTextureMovement();
+
+            // A texture may have been moved; would be best if the texture is painted in its new location as soon as possible.
+            QWidget::repaint();
+        }
+
         void AtlasWidget::zoomIn()
         {
             textureAtlas->zoomIn();

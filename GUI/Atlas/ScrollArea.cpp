@@ -77,6 +77,15 @@ namespace GUI
             {
                 controlKeyDown = true;
             }
+            else if(event->key() == Qt::Key_Z)
+            {
+                // Can't get keyboard shortcuts to work when this function exists. Could use keyboard shortcuts
+                // instead of this function for all keyboard input, but the state of each key still needs to be
+                // tracked. To do this with shortcuts would involve a lot of slots, one for each shortcut. This
+                // is because shortcuts can't pass information, such as a shortcut identifier, to a slot, which would
+                // allow one slot to be used.
+                atlasWidget->undoTextureMovement();
+            }
 
             atlasWidget->keyPressed(event);
         }

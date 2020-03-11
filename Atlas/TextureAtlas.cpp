@@ -243,6 +243,8 @@ namespace Atlas
                     // location, which case it has to be returned to its position at the time of being clicked. This assignment keeps track of that position.
                     previousDrawingCoords = selectedExistingTexture->getDrawingCoordinates();
 
+                    previousTexturePositionHistory = selectedExistingTexture->getDrawingCoordinates();
+
                     return;
                 }
                 else
@@ -329,6 +331,8 @@ namespace Atlas
                         deleteTextureDrawingPosition = true;
 
                         textureBank->textureSelected(i.texture);
+
+                        previousTexturePositionHistory = selectedExistingTexture->getDrawingCoordinates();
                     }
                 }
 
@@ -439,6 +443,10 @@ namespace Atlas
                         textureBank->textureSelected(nullptr);
                     }
                 }
+            }
+            else if(selectedExistingTexture->getDrawingCoordinates() != previousTexturePositionHistory)
+            {
+                textureMovementHistory.push(TextureMovement{selectedExistingTexture->getTextureLocation(), previousTexturePositionHistory});
             }
         }
 
@@ -687,6 +695,29 @@ namespace Atlas
         }
 
         return false;
+    }
+
+    void TextureAtlas::undoTextureMovement()
+    {
+        if(textureMovementHistory.empty())
+        {
+            return;
+        }
+
+        for(auto &i : textureDrawingPositions)
+        {
+            if(i.texture->textureLocation() == textureMovementHistory.top().textureLocation)
+            {
+                i.drawingPosition = textureMovementHistory.top().previousLocation;
+            }
+        }
+
+        if(selectedExistingTexture->isOpen() && selectedExistingTexture->getTextureLocation() == textureMovementHistory.top().textureLocation)
+        {
+            selectedExistingTexture->setDrawingCoordinates(textureMovementHistory.top().previousLocation);
+        }
+
+        textureMovementHistory.pop();
     }
 
     void TextureAtlas::zoomIn()

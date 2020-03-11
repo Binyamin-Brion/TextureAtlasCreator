@@ -214,6 +214,11 @@ namespace GUI
                 void updateTextureReferences();
 
                 /**
+                 *  Undoes the most recent texture movement, if any. Forwards request to the texture atlas.
+                 */
+                void undoTextureMovement();
+
+                /**
                  * Tells the texture atlas to zoom in, and display the visual changes that occur as a result.
                  */
                 void zoomIn();
