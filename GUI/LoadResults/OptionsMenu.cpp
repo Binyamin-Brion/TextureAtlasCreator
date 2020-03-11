@@ -31,7 +31,7 @@ namespace GUI
             {
                 addAction(&deleteTab);
 
-                connect(&deleteTab, &QAction::triggered, [this]() { emit deleteTabTriggered(); });
+                connect(&deleteTab, &QAction::triggered, [this]() { emit deleteTabTriggered(false); });
             }
 
             addAction(&renameTab);

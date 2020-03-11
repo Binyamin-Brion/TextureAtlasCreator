@@ -46,6 +46,15 @@ namespace Atlas
             explicit TextureAtlas(QImage::Format atlasFormat);
 
             /**
+             * Called when loading a texture from a project file. When this is done, it is known where a texture
+             * will be placed within the atlas.
+             *
+             * @param texture that is being added to the atlas
+             * @param position within the atlas
+             */
+            void addTextureWithPosition(const TextureLogic::Texture &texture, QPoint position);
+
+            /**
              *  Checks if the currently selected texture position intersects with another texture in the atlas.
              *
              * @return true if there is an intersection

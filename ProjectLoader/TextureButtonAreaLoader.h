@@ -9,10 +9,17 @@
 
 namespace ProjectLoader
 {
+    struct TextureData
+    {
+        QString textureLocation;
+        unsigned int intersectionWidth;
+        unsigned int selectionWidth;
+    };
+
     struct TextureButtonAreaLoader
     {
         QString areaName;
-        std::vector<QString> textures;
+        std::vector<TextureData> textures;
     };
 }
 

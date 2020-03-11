@@ -32,8 +32,10 @@ namespace GUI
 
                 /**
                  * Called when the action to delete a texture tab when it is clicked.
+                 *
+                 * @param whether or not the signal is being emitted as a result of the current project closing
                  */
-                void deleteTabTriggered();
+                void deleteTabTriggered(bool);
 
                 /**
                  *  Called when the action to add a tab when it is clicked.

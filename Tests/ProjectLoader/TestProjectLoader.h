@@ -17,7 +17,17 @@ namespace Tests
 
             private slots:
 
+                /*
+                 * Tests loading a project file containing only one texture button area and one texture atlas with one
+                 * texture within that atlas.
+                 */
                 void testParseProjectFile();
+
+                /*
+                 * Tests loading a more complicated project file that consists of two atlases
+                 * (one with two textures, and the other one with one)and two texture button areas
+                 * (that each have two textures).
+                 */
                 void testParseProjectFile2();
 
             private:

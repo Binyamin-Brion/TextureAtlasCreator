@@ -29,6 +29,27 @@ namespace Atlas
         currentZoomIndex = ::TextureLogic::GetZoomIndex(currentZoom);
     }
 
+    void TextureAtlas::addTextureWithPosition(const TextureLogic::Texture &texture, QPoint position)
+    {
+        textureDrawingPositions.emplace_back();
+
+        textureDrawingPositions.back().drawingPosition = position;
+
+        textureDrawingPositions.back().texture = &texture;
+
+        // This is required to do as due to the control flow resulting in this function call, the passed in texture may have
+        // an invalid index value.
+        for(int i = 0; i < textures->size(); ++i)
+        {
+            if((*textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[i].textureLocation() == texture.textureLocation())
+            {
+                textureDrawingPositions.back().index = i;
+
+                break;
+            }
+        }
+    }
+
     bool TextureAtlas::checkIntersection()
     {
         // A texture can only intersect with other textures if it's moving, in which case a texture must have

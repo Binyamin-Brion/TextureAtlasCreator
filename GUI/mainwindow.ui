@@ -95,8 +95,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>254</width>
-           <height>249</height>
+           <width>252</width>
+           <height>241</height>
           </rect>
          </property>
         </widget>
@@ -112,7 +112,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -120,6 +120,8 @@
      <string>File</string>
     </property>
     <addaction name="actionExport_Current_Atlas"/>
+    <addaction name="separator"/>
+    <addaction name="actionNew_Project"/>
     <addaction name="separator"/>
     <addaction name="actionOpen_Project"/>
     <addaction name="separator"/>
@@ -148,6 +150,11 @@
   <action name="actionSave_As">
    <property name="text">
     <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionNew_Project">
+   <property name="text">
+    <string>New Project</string>
    </property>
   </action>
  </widget>

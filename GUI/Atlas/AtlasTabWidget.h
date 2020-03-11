@@ -60,8 +60,10 @@ namespace GUI
                  * Adds a texture to the atlas currently being displayed.
                  *
                  * @param texture to add to the current atlas
+                 * @param tabName the tab holding the atlas to which to add the texture
+                 * @param position the position of the texture within the atlas (QSize == {-1, -1} if no position is known)
                  */
-                void addTextureToCurrentAtlas(const TextureLogic::Texture &texture);
+                void addTextureToAtlas(const TextureLogic::Texture &texture, QString atlasName, QPoint position);
 
                 /**
                  *  Goes through every atlas and closes it. Any unsaved changes will be lost, hence a warning will appear
@@ -75,6 +77,13 @@ namespace GUI
                  * @return format of the current atlas
                  */
                 QImage::Format getCurrentAtlasFormat() const;
+
+                /**
+                 * Gets the name of current tab being shown.
+                 *
+                 * @return name of tab displaying the currently viewed atlas
+                 */
+                QString getCurrentAtlasName() const;
 
                 /**
                  * Checks if there are any unsaved changes in the atlases.
@@ -123,14 +132,6 @@ namespace GUI
             public slots:
 
                 /**
-                 *  Call this function when an atlas should be exported. This will start the sequence of exporting
-                 *  the currently viewed atlas.
-                 */
-                void exportTexture();
-
-            private slots:
-
-                /**
                  *  Adds a new tab containing an empty atlas to this tab widget.
                  *
                  * @param tabName the name of the tab containing the new empty atlas
@@ -138,6 +139,14 @@ namespace GUI
                  * @param atlasFormat the format the atlas, and thus the textures it contains, should have
                  */
                 void addAtlasWidget(const QString &tabName, QSize atlasSize, QImage::Format atlasFormat);
+
+                /**
+                 *  Call this function when an atlas should be exported. This will start the sequence of exporting
+                 *  the currently viewed atlas.
+                 */
+                void exportTexture();
+
+            private slots:
 
                 /**
                  *  Handles when a different tab holding a different tab is selected.

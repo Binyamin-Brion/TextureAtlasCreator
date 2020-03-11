@@ -53,6 +53,8 @@ namespace GUI
 
         // Action connections
 
+        connect(ui->actionNew_Project, SIGNAL(triggered()), this, SLOT(newProject()));
+
         connect(ui->actionOpen_Project, SIGNAL(triggered()), this, SLOT(openProject()));
 
         connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveProject()));
@@ -77,6 +79,7 @@ namespace GUI
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), ui->atlasWidget, SLOT(exportTexture()));
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveProject()));
         new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(openProject()));
+        new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(newProject()));
 
         // Below this size and things look weird
         setMinimumSize(1280, 720);
@@ -89,6 +92,18 @@ namespace GUI
 
     // Beginning of private slots
 
+    void MainWindow::newProject()
+    {
+        closeProject();
+
+        ui->loadedTextures->addTextureButtonArea("Default");
+
+        ui->atlasWidget->addAtlasWidget("Default", QSize{1920, 1080}, QImage::Format_RGB32);
+
+        // Don't automatically overwrite previously saved location if there is one
+        previousSaveLocation.clear();
+    }
+
     void MainWindow::openProject()
     {
         QString openProjectLocation = QFileDialog::getOpenFileName(this, "Open Project", QDir::homePath());
@@ -99,7 +114,47 @@ namespace GUI
             return;
         }
 
-       // ::ProjectLoader::ProjectParser::parseFile(openProjectLocation);
+        closeProject();
+
+        ::ProjectLoader::ProjectParser projectParser;
+
+        projectParser.parseFile(openProjectLocation);
+
+        // The selection and intersection border width are stored in the texture button area part of the project file.
+        // When reading the results of the atlas project file, there has to be a way to reference the border widths for the
+        // current texture. This variable does that.
+        QMap<QString, std::pair<int, int>> loadedTexturesBorderWidths;
+
+        for(const auto &i : projectParser.getTextureButtonAreas())
+        {
+            ui->loadedTextures->addTextureButtonArea(i.areaName);
+
+            for(const auto &j : i.textures)
+            {
+                QString textureLocation = createPathToTexture(j.textureLocation);
+
+                ui->loadedTextures->openTexture(i.areaName, textureLocation, j.intersectionWidth, j.selectionWidth);
+
+                loadedTexturesBorderWidths.insert(textureLocation, std::make_pair(j.intersectionWidth, j.selectionWidth));
+            }
+        }
+
+        for(const auto &i : projectParser.getTextureAtlases())
+        {
+            ui->atlasWidget->addAtlasWidget(i.atlasName, i.atlasSize, TextureHelperFunctions::convertToFormat(i.format));
+
+            for(const auto &j : i.textures)
+            {
+                QString textureLocation = createPathToTexture(j.textureLocation);
+
+                // Certain logic is required when adding a texture to an atlas. Therefore go through the process program would take to add a texture to an atlas
+                // during runtime when user clicks a texture button.
+                textureBank->textureButtonPressedMainWindow(i.atlasName, textureLocation, loadedTexturesBorderWidths[textureLocation].first, loadedTexturesBorderWidths[textureLocation].second, j.position, {});
+            }
+        }
+
+        // Don't automatically overwrite previously saved location if there is one
+        previousSaveLocation.clear();
     }
 
     void MainWindow::saveAsProject()
@@ -180,5 +235,34 @@ namespace GUI
         ui->atlasWidget->closeAllTabs();
 
         ui->loadedTextures->closeAllTabs();
+    }
+
+    QString MainWindow::createPathToTexture(QString loadedPath)
+    {
+        // For testing purposes, it is assumed that test project files can be loaded into the program.
+        // To ensure that assets are available, the texture locations have to be specified relative to this program folder.
+
+        #ifdef QT_DEBUG
+
+                if(loadedPath.startsWith('/'))
+                {
+                    QDir executableDirectory = QDir::current();
+
+                    if(!executableDirectory.cdUp())
+                    {
+                        Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\n\nFailure to get to test asset folder.\n\n");
+                    }
+
+                    if(!executableDirectory.cd("Assets/Test"))
+                    {
+                        Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\n\nFailure to get to test asset folder.\n\n");
+                    }
+
+                    loadedPath = executableDirectory.path() + loadedPath;
+                }
+
+        #endif
+
+        return loadedPath;
     }
 }

@@ -84,6 +84,16 @@ namespace GUI
             public slots:
 
                 /**
+                 * Forwards the information specified in the ChooseTexture dialog to the the TextureButtonArea in the
+                 * currently opened tab.
+                 *
+                 * @param textureLocation
+                 * @param intersectionBorderWidth
+                 * @param selectionBorderWidth
+                 */
+                void openTexture(QString textureButtonAreaName, QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
+
+                /**
                  *  Called to open the dialog used to add a new tab to this widget.
                  */
                 void showAddTabDialog();
@@ -116,7 +126,7 @@ namespace GUI
                  *        deleted from the texture bank AND all opened textures that have that texture. A warning will
                  *        be given in such a scenario.
                  */
-                void deleteCurrentTab();
+                void deleteCurrentTab(bool closingProgram);
 
                 /**
                  *  Moves the current tab to the left in the list of open tabs.
@@ -137,16 +147,6 @@ namespace GUI
                  * @param newTabName result of the addNewTab dialog
                  */
                 void newTabNameChosen(QString newTabName);
-
-                /**
-                 * Forwards the information specified in the ChooseTexture dialog to the the TextureButtonArea in the
-                 * currently opened tab.
-                 *
-                 * @param textureLocation
-                 * @param intersectionBorderWidth
-                 * @param selectionBorderWidth
-                 */
-                void openTexture(QString textureButtonAreaName, QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
 
             private:
 

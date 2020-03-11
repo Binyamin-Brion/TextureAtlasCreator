@@ -70,8 +70,10 @@ namespace GUI
                 /**
                  *  This does not directly delete texture buttons; when this area is deleted all of the buttons are automatically deleted.
                  *  What this function will do is delete all of the textures in the texture bank that the buttons in this object represent.
+                 *
+                 * @param whether or not the signal is being emitted as a result of the current project closing
                  */
-                void deleteTextureButtons();
+                void deleteTextureButtons(bool closingProgram);
 
                 /**
                  * Checks if there are any unsaved changes in the atlas.

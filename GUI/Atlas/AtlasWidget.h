@@ -231,8 +231,9 @@ namespace GUI
                  * the user the operation is aborted.
                  *
                  * @param texture to be added to the atlas
+                 * @param position the position of the texture within the atlas (QSize == {-1, -1} if no position is known)
                  */
-                void textureButtonPressed(const TextureLogic::Texture &texture);
+                void textureButtonPressed(const TextureLogic::Texture &texture, QPoint position);
 
             private:
 

@@ -57,8 +57,9 @@ namespace GUI
                  * Add a texture to the current atlas. Forwards the argument to the atlas widget held by this object.
                  *
                  * @param texture to be added to the atlas
+                 * @param position the position of the texture within the atlas (QSize == {-1, -1} if no position is known)
                  */
-                void addTexture(const TextureLogic::Texture &texture);
+                void addTexture(const TextureLogic::Texture &texture, QPoint position);
 
                 /**
                  * When the cursor enters this widget, it automatically grabs the focus of the keyboard so that

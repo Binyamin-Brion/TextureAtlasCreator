@@ -47,8 +47,10 @@ namespace GUI
 
                 /**
                  *  Removes all of the texture buttons. Used when a texture button is to be deleted. Forwards call to the texture button area.
+                 *
+                 * @param whether or not the signal is being emitted as a result of the current project closing
                  */
-                void deleteTextureButtons();
+                void deleteTextureButtons(bool closingProgram);
 
                 /**
                  * Gets the texture button area this objects holds.

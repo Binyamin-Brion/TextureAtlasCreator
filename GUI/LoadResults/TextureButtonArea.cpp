@@ -102,24 +102,28 @@ namespace GUI
             unsavedChanges = true;
         }
 
-        void TextureButtonArea::deleteTextureButtons()
+        void TextureButtonArea::deleteTextureButtons(bool closingProgram)
         {
-            // Before actually modifying the texture buttons, check if deleting the texture buttons would result in texture
-            // being removed from the program. If such a texture(s) exist, ask the user if this function should continue.
-            for(const auto &i : textureButtons)
+            // When closing a project it is taken to be known that all textures will be deleted from the texture atlas. No warning is required as a result.
+            if(!closingProgram)
             {
-                int currentTextureCount = TextureButton::getTextureRepresentationCount()[i->getTextureLocation()];
-
-                if(currentTextureCount == TextureButton::MINIMUM_TEXTURE_REPRESENTATION_COUNT)
+                // Before actually modifying the texture buttons, check if deleting the texture buttons would result in texture
+                // being removed from the program. If such a texture(s) exist, ask the user if this function should continue.
+                for(const auto &i : textureButtons)
                 {
-                    int questionResponse = QMessageBox::question(this, tr("Confirmation Required"), "Deleting this texture area will results in texture being permanently deleted. "
-                                                                                                    "All instances of this texture in ALL atlases will be removed. \n\n"
-                                                                                                    "\nContinue, and apply this response to all other textures that would be deleted if this operation finishes?",
-                                                                 QMessageBox::Yes | QMessageBox::Cancel);
+                    int currentTextureCount = TextureButton::getTextureRepresentationCount()[i->getTextureLocation()];
 
-                    if(questionResponse != QMessageBox::Yes)
+                    if(currentTextureCount == TextureButton::MINIMUM_TEXTURE_REPRESENTATION_COUNT)
                     {
-                        return;
+                        int questionResponse = QMessageBox::question(this, tr("Confirmation Required"), "Deleting this texture area will results in texture being permanently deleted. "
+                                                                                                        "All instances of this texture in ALL atlases will be removed. \n\n"
+                                                                                                        "\nContinue, and apply this response to all other textures that would be deleted if this operation finishes?",
+                                                                     QMessageBox::Yes | QMessageBox::Cancel);
+
+                        if(questionResponse != QMessageBox::Yes)
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -192,7 +196,8 @@ namespace GUI
 
             for(const auto &i : textureButtons)
             {
-                saveStream << i->getTextureLocation() << '\n';
+                saveStream << i->getTextureLocation() << " -> " << textureBank->getIntersectionWidth(i->getTextureLocation()) << " , "
+                           << textureBank->getSelectionWidth(i->getTextureLocation()) << '\n';
             }
 
             saveStream << "\n=======================================\n\n";
@@ -264,7 +269,7 @@ namespace GUI
 
         void TextureButtonArea::textureButtonClicked(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
         {
-            textureBank->textureButtonPressed(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
+            textureBank->textureButtonPressedButtonArea(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
         }
 
         // Beginning of private functions

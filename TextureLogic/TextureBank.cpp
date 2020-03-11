@@ -46,6 +46,30 @@ namespace TextureLogic
         }
     }
 
+    unsigned int TextureBank::getIntersectionWidth(const QString &textureLocation)
+    {
+        const Texture *texture = findTexture(textureLocation);
+
+        if(texture == nullptr)
+        {
+            throw std::runtime_error{"Unable to find the intersection width for the selected texture."};
+        }
+
+        return texture->getIntersectionBorderWidth(Zoom::Normal);
+    }
+
+    unsigned int TextureBank::getSelectionWidth(const QString &textureLocation)
+    {
+        const Texture *texture = findTexture(textureLocation);
+
+        if(texture == nullptr)
+        {
+            throw std::runtime_error{"Unable to find the intersection width for the selected texture."};
+        }
+
+        return texture->getSelectedBorderWidth(Zoom::Normal);
+    }
+
     const std::vector<std::pair<std::vector<Texture>, std::vector<unsigned int>>>& TextureBank::getTextures() const
     {
         return textures;
@@ -147,7 +171,72 @@ namespace TextureLogic
         loadNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth);
     }
 
-    void TextureBank::textureButtonPressed(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
+    void TextureBank::textureButtonPressedButtonArea(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>)
+    {
+        // QPoint == {-1, -1} as there is no position for the texture at the time of calling this function
+        // Pass in the name of the currently viewed atlas as that is the required behaviour when clicking a texture button
+        handleTextureButtonPressed(atlasTabWidget->getCurrentAtlasName(), textureLocation, intersectionBorderWidth, selectionBorderWidth, QPoint{-1, -1});
+    }
+
+    void TextureBank::textureButtonPressedMainWindow(const QString &atlasName, const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, QPoint texturePosition, AccessRestriction::PassKey<GUI::MainWindow>)
+    {
+        // Loading a texture into an altas from a project file is the same effect if the user pressed the equivalent texture button.
+        // Since certain logic has to be executed when a texture is to be loaded into an atlas, it makes sense that when loading a project
+        // that the same logic is executed (as loading a project requires adding textures to an atlas)
+        handleTextureButtonPressed(atlasName, textureLocation, intersectionBorderWidth, selectionBorderWidth, texturePosition);
+    }
+
+    void TextureBank::textureSelected(const Texture *texture)
+    {
+        // Notify all of the objects that change their state if a texture is selected that, well, a new texture has been selected.
+        // As of this writing, these are GUI widgets such as a widget that displays the selected texture properites
+
+        currentTextureTabWidget->setSelectedTexture(const_cast<Texture*>(texture), {});
+
+        textureInfoScrollArea->setTexture(texture, {});
+    }
+
+    // Beginning of private functions
+
+    const Texture* TextureBank::findTexture(const QString &textureLocation) const
+    {
+        bool foundTexture = false;
+        int formatIndex = 0;
+        int textureIndex = 0;
+
+        for(const auto &textureFormats : textures)
+        {
+            textureIndex = 0;
+
+            for(const auto &texture : textureFormats.first)
+            {
+                if(texture.textureLocation() == textureLocation)
+                {
+                    foundTexture = true;
+
+                    break;
+                }
+
+                textureIndex += 1;
+            }
+
+            if(foundTexture)
+            {
+                break;
+            }
+
+            formatIndex += 1;
+        }
+
+        if(!foundTexture)
+        {
+            return nullptr;
+        }
+
+        return &textures[formatIndex].first[textureIndex];
+    }
+
+    void TextureBank::handleTextureButtonPressed(const QString &atlasName, const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, QPoint texturePosition)
     {
         if(originalTextureUploadLocation.find(textureLocation.toStdString()) == originalTextureUploadLocation.end())
         {
@@ -167,7 +256,7 @@ namespace TextureLogic
         {
             if(i.textureLocation() == textureLocation)
             {
-                atlasTabWidget->addTextureToCurrentAtlas(i);
+                atlasTabWidget->addTextureToAtlas(i, atlasName, texturePosition);
 
                 foundTexture = true;
 
@@ -191,7 +280,7 @@ namespace TextureLogic
                 // A reseating of references to the vector is needed (see fn resetTextureReference for more details)
                 resetTextureReference();
 
-                atlasTabWidget->addTextureToCurrentAtlas(textures[formatIndex].first.back());
+                atlasTabWidget->addTextureToAtlas(textures[formatIndex].first.back(), atlasName, texturePosition);
             }
             else
             {
@@ -203,19 +292,9 @@ namespace TextureLogic
 
                 textures[formatIndex].second.erase(textures[formatIndex].second.begin());
 
-                atlasTabWidget->addTextureToCurrentAtlas(textures[formatIndex].first[textures[formatIndex].second.front()]);
+                atlasTabWidget->addTextureToAtlas(textures[formatIndex].first[textures[formatIndex].second.front()], atlasName, texturePosition);
             }
         }
-    }
-
-    void TextureBank::textureSelected(const Texture *texture)
-    {
-        // Notify all of the objects that change their state if a texture is selected that, well, a new texture has been selected.
-        // As of this writing, these are GUI widgets such as a widget that displays the selected texture properites
-
-        currentTextureTabWidget->setSelectedTexture(const_cast<Texture*>(texture), {});
-
-        textureInfoScrollArea->setTexture(texture, {});
     }
 
     void TextureBank::loadNewTexture(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)

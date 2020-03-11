@@ -38,9 +38,9 @@ namespace GUI
             connect(atlasWidget, &AtlasWidget::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle information) { emit currentAtlasInformationChanged(information); });
         }
 
-        void ScrollArea::addTexture(const TextureLogic::Texture &texture)
+        void ScrollArea::addTexture(const TextureLogic::Texture &texture, QPoint position)
         {
-            atlasWidget->textureButtonPressed(texture);
+            atlasWidget->textureButtonPressed(texture, position);
         }
 
         void ScrollArea::enterEvent(QEvent *event)

@@ -30,7 +30,10 @@ namespace Tests
 
             QVERIFY(textureButtonAreaLoader.areaName == "Default");
             QVERIFY(textureButtonAreaLoader.textures.size() == 1);
-            QVERIFY(textureButtonAreaLoader.textures[0] == "/bark.jpg");
+
+            QVERIFY(textureButtonAreaLoader.textures[0].textureLocation == "/bark.jpg");
+            QVERIFY(textureButtonAreaLoader.textures[0].intersectionWidth == 2);
+            QVERIFY(textureButtonAreaLoader.textures[0].selectionWidth == 5);
 
             QVERIFY(projectParser.getTextureAtlases().size() == 1);
             ::ProjectLoader::TextureAtlasLoader textureAtlasLoader = projectParser.getTextureAtlases().front();
@@ -40,7 +43,7 @@ namespace Tests
             QVERIFY(textureAtlasLoader.format == "RGB32");
             QVERIFY(textureAtlasLoader.textures.size() == 1);
             QVERIFY(textureAtlasLoader.textures[0].textureLocation == "/bark.jpg");
-            QVERIFY((textureAtlasLoader.textures[0].position == QPoint{94, 508}));
+            QVERIFY((textureAtlasLoader.textures[0].position == QPoint{60, 48}));
         }
 
         void TestProjectLoader::testParseProjectFile2()
@@ -57,15 +60,23 @@ namespace Tests
 
             QVERIFY(textureButtonAreaLoader.areaName == "Default");
             QVERIFY(textureButtonAreaLoader.textures.size() == 2);
-            QVERIFY(textureButtonAreaLoader.textures[0] == "/bark.jpg");
-            QVERIFY(textureButtonAreaLoader.textures[1] == "/grassFlora.png");
+            QVERIFY(textureButtonAreaLoader.textures[0].textureLocation == "/bark.jpg");
+            QVERIFY(textureButtonAreaLoader.textures[0].intersectionWidth == 2);
+            QVERIFY(textureButtonAreaLoader.textures[0].selectionWidth == 5);
+            QVERIFY(textureButtonAreaLoader.textures[1].textureLocation == "/grassFlora.png");
+            QVERIFY(textureButtonAreaLoader.textures[1].intersectionWidth == 2);
+            QVERIFY(textureButtonAreaLoader.textures[1].selectionWidth == 5);
 
             textureButtonAreaLoader = projectParser.getTextureButtonAreas()[1];
 
             QVERIFY(textureButtonAreaLoader.areaName == "te");
             QVERIFY(textureButtonAreaLoader.textures.size() == 2);
-            QVERIFY(textureButtonAreaLoader.textures[0] == "/bark.jpg");
-            QVERIFY(textureButtonAreaLoader.textures[1] == "/dirt.jpg");
+            QVERIFY(textureButtonAreaLoader.textures[0].textureLocation == "/bark.jpg");
+            QVERIFY(textureButtonAreaLoader.textures[0].intersectionWidth == 2);
+            QVERIFY(textureButtonAreaLoader.textures[0].selectionWidth == 5);
+            QVERIFY(textureButtonAreaLoader.textures[1].textureLocation == "/dirt.jpg");
+            QVERIFY(textureButtonAreaLoader.textures[1].intersectionWidth == 2);
+            QVERIFY(textureButtonAreaLoader.textures[1].selectionWidth == 5);
 
 
             // Texture Atlases

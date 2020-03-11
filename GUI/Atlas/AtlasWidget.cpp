@@ -232,8 +232,19 @@ namespace GUI
             painter.drawRect(0,0, width() - 1, height() - 1);
         }
 
-        void AtlasWidget::textureButtonPressed(const TextureLogic::Texture &texture)
+        void AtlasWidget::textureButtonPressed(const TextureLogic::Texture &texture, QPoint position)
         {
+            // It is taken that if QSize == {-1, -1} it means that the passed in texture will placed at a later point in time in the atlas.
+            // Otherwise the position variable specifies the location of the passed in texture after reading from a project file.
+            if(position.x() != -1 && position.y() != -1)
+            {
+                textureAtlas->addTextureWithPosition(texture, position);
+
+                QWidget::repaint();
+
+                return;
+            }
+
             QSize atlasSize = textureAtlas->getAtlasSize();
             QSize textureSize = texture.getImage(textureAtlas->getCurrentZoom()).size();
 

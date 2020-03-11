@@ -95,7 +95,16 @@ namespace ProjectLoader
             }
             else if(processingButtonArea)
             {
-                textureButtonAreaLoader.textures.push_back(qString);
+                QStringList textureInformation = qString.split(' ');
+
+                TextureData textureData;
+
+
+                textureData.textureLocation = textureInformation[0];
+                textureData.intersectionWidth = textureInformation[4].toInt();
+                textureData.selectionWidth = textureInformation[2].toInt();
+
+                textureButtonAreaLoader.textures.push_back(textureData);
             }
 
             // Handle Atlas
@@ -136,5 +145,7 @@ namespace ProjectLoader
                 }
             }
         }
+
+        return true;
     }
 }

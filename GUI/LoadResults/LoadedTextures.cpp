@@ -57,7 +57,7 @@ namespace GUI
 
             // The logic for renaming and deleting a tab is the same as that of AtlasTabWidget. Refer to that class for more information.
 
-            connect(optionsMenu, SIGNAL(deleteTabTriggered()), this, SLOT(deleteCurrentTab()));
+            connect(optionsMenu, SIGNAL(deleteTabTriggered(bool)), this, SLOT(deleteCurrentTab(bool)));
 
             connect(addNewTab, SIGNAL(newTabNameChosen(QString)), this, SLOT(newTabNameChosen(QString)));
 
@@ -90,12 +90,16 @@ namespace GUI
         {
             for(unsigned int i = 0; i < currentTabs.size(); ++i)
             {
-                deleteCurrentTab();
+                deleteCurrentTab(true);
             }
 
             // Deleting all of the tabs in the above loop will put in a default tab, which is not required as this function
             // is called when a project is to be opened. When that happens, there will be tabs to be placed.
+
             removeTab(0);
+
+            delete currentTabs.front().first;
+            currentTabs.clear();
         }
 
         bool LoadedTextures::getUnsavedTextureButtonAreas() const
@@ -172,7 +176,7 @@ namespace GUI
 
         // Beginning of private slots
 
-        void LoadedTextures::deleteCurrentTab()
+        void LoadedTextures::deleteCurrentTab(bool closingProgram)
         {
             // See note at the top of this file
 
@@ -180,7 +184,7 @@ namespace GUI
             {
                 int previousIndex = currentIndex();
 
-                currentTabs[currentIndex()].first->deleteTextureButtons();
+                currentTabs[currentIndex()].first->deleteTextureButtons(closingProgram);
 
                 chooseTexture->removeTab(currentTabs[previousIndex].second);
 

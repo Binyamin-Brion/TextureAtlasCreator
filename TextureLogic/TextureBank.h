@@ -19,6 +19,8 @@ namespace Atlas
 
 namespace GUI
 {
+    class MainWindow;
+
     namespace Atlas
     {
         class AtlasTabWidget;
@@ -53,6 +55,10 @@ namespace TextureLogic
              * Initializes required internal variables.
              */
             TextureBank();
+
+            unsigned int getIntersectionWidth(const QString &textureLocation);
+
+            unsigned int getSelectionWidth(const QString &textureLocation);
 
             /**
              * Gets the textures that have been loaded thus far.
@@ -139,7 +145,20 @@ namespace TextureLogic
              * @param intersectionBorderWidth that the texture should have at a 100% (ie Normal) zoom
              * @param selectionBorderWidth that the texture should have at a 100% (ie Normal) zoom
              */
-            void textureButtonPressed(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
+            void textureButtonPressedButtonArea(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, AccessRestriction::PassKey<GUI::LoadResults::TextureButtonArea>);
+
+            /**
+             * Adds the specified texture to the currently opened atlas. If the texture has not been loaded in the format
+             * of the currently opened atlas, it is first loaded as that format and then added to the atlas. Called when loading
+             * from a project file.
+             *
+             * @param atlasName name of the atlas to add the texture to
+             * @param textureLocation location on the file system of the texture being added
+             * @param intersectionBorderWidth that the texture should have at a 100% (ie Normal) zoom
+             * @param selectionBorderWidth that the texture should have at a 100% (ie Normal) zoom
+             * @param texturePosition location of the loaded texture within the atlas  (QSize == {-1, -1} if no position is known)
+             */
+            void textureButtonPressedMainWindow(const QString &atlasName, const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, QPoint texturePosition, AccessRestriction::PassKey<GUI::MainWindow>);
 
             /**
              * Informs other GUI widgets that the currently selected texture has changed.
@@ -149,6 +168,25 @@ namespace TextureLogic
             void textureSelected(const Texture *texture);
 
         private:
+
+            /**
+             * Get the reference to the texture given its location on the file system.
+             *
+             * @param textureLocation location on the file system of the desired texture when it was loaded into the program
+             * @return reference to the equivalent texture object. If no texture was found, a nullptr is returned
+             */
+            const Texture* findTexture(const QString &textureLocation) const;
+
+            /**
+             * Executes the logic required when adding a texture as a result of a texture button click.
+             *
+             * @param atlasName name of the atlas to add the texture to
+             * @param textureLocation location on the file system of the texture being added
+             * @param intersectionBorderWidth that the texture should have at a 100% (ie Normal) zoom
+             * @param selectionBorderWidth that the texture should have at a 100% (ie Normal) zoom
+             * @param texturePosition location of the loaded texture within the atlas
+             */
+            void handleTextureButtonPressed(const QString &atlasName, const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, QPoint texturePosition);
 
             /**
              * Actually does the work of loading a new texture into the program. The loading logic is put in a separate
