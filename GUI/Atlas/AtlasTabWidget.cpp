@@ -99,6 +99,11 @@ namespace GUI
             return currentTabs[currentIndex()].first->getAtlasFormat();
         }
 
+        ::Atlas::AtlasInformationBundle AtlasTabWidget::getCurrentAtlasInformation() const
+        {
+            return currentTabs[currentIndex()].first->getCurrentAtlasInformation();
+        }
+
         QString AtlasTabWidget::getCurrentAtlasName() const
         {
             return currentTabs[currentIndex()].second;

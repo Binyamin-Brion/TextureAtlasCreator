@@ -61,12 +61,7 @@ namespace GUI
 
         connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsProject()));
 
-        connect(ui->atlasWidget, &Atlas::AtlasTabWidget::currentAtlasInformationChanged, [this](::Atlas::AtlasInformationBundle atlasInformation)
-        {
-            ui->atlasFormatLabel->setText("Atlas Format: " + TextureHelperFunctions::convertToString(atlasInformation.textureFormat));
-            ui->numberTexturesLabel->setText("Number of Textures in Atlas: " + QString::number(atlasInformation.numberTexturesUsed));
-            ui->percentageAtlasUsed->setText("Percentage Atlas Used: " + QString::number(atlasInformation.percentageAtlasUsed));
-        });
+        connect(ui->atlasWidget, SIGNAL(currentAtlasInformationChanged(::Atlas::AtlasInformationBundle)), this, SLOT(showPercentageUsed(::Atlas::AtlasInformationBundle)));
 
         // For some reason is required in order for the brush colour to be the default colour upon start for the "Texture" Render area (not the specular area)
         ui->currentTexture->setCurrentIndex(1);
@@ -166,6 +161,8 @@ namespace GUI
                 textureBank->textureButtonPressedMainWindow(i.atlasName, textureLocation, loadedTexturesBorderWidths[textureLocation].first, loadedTexturesBorderWidths[textureLocation].second, j.position, {});
             }
         }
+
+        showPercentageUsed(ui->atlasWidget->getCurrentAtlasInformation());
 
         // Don't automatically overwrite previously saved location if there is one
         previousSaveLocation.clear();
@@ -281,5 +278,12 @@ namespace GUI
         #endif
 
         return loadedPath;
+    }
+
+    void MainWindow::showPercentageUsed(::Atlas::AtlasInformationBundle atlasInformationBundle)
+    {
+        ui->atlasFormatLabel->setText("Atlas Format: " + TextureHelperFunctions::convertToString(atlasInformationBundle.textureFormat));
+        ui->numberTexturesLabel->setText("Number of Textures in Atlas: " + QString::number(atlasInformationBundle.numberTexturesUsed));
+        ui->percentageAtlasUsed->setText("Percentage Atlas Used: " + QString::number(atlasInformationBundle.percentageAtlasUsed));
     }
 }

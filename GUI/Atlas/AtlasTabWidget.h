@@ -79,6 +79,13 @@ namespace GUI
                 QImage::Format getCurrentAtlasFormat() const;
 
                 /**
+                 * Gets the information about the currently viewed texture atlas.
+                 *
+                 * @return information about the currently viewed atlas
+                 */
+                ::Atlas::AtlasInformationBundle getCurrentAtlasInformation() const;
+
+                /**
                  * Gets the name of current tab being shown.
                  *
                  * @return name of tab displaying the currently viewed atlas

@@ -62,6 +62,8 @@ namespace GUI
              */
             void saveProject();
 
+            void showPercentageUsed(::Atlas::AtlasInformationBundle atlasInformationBundle);
+
         private:
 
             /**

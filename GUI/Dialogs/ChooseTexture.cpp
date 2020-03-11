@@ -70,7 +70,7 @@ namespace GUI
         {
             // During debugging it is more convenient to have the file selection dialog automatically go to the pictures folder
             #ifdef QT_DEBUG
-                ui->fileButton->setText(QFileDialog::getOpenFileName(this, tr("Open Image"), "C:/Users/BinyBrion/Pictures", tr("Image Files ()")));
+                ui->fileButton->setText(QFileDialog::getOpenFileName(this, tr("Open Image"), "C:/Users/BinyBrion/Pictures", "Image Files (*.png *.jpg *.jpeg)"));
             #else
                 ui->fileButton->setText(QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Image Files ()")));
             #endif

@@ -89,6 +89,13 @@ namespace GUI
                 ::Atlas::AtlasInformationBundle getAtlasInformation() const;
 
                 /**
+                 * Gets the information about the currently viewed texture atlas.
+                 *
+                 * @return information about the currently viewed atlas
+                 */
+                ::Atlas::AtlasInformationBundle getCurrentAtlasInformation() const;
+
+                /**
                  * Checks if there are any unsaved changes in the atlas.
                  *
                  * @return true if there are unsaved changes

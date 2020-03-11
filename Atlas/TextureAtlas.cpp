@@ -128,14 +128,14 @@ namespace Atlas
 
         for(const auto &i : textureDrawingPositions)
         {
-            const QImage& referredToImage = i.texture->getImage(TextureLogic::Zoom::Normal);
+            const QImage& referredToImage = i.texture->getImage(currentZoom);
 
             pixelsCovered += (referredToImage.width() * referredToImage.height());
         }
 
         if(selectedExistingTexture->isOpen())
         {
-            const QImage& referredToImage = selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal);
+            const QImage& referredToImage = selectedExistingTexture->getImageForDrawing().getImage(currentZoom);
 
             pixelsCovered += (referredToImage.width() * referredToImage.height());
         }

@@ -61,6 +61,11 @@ namespace GUI
             return atlasWidget->getAtlasFormat();
         }
 
+        ::Atlas::AtlasInformationBundle ScrollArea::getCurrentAtlasInformation() const
+        {
+            return atlasWidget->getAtlasInformation();
+        }
+
         bool ScrollArea::getUnsavedChanges() const
         {
             return atlasWidget->getUnsavedChanges();
