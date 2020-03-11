@@ -9,13 +9,18 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_PREFIX_PATH C:\\Qt\\Qt5.9.8\\5.9.8\\mingw53_32)
+if(WIN32)
+    set(CMAKE_PREFIX_PATH C:\\Qt\\Qt5.9.8\\5.9.8\\mingw53_32)
+endif(WIN32)
+
+if(UNIX)
+    set(CMAKE_PREFIX_PATH /home/binybrion/Qt5.9.8/5.9.8/gcc_64)
+endif(UNIX)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Test REQUIRED)
 
 include_directories(${Qt5Widgets_INCLUDES})
-include_directories(C:\\glm\\glm)
 
 add_executable(TextureAtlasCreator main.cpp TextureLogic/ScaledTexture.cpp TextureLogic/ScaledTexture.h TextureLogic/Zoom.h
         TextureLogic/TextureBank.cpp TextureLogic/TextureBank.h TextureLogic/Texture.cpp TextureLogic/Texture.h
@@ -34,6 +39,7 @@ add_executable(TextureAtlasCreator main.cpp TextureLogic/ScaledTexture.cpp Textu
         GUI/TextureInformation/SelectedTextureInformation.h GUI/TextureInformation/SaveQualitySlider.cpp GUI/TextureInformation/SaveQualitySlider.h GUI/LoadResults/OptionsMenu.cpp
         GUI/LoadResults/OptionsMenu.h GUI/Dialogs/AddNewTab.cpp GUI/Dialogs/AddNewTab.h GUI/Atlas/AtlasTabOptionsMenu.cpp GUI/Atlas/AtlasTabOptionsMenu.h GUI/Dialogs/AddNewAtlasTab.cpp
         GUI/Dialogs/AddNewAtlasTab.h GUI/TextureHelperFunctions/TextureFormats.cpp GUI/TextureHelperFunctions/TextureFormats.h TextureLogic/Zoom.cpp Atlas/AtlasInformationBundle.h
-        Atlas/AtlasInformationBundle.cpp ProjectLoader/TextureAtlasLoader.h ProjectLoader/TextureButtonAreaLoader.h ProjectLoader/ProjectParser.cpp ProjectLoader/ProjectParser.h Tests/ProjectLoader/TestProjectLoader.cpp Tests/ProjectLoader/TestProjectLoader.h)
+        Atlas/AtlasInformationBundle.cpp ProjectLoader/TextureAtlasLoader.h ProjectLoader/TextureButtonAreaLoader.h ProjectLoader/ProjectParser.cpp ProjectLoader/ProjectParser.h
+        Tests/ProjectLoader/TestProjectLoader.cpp Tests/ProjectLoader/TestProjectLoader.h)
 
 target_link_libraries(TextureAtlasCreator ${Qt5Widgets_LIBRARIES} ${Qt5Test_LIBRARIES})

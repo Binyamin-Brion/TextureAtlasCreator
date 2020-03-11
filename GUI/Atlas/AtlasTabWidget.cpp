@@ -85,10 +85,13 @@ namespace GUI
             // Deleting all of the tabs in the above loop will put in a default tab, which is not required as this function
             // is called when a project is to be opened. When that happens, there will be tabs to be placed.
 
-            removeTab(0);
+            if(!currentTabs.empty())
+            {
+                removeTab(0);
 
-            delete currentTabs.front().first;
-            currentTabs.clear();
+                delete currentTabs.front().first;
+                currentTabs.clear();
+            }
         }
 
         QImage::Format AtlasTabWidget::getCurrentAtlasFormat() const

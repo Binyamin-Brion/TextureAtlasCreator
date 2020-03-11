@@ -118,7 +118,21 @@ namespace GUI
 
         ::ProjectLoader::ProjectParser projectParser;
 
-        projectParser.parseFile(openProjectLocation);
+        try
+        {
+            projectParser.parseFile(openProjectLocation);
+        }
+        catch(std::runtime_error &e)
+        {
+            QMessageBox::critical(this, "Error Loading Project", e.what(), QMessageBox::Ok);
+
+            if(previousSaveLocation.isEmpty())
+            {
+                newProject();
+            }
+
+            return;
+        }
 
         // The selection and intersection border width are stored in the texture button area part of the project file.
         // When reading the results of the atlas project file, there has to be a way to reference the border widths for the
@@ -235,6 +249,9 @@ namespace GUI
         ui->atlasWidget->closeAllTabs();
 
         ui->loadedTextures->closeAllTabs();
+
+        // Don't automatically overwrite previously saved location if there is one
+        previousSaveLocation.clear();
     }
 
     QString MainWindow::createPathToTexture(QString loadedPath)

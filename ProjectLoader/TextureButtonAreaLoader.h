@@ -9,6 +9,9 @@
 
 namespace ProjectLoader
 {
+    /**
+     *  Combines the information required to load all of the textures stored in a texture button area.
+     */
     struct TextureData
     {
         QString textureLocation;
@@ -16,6 +19,9 @@ namespace ProjectLoader
         unsigned int selectionWidth;
     };
 
+    /**
+     *  Combines the information required to represent a tab in the loaded textures widget.
+     */
     struct TextureButtonAreaLoader
     {
         QString areaName;

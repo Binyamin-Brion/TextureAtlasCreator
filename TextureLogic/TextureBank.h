@@ -56,8 +56,20 @@ namespace TextureLogic
              */
             TextureBank();
 
+            /**
+            * Gets the width of the selection border for the texture that the input location represents.
+            *
+            * @param textureLocation location of the texture on the file system being queried when it was loaded into the program
+            * @return selection border width
+            */
             unsigned int getIntersectionWidth(const QString &textureLocation);
 
+            /**
+             * Gets the width of the selection border for the texture that the input location represents.
+             *
+             * @param textureLocation location of the texture on the file system being queried when it was loaded into the program
+             * @return selection border width
+             */
             unsigned int getSelectionWidth(const QString &textureLocation);
 
             /**

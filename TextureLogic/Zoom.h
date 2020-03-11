@@ -6,6 +6,7 @@
 #define TEXTUREATLAS_ZOOM_H
 
 #include <QtCore/QString>
+#include <vector>
 
 // RIP compile times if this header file is modified
 

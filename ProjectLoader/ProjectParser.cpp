@@ -3,8 +3,8 @@
 //
 
 #include <QtCore/QFile>
-#include <c++/fstream>
-#include <c++/sstream>
+#include <fstream>
+#include <sstream>
 #include "ProjectParser.h"
 
 namespace ProjectLoader
@@ -19,7 +19,7 @@ namespace ProjectLoader
         return textureButtonAreas;
     }
 
-    bool ProjectParser::parseFile(const QString &projectFileLocation)
+    void ProjectParser::parseFile(const QString &projectFileLocation)
     {
         // Reading and processing of file contents are done using std::strings instead of QStrings as using QStrings
         // causes this function to fail in tests on certain computers.
@@ -27,7 +27,7 @@ namespace ProjectLoader
 
         if(!fileReader.is_open())
         {
-            return false;
+            throw std::runtime_error{"Unable to open the file: " + projectFileLocation.toStdString()};
         }
 
         std::stringstream fileContentsBuffer;
@@ -43,16 +43,9 @@ namespace ProjectLoader
             splitContents.push_back(fileSegment);
         }
 
+        // Ensure that repeated parsing of project files does not include result of previous project loading.
         textureAtlases.clear();
         textureButtonAreas.clear();
-
-        bool processingButtonArea = false;
-        bool processingAtlas = false;
-
-        TextureAtlasLoader textureAtlasLoader;
-        int atlasInformationIndex = 0;
-
-        TextureButtonAreaLoader textureButtonAreaLoader;
 
         for(const auto &i : splitContents)
         {
@@ -63,11 +56,13 @@ namespace ProjectLoader
                 continue;
             }
 
+            // Signals the end of a section within the project file
             if(qString.contains('='))
             {
                 processingAtlas = false;
                 processingButtonArea = false;
 
+                // Condition is true if a texture button area was the last thing processed
                 if(!textureButtonAreaLoader.textures.empty())
                 {
                     textureButtonAreas.push_back(textureButtonAreaLoader);
@@ -75,6 +70,7 @@ namespace ProjectLoader
                     textureButtonAreaLoader = TextureButtonAreaLoader{};
                 }
 
+                // Condition is true if a texture atlas was the last thing processed
                 if(!textureAtlasLoader.textures.empty())
                 {
                     textureAtlases.push_back(textureAtlasLoader);
@@ -85,67 +81,135 @@ namespace ProjectLoader
                 }
             }
 
-            // Handle Button Area
+            // If a line results in parsing a button area, then parseArea() will not do anything and this is true the other way around
 
-            if(qString.contains("Texture Button Area"))
+            parseButtonArea(qString);
+
+            parseAtlas(qString);
+
+        }
+    }
+
+    int ProjectParser::checkConversionSuccess(const QString &source, const QString &baseErrorMessage)
+    {
+        bool ok = true;
+
+        int convertedResult = source.toInt(&ok);
+
+        if(!ok)
+        {
+            throw std::runtime_error{(baseErrorMessage + ". The text : " + source + " is not a valid number.").toStdString()};
+        }
+
+        return convertedResult;
+    }
+
+    void ProjectParser::parseAtlas(const QString &qString)
+    {
+        if(qString.contains("Atlas Name"))
+        {
+            // Line format: Atlas Name: atlasName
+            processingAtlas = true;
+
+            QStringList atlasNameInformation = qString.split(QRegExp{":\\s+"});
+
+            if(atlasNameInformation.size() != 2) // Index 1 must be valid
             {
-                processingButtonArea = true;
-
-                textureButtonAreaLoader.areaName = qString.split(": ")[1];
+                throw std::runtime_error{"Error reading an atlas name- it does not match the expected format."};
             }
-            else if(processingButtonArea)
+
+            textureAtlasLoader.atlasName = atlasNameInformation[1];
+
+            atlasInformationIndex += 1;
+        }
+        else if(processingAtlas)
+        {
+            if(atlasInformationIndex == 1)
             {
-                QStringList textureInformation = qString.split(' ');
+                const QString errorMessage = "Error reading dimensions for atlas: " + textureAtlasLoader.atlasName;
 
-                TextureData textureData;
+                // Line format: Dimensions: width , height
+                QStringList dimensions = qString.split(QRegExp{"\\s+"});
 
+                if(dimensions.size() != 4) // Index 3 must be valid
+                {
+                    throw std::runtime_error{(errorMessage + ". The format was not as expected").toStdString()};
+                }
 
-                textureData.textureLocation = textureInformation[0];
-                textureData.intersectionWidth = textureInformation[4].toInt();
-                textureData.selectionWidth = textureInformation[2].toInt();
-
-                textureButtonAreaLoader.textures.push_back(textureData);
-            }
-
-            // Handle Atlas
-
-            if(qString.contains("Atlas Name"))
-            {
-                processingAtlas = true;
-
-                textureAtlasLoader.atlasName = qString.split(": ")[1];
+                textureAtlasLoader.atlasSize = QSize{checkConversionSuccess(dimensions[1], errorMessage), checkConversionSuccess(dimensions[3], errorMessage)};
 
                 atlasInformationIndex += 1;
             }
-            else if(processingAtlas)
+            else if(atlasInformationIndex == 2)
             {
-                if(atlasInformationIndex == 1)
+                QStringList formatInformation = qString.split(QRegExp{":\\s+"});
+
+                if(formatInformation.size() != 2) // Index 1 must be valid
                 {
-                    QStringList dimensions = qString.split(' ');
-
-                    textureAtlasLoader.atlasSize = QSize{dimensions[1].toInt(), dimensions[3].toInt()};
-
-                    atlasInformationIndex += 1;
+                    throw std::runtime_error{("Error atlas format for atlas: " + textureAtlasLoader.atlasName + ". The format was not as expected.").toStdString()};
                 }
-                else if(atlasInformationIndex == 2)
+
+                // Line format: Format: format
+                textureAtlasLoader.format = formatInformation[1];
+
+                atlasInformationIndex += 1;
+            }
+            else
+            {
+                const QString errorMessage = "Error information about texture within atlas: " + textureAtlasLoader.atlasName;
+
+                // Line format: Texture: textureLocation -> Position: width , height
+                QStringList textureInformation = qString.split(QRegExp{"\\s+"} );
+
+                if(textureInformation.size() != 7) // Index 7 must be valid
                 {
-                    textureAtlasLoader.format = qString.split(": ")[1];
-
-                    atlasInformationIndex += 1;
+                    throw std::runtime_error{(errorMessage + ". The format was not as expected.").toStdString()};
                 }
-                else
-                {
-                    QStringList textureInformation = qString.split(' ' );
 
-                    TexturePos texturePos;
-                    texturePos.textureLocation = textureInformation[1];
-                    texturePos.position = QPoint{textureInformation[4].toInt(), textureInformation[6].toInt()};
+                TexturePos texturePos;
+                texturePos.textureLocation = textureInformation[1];
+                texturePos.position = QPoint{checkConversionSuccess(textureInformation[4], errorMessage), checkConversionSuccess(textureInformation[6], errorMessage)};
 
-                    textureAtlasLoader.textures.push_back(texturePos);
-                }
+                textureAtlasLoader.textures.push_back(texturePos);
             }
         }
+    }
 
-        return true;
+    void ProjectParser::parseButtonArea(const QString &qString)
+    {
+        if(qString.contains("Texture Button Area"))
+        {
+            processingButtonArea = true;
+
+            QStringList buttonAreaName = qString.split(QRegExp{":\\s+"});
+
+            if(buttonAreaName.size() != 2) // Index 1 must be valid
+            {
+                throw std::runtime_error{"Error reading a button area name- it does not match the expected format."};
+            }
+
+            // Line format: Texture Button Area Name: AreName
+            textureButtonAreaLoader.areaName = buttonAreaName[1];
+        }
+        else if(processingButtonArea)
+        {
+            const QString errorMessage = "Error reading button area texture for button area: " + textureButtonAreaLoader.areaName;
+
+            // Line format: textureLocation -> selectionBorderWidth , intersectionBorderWidth
+            QStringList textureInformation = qString.split(QRegExp{"\\s+"});
+
+            if(textureInformation.size() != 5) // Index 4 must be valid
+            {
+                throw std::runtime_error{(errorMessage + ". The format does not match what was expected.").toStdString()};
+            }
+
+            TextureData textureData;
+
+            textureData.textureLocation = textureInformation[0];
+            textureData.intersectionWidth = checkConversionSuccess(textureInformation[4], errorMessage);
+            textureData.selectionWidth = checkConversionSuccess(textureInformation[2], errorMessage);
+
+            textureButtonAreaLoader.textures.push_back(textureData);
+        }
     }
 }

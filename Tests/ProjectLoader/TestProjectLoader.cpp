@@ -16,13 +16,17 @@ namespace Tests
 {
     namespace ProjectLoader
     {
+        // Beginning of private slots
+
         void TestProjectLoader::testParseProjectFile()
         {
             QString testAssetDirectory = getTestAssetDirectory();
 
             ::ProjectLoader::ProjectParser projectParser;
 
-            QVERIFY(projectParser.parseFile(testAssetDirectory + "/test.tac"));
+            projectParser.parseFile(testAssetDirectory + "/test.tac");
+
+            // Texture Button Areas
 
             QVERIFY(projectParser.getTextureButtonAreas().size() == 1);
 
@@ -34,6 +38,8 @@ namespace Tests
             QVERIFY(textureButtonAreaLoader.textures[0].textureLocation == "/bark.jpg");
             QVERIFY(textureButtonAreaLoader.textures[0].intersectionWidth == 2);
             QVERIFY(textureButtonAreaLoader.textures[0].selectionWidth == 5);
+
+            // Texture Atlases
 
             QVERIFY(projectParser.getTextureAtlases().size() == 1);
             ::ProjectLoader::TextureAtlasLoader textureAtlasLoader = projectParser.getTextureAtlases().front();
@@ -52,11 +58,13 @@ namespace Tests
 
             ::ProjectLoader::ProjectParser projectParser;
 
-            QVERIFY(projectParser.parseFile(testAssetDirectory + "/test2.tac"));
+            projectParser.parseFile(testAssetDirectory + "/test2.tac");
 
             QVERIFY(projectParser.getTextureButtonAreas().size() == 2);
 
             ::ProjectLoader::TextureButtonAreaLoader textureButtonAreaLoader = projectParser.getTextureButtonAreas().front();
+
+            // Texture Button Areas
 
             QVERIFY(textureButtonAreaLoader.areaName == "Default");
             QVERIFY(textureButtonAreaLoader.textures.size() == 2);
@@ -77,7 +85,6 @@ namespace Tests
             QVERIFY(textureButtonAreaLoader.textures[1].textureLocation == "/dirt.jpg");
             QVERIFY(textureButtonAreaLoader.textures[1].intersectionWidth == 2);
             QVERIFY(textureButtonAreaLoader.textures[1].selectionWidth == 5);
-
 
             // Texture Atlases
 
