@@ -10,6 +10,7 @@
 #include "GUI/Dialogs/ChooseTexture.h"
 #include "GUI/Dialogs/AddNewTab.h"
 #include <QMouseEvent>
+#include "../TextureLogic/TextureBank.h"
 
 namespace GUI
 {
@@ -141,7 +142,67 @@ namespace GUI
             }
         }
 
+        void LoadedTextures::updateTextureButtonLocation(const QString &previousLocation, const QString &newLocation)
+        {
+            for(auto &i : currentTabs)
+            {
+                i.first->updateTextureButtonsLocation(previousLocation, newLocation);
+            }
+        }
+
+        void LoadedTextures::updateTextureReference()
+        {
+            if(currentTextureIndex != -1) // A texture is selected
+            {
+                selectedTexture = &textureBank->getTextures()[formatIndex].first[currentTextureIndex];
+            }
+        }
+
         // Beginning of public slots
+
+        void LoadedTextures::paintTextureButtons()
+        {
+            if(selectedTexture == nullptr)
+            {
+                return;
+            }
+
+            for(auto &i : currentTabs)
+            {
+                i.first->paintTextureButton(selectedTexture);
+            }
+        }
+
+        void LoadedTextures::setSelectedTexture(const ::TextureLogic::Texture *texture)
+        {
+            selectedTexture = texture;
+
+            int index = -1;
+
+            if(selectedTexture != nullptr)
+            {
+                // Required to index into the texturs stored in texture bank. See TextureBank.cpp
+                formatIndex = TextureHelperFunctions::indexFormat(texture->getImage(TextureLogic::Zoom::Normal).format(), true);
+
+                for(const auto &i : textureBank->getTextures()[formatIndex].first)
+                {
+                    index += 1;
+
+                    if(i.textureLocation() == texture->textureLocation())
+                    {
+                        break;
+                    }
+                }
+
+                // If the texture was not found in the texture bank, that is a fatal error
+                if(index == -1)
+                {
+                    Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
+                }
+            }
+
+            currentTextureIndex = index;
+        }
 
         void LoadedTextures::showAddTabDialog()
         {

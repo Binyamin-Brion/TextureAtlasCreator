@@ -9,6 +9,7 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QColorDialog>
+#include <QRadioButton>
 #include <QtWidgets/QMessageBox>
 #include "PaintFunctions/Brush.h"
 
@@ -26,7 +27,8 @@ namespace GUI
                                     currentBrushColourButton{new QPushButton{this}},
                                     currentBrushWidthLabel{new QLabel{this}},
                                     currentBrushWidthLineEdit{new QLineEdit{this}},
-                                    colourDialog{new QColorDialog{this}}
+                                    colourDialog{new QColorDialog{this}},
+                                    drawingSpecularTexture{new QRadioButton{this}}
 
         {
             currentZoom = TextureLogic::Zoom::Normal;
@@ -47,6 +49,8 @@ namespace GUI
             layout->addWidget(currentBrushWidthLabel);
             layout->addWidget(currentBrushWidthLineEdit);
 
+            layout->addWidget(drawingSpecularTexture);
+
             setLayout(layout);
 
             // Show a colour dialog if the colour brush button is pressed
@@ -57,11 +61,20 @@ namespace GUI
 
             // Update the brush size to the new size specified in the appropriate QLabel
             connect(currentBrushWidthLineEdit, SIGNAL(returnPressed()), this, SLOT(updateBrushSize()));
+
+            connect(drawingSpecularTexture, &QRadioButton::toggled, [this](bool value)
+            {
+                // Just in case this connection is executed before it should be
+                if(brush != nullptr)
+                {
+                    brush->setPaintingSpecularTexture(value);
+                }
+            });
         }
 
         // Beginning of public functions
 
-        void CurrentBrushSettings::showDifferentBrush(const PaintFunctions::Brush &brush)
+        void CurrentBrushSettings::setBrushReference(const PaintFunctions::Brush &brush)
         {
             this->brush = const_cast<PaintFunctions::Brush*>(&brush);
 

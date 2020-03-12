@@ -7,6 +7,8 @@
 #include "GUI/Atlas/AtlasTabWidget.h"
 #include "GUI/CurrentTexture/CurrentTextureTabWidget.h"
 #include "GUI/TextureInformation/TextureInfoScrollArea.h"
+#include "GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.h"
+#include "GUI/LoadResults/LoadedTextures.h"
 
 // For every type of format, there are two vectors associated with it: the first vector holds the
 // textures of a given format; the other one holds free spots the new textures can be inserted to.
@@ -122,12 +124,22 @@ namespace TextureLogic
         }
     }
 
+    void TextureBank::setLoadedTextures(GUI::LoadResults::LoadedTextures *loadedTexturesWidget)
+    {
+        this->loadedTexturesWidget = loadedTexturesWidget;
+    }
+
     void TextureBank::setSelectedTextureTabWidgetReference(GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget)
     {
         if(this->currentTextureTabWidget == nullptr)
         {
             this->currentTextureTabWidget = currentTextureTabWidget;
         }
+    }
+
+    void TextureBank::setSpecularTabWidgetReference(GUI::CurrentTexture::SpecularTexture::SpecularTextureTabWidget *specularTextureTabWidget)
+    {
+        this->specularTextureTabWidget = specularTextureTabWidget;
     }
 
     bool TextureBank::setIntersectionBorderWidth(Texture *texture, Zoom zoom, unsigned int newBorderWidth)
@@ -193,7 +205,20 @@ namespace TextureLogic
 
         currentTextureTabWidget->setSelectedTexture(const_cast<Texture*>(texture), {});
 
+        specularTextureTabWidget->setSpecularTexture(texture);
+
         textureInfoScrollArea->setTexture(texture, {});
+
+        loadedTexturesWidget->setSelectedTexture(texture);
+    }
+
+    void TextureBank::updateTextureButtonLocation(const QString &previousLocation, const QString &newLocation)
+    {
+        loadedTexturesWidget->updateTextureButtonLocation(previousLocation, newLocation);
+
+        originalTextureUploadLocation.insert(std::make_pair(newLocation.toStdString(), originalTextureUploadLocation[previousLocation.toStdString()]));
+
+        originalTextureUploadLocation.erase(previousLocation.toStdString());
     }
 
     // Beginning of private functions
@@ -397,5 +422,9 @@ namespace TextureLogic
         atlasTabWidget->updateTextureReferences({});
 
         currentTextureTabWidget->setTexturesReference(textures);
+
+        specularTextureTabWidget->updateTextureReference();
+
+        loadedTexturesWidget->updateTextureReference();
     }
 }

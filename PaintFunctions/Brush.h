@@ -36,6 +36,20 @@ namespace PaintFunctions
             const QImage& getPaintImage(TextureLogic::Zoom zoom) const;
 
             /**
+             *  Returns whether the user is painting the specular texture.
+             *
+             * @return true if the user is painting the specular texture
+             */
+            bool getPaintingSpecularTexture() const;
+
+            /**
+             * Sets whether the user is painting the specular texture.
+             *
+             * @param value true if the user selected to paint the specular texture
+             */
+            void setPaintingSpecularTexture(bool value);
+
+            /**
              * Resizes the required paint image to reflect the appropriate size for the passed in zoom. The other paint
              * images are scaled as required for the other zoom values.
              *
@@ -47,6 +61,7 @@ namespace PaintFunctions
 
         private:
             std::array<QImage, TextureLogic::NumberZoomElements()> paintImages;
+            bool paintingSpecularTexture = false;
     };
 }
 

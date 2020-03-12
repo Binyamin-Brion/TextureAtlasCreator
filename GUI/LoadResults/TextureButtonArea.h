@@ -11,6 +11,7 @@ class QGridLayout;
 
 namespace TextureLogic
 {
+    class Texture;
     class TextureBank;
 }
 
@@ -89,6 +90,8 @@ namespace GUI
                  */
                 void mousePressEvent(QMouseEvent *event) override;
 
+                void paintTextureButton(const ::TextureLogic::Texture *texture);
+
                 /**
                  * Saves the location of the loaded textures to the specified location.
                  *
@@ -104,6 +107,15 @@ namespace GUI
                  * @param textureBank reference to the object that stores all textures
                  */
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
+
+                /**
+                 * Forwards request to all texture button areas that represent the modified texture to now represent
+                 * the saved modified texture.
+                 *
+                 * @param previousLocation location on the file system that the texture buttons had before the modified texture was saved
+                 * @param newLocation new location on the file system of the saved modified texture
+                 */
+                void updateTextureButtonsLocation(const QString &previousLocation, const QString &newLocation);
 
             private slots:
 

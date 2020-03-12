@@ -29,9 +29,7 @@ namespace GUI
                 textureBank->setSelectionBorderWidth(texture, zoom, newBorderWidth);
             });
 
-            connect(selectedTextureInformation, SIGNAL(reuploadTexture(const QString&, const TextureLogic::Texture*, unsigned int, unsigned int)),
-                    this, SLOT(reuploadTexture(const QString&, const TextureLogic::Texture*, unsigned int, unsigned int)));
-
+            connect(selectedTextureInformation, &SelectedTextureInformation::updateTextureButtonLocation, [this](const QString &previousLocation, const QString &newLocation) { textureBank->updateTextureButtonLocation(previousLocation, newLocation); });
         }
 
         void TextureInfoScrollArea::setCentralWidget()

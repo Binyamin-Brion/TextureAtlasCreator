@@ -9,6 +9,7 @@
 
 namespace TextureLogic
 {
+    class Texture;
     class TextureBank;
 }
 
@@ -60,6 +61,20 @@ namespace GUI
                  * @return true if the cursor is over this button
                  */
                 bool mouseOver(QPoint mousePos) const;
+
+                /**
+                 * Updates the location this texture button represents.
+                 *
+                 * @param textureLocation new location on the file system that this button represents
+                 */
+                void setTextureLocation(const QString &textureLocation);
+
+                /**
+                 *  Updates the icon of this button when the texture it represents is painted.
+                 *
+                 * @param texture reference to the texture this button represents
+                 */
+                void updateTextureButton(const ::TextureLogic::Texture *texture);
 
                 /**
                  * Decrement the count of the number of texture buttons representing a texture. Used when deleting a button.

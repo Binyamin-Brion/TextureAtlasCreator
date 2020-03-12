@@ -437,19 +437,9 @@ namespace GUI
 
                 ui->textureFormatLabel->setText("Texture Format: " + texture->textureFormat());
 
-                // After saving the texture, it now has a new texture name and location. However, this effectively "erased"
-                // the old texture that a texture button refers to. Thus when that button is pressed again, an error saying
-                // no texture of that location was loaded will appear. To deal with that, the old texture has to be reuploaded
-                // so that in the texturebank a texture with the old details is present.
-                // The user must load the saved texture as any other texture in order for a texture button representing the
-                // modified texture to be created.
-
-                unsigned int intersectionBorderWidth = texture->getIntersectionBorderWidth(TextureLogic::Zoom::Normal);
-
-                unsigned int selectionBorderWidth = texture->getSelectedBorderWidth(TextureLogic::Zoom::Normal);
-
-                emit reuploadTexture(previousTextureLocation, texture, intersectionBorderWidth, selectionBorderWidth);
-
+                // Any texture buttons that represent the previous image (before it was saved) need to be updated so that
+                // they refer to the newly saved image.
+                emit updateTextureButtonLocation(previousTextureLocation, newFileLocation);
             }
         }
     }

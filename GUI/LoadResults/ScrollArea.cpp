@@ -42,6 +42,11 @@ namespace GUI
             return textureButtonArea->getUnsavedChanges();
         }
 
+        void ScrollArea::paintTextureButton(const ::TextureLogic::Texture *texture)
+        {
+            textureButtonArea->paintTextureButton(texture);
+        }
+
         void ScrollArea::saveLoadedTextures(const QString &textureButtonAreaName, const QString &saveLocation) const
         {
             textureButtonArea->saveLoadedTextures(textureButtonAreaName, saveLocation);
@@ -50,6 +55,11 @@ namespace GUI
         void ScrollArea::setTextureBankReference(TextureLogic::TextureBank *textureBank)
         {
             textureButtonArea->setTextureBankReference(textureBank);
+        }
+
+        void ScrollArea::updateTextureButtonsLocation(const QString &previousLocation, const QString &newLocation)
+        {
+            textureButtonArea->updateTextureButtonsLocation(previousLocation, newLocation);
         }
     }
 }

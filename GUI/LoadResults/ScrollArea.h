@@ -10,6 +10,7 @@
 
 namespace TextureLogic
 {
+    class Texture;
     class TextureBank;
 }
 
@@ -66,6 +67,8 @@ namespace GUI
               */
                 bool getUnsavedChanges() const;
 
+                void paintTextureButton(const ::TextureLogic::Texture *texture);
+
                 /**
                  * Forwards request to save the loaded textures to the texture button area.
                  *
@@ -80,6 +83,15 @@ namespace GUI
                  * @param textureBank reference to the texture bank that holds all textures
                  */
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
+
+                /**
+                 * Forwards request to all texture button areas that represent the modified texture to now represent
+                 * the saved modified texture.
+                 *
+                 * @param previousLocation location on the file system that the texture buttons had before the modified texture was saved
+                 * @param newLocation new location on the file system of the saved modified texture
+                 */
+                void updateTextureButtonsLocation(const QString &previousLocation, const QString &newLocation);
 
             private:
 

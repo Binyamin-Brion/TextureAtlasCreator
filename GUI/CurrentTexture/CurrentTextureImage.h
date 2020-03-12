@@ -15,7 +15,7 @@ namespace GUI
 
         enum class CurrentTextureImage : unsigned int
         {
-            SelectedTexture= 0,
+            SelectedTexture = 0,
             SpecularTexture = 1,
         };
 

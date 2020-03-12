@@ -33,6 +33,8 @@ namespace GUI
 
         ui->selectedTextureInformation->setTextureBankReference(textureBank.get());
 
+        ui->specularTextureDisplay->setTextureBankReference(textureBank.get());
+
         // Setup texture bank with the required widget references
 
         textureBank->setAtlasTabWidgetReference(ui->atlasWidget);
@@ -41,9 +43,11 @@ namespace GUI
 
         textureBank->setTextureInfoScrollAreaReference(ui->selectedTextureInformation);
 
-        // For some reason is required in order for the brush colour to be the default colour upon start for the "Texture" Render area (not the specular area)
-        ui->currentTexture->setCurrentIndex(1);
-        ui->currentTexture->setCurrentIndex(0);
+        textureBank->setSpecularTabWidgetReference(ui->specularTextureDisplay);
+
+        ui->brushSettings->setBrushReference(*ui->currentTexture->getBrush());
+
+        textureBank->setLoadedTextures(ui->loadedTextures);
 
         // By default the brush has a default size and cannot currently paint on anyting as no texture is selected
         ui->brushSettings->updateSelectedTextureSize(QSize{-1, 1}, QSize{25, 25});
@@ -132,7 +136,9 @@ namespace GUI
     {
         connect(ui->currentTexture, SIGNAL(repaintSelectedTexture()), ui->atlasWidget, SLOT(repaintSelectedTexture()));
 
-        connect(ui->currentTexture, SIGNAL(changedRenderArea(const PaintFunctions::Brush&)), ui->brushSettings, SLOT(showDifferentBrush(const PaintFunctions::Brush&)));
+        connect(ui->currentTexture, SIGNAL(repaintSelectedTexture()), ui->specularTextureDisplay, SLOT(repaintSpecularTexture()));
+
+        connect(ui->currentTexture, SIGNAL(repaintSelectedTexture()), ui->loadedTextures, SLOT(paintTextureButtons()));
 
         connect(ui->currentTexture, SIGNAL(selectedTextureChanged(QSize, QSize)), ui->brushSettings, (SLOT(updateSelectedTextureSize(QSize, QSize))));
 

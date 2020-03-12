@@ -13,6 +13,7 @@ class QHBoxLayout;
 class QPushButton;
 class QLineEdit;
 class QColorDialog;
+class QRadioButton;
 
 namespace PaintFunctions
 {
@@ -42,8 +43,6 @@ namespace GUI
                  */
                 explicit CurrentBrushSettings(QWidget *parent = nullptr);
 
-            public slots:
-
                 /**
                  * Changes the brush displayed to what is passed in. This causes the colour of the brush and the size
                  * GUI components of this widget to change. This is called when a different render area is opened,
@@ -51,7 +50,9 @@ namespace GUI
                  *
                  * @param brush to display as the current brush
                  */
-                void showDifferentBrush(const PaintFunctions::Brush &brush);
+                void setBrushReference(const PaintFunctions::Brush &brush);
+
+            public slots:
 
                 /**
                  * Called when the selected texture that is being painted on has changed size.
@@ -108,6 +109,9 @@ namespace GUI
 
                 // Shown when the user wants to select a new colour for the brush
                 QColorDialog *colourDialog = nullptr;
+
+                QLabel *drawingSpecularTextureLabel = nullptr;
+                QRadioButton *drawingSpecularTexture = nullptr;
 
                 PaintFunctions::Brush *brush = nullptr;
 

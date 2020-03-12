@@ -86,6 +86,9 @@
        </layout>
       </item>
       <item>
+       <widget class="GUI::CurrentTexture::SpecularTexture::SpecularTextureTabWidget" name="specularTextureDisplay"/>
+      </item>
+      <item>
        <widget class="GUI::TextureInformation::TextureInfoScrollArea" name="selectedTextureInformation">
         <property name="widgetResizable">
          <bool>true</bool>
@@ -95,7 +98,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>254</width>
+           <width>188</width>
            <height>248</height>
           </rect>
          </property>
@@ -274,6 +277,12 @@
    <class>GUI::TextureInformation::TextureInfoScrollArea</class>
    <extends>QScrollArea</extends>
    <header>GUI/TextureInformation/TextureInfoScrollArea.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GUI::CurrentTexture::SpecularTexture::SpecularTextureTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

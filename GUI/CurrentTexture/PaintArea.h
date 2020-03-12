@@ -67,14 +67,14 @@ namespace GUI
                  *
                  * @return brush being used to paint the selected texture
                  */
-                const PaintFunctions::Brush& getBrush() const;
+                PaintFunctions::Brush& getBrush();
 
                 /**
                  * Get the format of the current image that can be painted.
                  *
                  * @return format of the selected image. Note that if no image is selected, then an Qt::Invalid_Format is returned
                  */
-                QImage::Format getCurrentTextureFormat() const;
+                QImage::Format getCurrentTextureFormat();
 
                 /**
                  * Get the current zoom of the area where the selected texture can be painted.

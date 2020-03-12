@@ -38,12 +38,12 @@ namespace GUI
             new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z), this, SLOT(undoPaintOperation()));
         }
 
-        const PaintFunctions::Brush& PaintArea::getBrush() const
+        PaintFunctions::Brush& PaintArea::getBrush()
         {
             return brush;
         }
 
-        QImage::Format PaintArea::getCurrentTextureFormat() const
+        QImage::Format PaintArea::getCurrentTextureFormat()
         {
             if(texture == nullptr)
             {
@@ -130,10 +130,6 @@ namespace GUI
                         // synchronize the two, after modifying the texture here where the updates are seen visually immediately,
                         // the atlas widget has to be told to visually update the (same) texture it draws
                         emit repaintSelectedTexture();
-                        break;
-
-                    case CurrentTextureImage::SpecularTexture:
-                        painter.drawImage(QPoint{0, 0}, texture->getSpecularTexture(currentZoom, {}));
                         break;
                 }
 
@@ -250,14 +246,23 @@ namespace GUI
 
         const QImage& PaintArea::getReferredToImage(TextureLogic::Zoom zoom) const
         {
-            switch(currentTextureImage)
+            if(brush.getPaintingSpecularTexture())
             {
-                case CurrentTextureImage::SelectedTexture:
-                    return texture->getImage(zoom);
-
-                case CurrentTextureImage::SpecularTexture:
-                    return texture->getSpecularTexture(zoom, {});
+                return texture->getSpecularTextureDiffuseArea(zoom, {});
             }
+            else
+            {
+                return texture->getImage(zoom);
+            }
+
+//            switch(currentTextureImage)
+//            {
+//                case CurrentTextureImage::SelectedTexture:
+//                    return texture->getImage(zoom);
+//
+//                case CurrentTextureImage::SpecularTexture:
+//                    return texture->getSpecularTextureDiffuseArea(zoom, {});
+//            }
 
             // This should never be reached, as the switch statement should cover all of the possible enum values. But
             // in case an enum value is added.

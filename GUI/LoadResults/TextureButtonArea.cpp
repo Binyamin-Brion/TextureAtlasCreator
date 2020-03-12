@@ -181,6 +181,17 @@ namespace GUI
             }
         }
 
+        void TextureButtonArea::paintTextureButton(const ::TextureLogic::Texture *texture)
+        {
+            for(auto &i : textureButtons)
+            {
+                if(i->getTextureLocation() == texture->textureLocation())
+                {
+                    i->updateTextureButton(texture);
+                }
+            }
+        }
+
         void TextureButtonArea::saveLoadedTextures(const QString &textureButtonAreaName, const QString &saveLocation) const
         {
             QFile saveFile{saveLocation};
@@ -211,6 +222,17 @@ namespace GUI
             if(this->textureBank == nullptr)
             {
                 this->textureBank = textureBank;
+            }
+        }
+
+        void TextureButtonArea::updateTextureButtonsLocation(const QString &previousLocation, const QString &newLocation)
+        {
+            for(auto &i : textureButtons)
+            {
+                if(i->getTextureLocation() == previousLocation)
+                {
+                    i->setTextureLocation(newLocation);
+                }
             }
         }
 

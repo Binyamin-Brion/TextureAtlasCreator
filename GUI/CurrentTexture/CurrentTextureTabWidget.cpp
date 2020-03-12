@@ -3,6 +3,7 @@
 //
 
 #include <TextureLogic/TextureBank.h>
+#include <QtWidgets/qscrollarea.h>
 #include "CurrentTextureTabWidget.h"
 
 #include "CurrentTextureImage.h"
@@ -37,8 +38,8 @@ namespace GUI
 
             addTab(paintAreaScrollArea, "Selected Texture");
 
-                // When the zoom, changes, the brush needs to know so that it can change its size so that its size remains constant
-                // relative to the adjusted size of the texture
+            // When the zoom, changes, the brush needs to know so that it can change its size so that its size remains constant
+            // relative to the adjusted size of the texture
             connect(paintAreaScrollArea, &ScrollArea::zoomChanged, [this](TextureLogic::Zoom newZoom) { emit zoomChanged(newZoom); });
 
 
@@ -53,9 +54,11 @@ namespace GUI
                     textureBank->selectedTextureChanged();
                 }
             });
+        }
 
-            // If a different render area is being shown, then display the brush it has stored (brush that should be used with painting for that render area)
-            connect(this, &QTabWidget::currentChanged, [this](int index) { emit changedRenderArea(paintAreaScrollArea->getBrush()); });
+        ::PaintFunctions::Brush* CurrentTextureTabWidget::getBrush()
+        {
+            return &paintAreaScrollArea->getBrush();
         }
 
         void CurrentTextureTabWidget::setSelectedTexture(TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>)
@@ -71,8 +74,8 @@ namespace GUI
             // a new texture has been selected that may have a different size than the previous selected texture
             if(texture != nullptr)
             {
-                // Required to index into the texturs stored in texture bank. See TextureBank.cpp
-                unsigned formatIndex = TextureHelperFunctions::indexFormat(texture->getImage(TextureLogic::Zoom::Normal).format(), true);
+                // Required to index into the textures stored in texture bank. See TextureBank.cpp
+                unsigned int formatIndex = TextureHelperFunctions::indexFormat(texture->getImage(TextureLogic::Zoom::Normal).format(), true);
 
                 // Find the index of the texture within texture bank
                 for(const auto &i : (*textures)[formatIndex].first)
@@ -120,7 +123,7 @@ namespace GUI
             // Required to index into vector in texture bank. See TextureBank.cpp for more details.
             unsigned int formatIndex = TextureHelperFunctions::indexFormat(paintAreaScrollArea->getCurrentTextureFormat(), true);
 
-            // if there is a texture selected, update the references held in render area to ensure they are still pointing to
+            // Iif(f there is a texture selected, update the references held in render area to ensure they are still pointing to
             // a valid memory location
             if(currentTextureIndex != -1)
             {

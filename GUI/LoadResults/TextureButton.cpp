@@ -4,6 +4,7 @@
 
 #include "TextureButton.h"
 #include <QMap>
+#include "../TextureLogic/Texture.h"
 
 namespace GUI
 {
@@ -87,6 +88,23 @@ namespace GUI
             return pos().x() <= mousePos.x() && mousePos.x() <= pos().x() + width() &&
                    pos().y() <= mousePos.y() && mousePos.y() <= pos().y() + height();
 
+        }
+
+        void TextureButton::setTextureLocation(const QString &textureLocation)
+        {
+            this->textureLocation = textureLocation;
+        }
+
+        void TextureButton::updateTextureButton(const ::TextureLogic::Texture *texture)
+        {
+            pixMap.convertFromImage(texture->getImage(::TextureLogic::Zoom::Normal));
+
+            buttonIcon.addPixmap(pixMap);
+
+            setIcon(buttonIcon);
+
+            // Leave some border of the button visible around the icon so it still looks like a button
+            setIconSize(QSize{140, 140});
         }
 
         const QMap<QString, int> &TextureButton::getTextureRepresentationCount()

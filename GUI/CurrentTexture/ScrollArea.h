@@ -78,7 +78,7 @@ namespace GUI
                 *
                 * @return brush being used to paint the selected texture
                 */
-                const PaintFunctions::Brush& getBrush() const;
+                PaintFunctions::Brush& getBrush() const;
 
                 /**
                  * Get the format of the current image that can be painted.

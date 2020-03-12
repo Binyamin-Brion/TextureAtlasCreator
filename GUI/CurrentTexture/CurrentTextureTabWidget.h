@@ -32,11 +32,6 @@ namespace GUI
 
             signals:
 
-               /**
-                * Emitted when a different render area is opened, such as specular render area.
-                */
-                void changedRenderArea(const PaintFunctions::Brush&);
-
                 /**
                  *  Emitted when the selected texture has been modified with a brush.
                  */
@@ -60,6 +55,8 @@ namespace GUI
                  * @param parent widget that has ownership over this object.
                  */
                 explicit CurrentTextureTabWidget(QWidget *parent = nullptr);
+
+                ::PaintFunctions::Brush* getBrush();
 
                 /**
                  * Set the texture that can be painted. Forwards argument to the scroll area holding the render area.

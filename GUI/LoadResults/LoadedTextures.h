@@ -10,6 +10,7 @@
 
 namespace TextureLogic
 {
+    class Texture;
     class TextureBank;
 }
 
@@ -81,6 +82,21 @@ namespace GUI
                  */
                 void setTextureBankReference(TextureLogic::TextureBank *textureBank);
 
+                /**
+                 * Forwards request to all texture button areas that represent the modified texture to now represent
+                 * the saved modified texture.
+                 *
+                 * @param previousLocation location on the file system that the texture buttons had before the modified texture was saved
+                 * @param newLocation new location on the file system of the saved modified texture
+                 */
+                void updateTextureButtonLocation(const QString &previousLocation, const QString &newLocation);
+
+                /**
+                 * Updates the reference to the selected texture to ensure that it points to a valid piece of memory,
+                 * which happens if additional textures are loaded into the texture bank.
+                 */
+                void updateTextureReference();
+
             public slots:
 
                 /**
@@ -92,6 +108,18 @@ namespace GUI
                  * @param selectionBorderWidth
                  */
                 void openTexture(QString textureButtonAreaName, QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
+
+                /**
+                 *  Paints the texture buttons representing the currently selected texture when the texture is painted.
+                 */
+                void paintTextureButtons();
+
+                /**
+                 * Sets the reference to the currently selected texture.
+                 *
+                 * @param texture reference to the currently selected texture
+                 */
+                void setSelectedTexture(const ::TextureLogic::Texture *texture);
 
                 /**
                  *  Called to open the dialog used to add a new tab to this widget.
@@ -169,6 +197,10 @@ namespace GUI
                 // this dialog interacts with this class more so than the place from where it is opened
                 Dialogs::ChooseTexture *chooseTexture = nullptr;
                 OptionsMenu *optionsMenu = nullptr;
+
+                const ::TextureLogic::Texture *selectedTexture = nullptr;
+                int currentTextureIndex;
+                unsigned int formatIndex;
         };
     }
 }

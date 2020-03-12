@@ -13,8 +13,8 @@ namespace GUI
     {
         ScrollArea::ScrollArea(CurrentTextureImage currentTextureImage, QWidget *parent)
                     :
-                QScrollArea{parent},
-                paintArea{new PaintArea{currentTextureImage, this}}
+                        QScrollArea{parent},
+                        paintArea{new PaintArea{currentTextureImage, this}}
         {
             setWidget(paintArea);
 
@@ -32,7 +32,7 @@ namespace GUI
             QWidget::grabKeyboard();
         }
 
-        const PaintFunctions::Brush &ScrollArea::getBrush() const
+        PaintFunctions::Brush &ScrollArea::getBrush() const
         {
             return paintArea->getBrush();
         }

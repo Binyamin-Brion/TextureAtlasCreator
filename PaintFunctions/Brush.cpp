@@ -21,6 +21,16 @@ namespace PaintFunctions
         return paintImages[TextureLogic::GetZoomIndex(zoom)];
     }
 
+    bool Brush::getPaintingSpecularTexture() const
+    {
+        return paintingSpecularTexture;
+    }
+
+    void Brush::setPaintingSpecularTexture(bool value)
+    {
+        paintingSpecularTexture = value;
+    }
+
     void Brush::setPaintTypeSolid(TextureLogic::Zoom zoom, QSize drawAreaSize, QColor colour)
     {
         // When a brush size is selected, it is done with respective to a given zoom. The brush size changes

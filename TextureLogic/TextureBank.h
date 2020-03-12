@@ -28,11 +28,17 @@ namespace GUI
 
     namespace CurrentTexture
     {
+        namespace SpecularTexture
+        {
+            class SpecularTextureTabWidget;
+        }
+
         class CurrentTextureTabWidget;
     }
 
     namespace LoadResults
     {
+        class LoadedTextures;
         class TextureButtonArea;
     }
 
@@ -99,11 +105,25 @@ namespace TextureLogic
             void setAtlasTabWidgetReference(GUI::Atlas::AtlasTabWidget *atlasTabWidget);
 
             /**
+             * Sets the reference to the widget holding the texture buttons.
+             *
+             * @param loadedTexturesWidget
+             */
+            void setLoadedTextures(GUI::LoadResults::LoadedTextures *loadedTexturesWidget);
+
+            /**
              * Sets the reference to the tab widget holding the currently selected reference.
              *
              * @param currentTextureTabWidget reference to the current texture tab widget
              */
             void setSelectedTextureTabWidgetReference(GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget);
+
+            /**
+             * Sets the reference to the widget holding the specular texture for the selected texture.
+             *
+             * @param specularTextureTabWidget
+             */
+            void setSpecularTabWidgetReference(GUI::CurrentTexture::SpecularTexture::SpecularTextureTabWidget *specularTextureTabWidget);
 
             /**
              * Updates the intersection width of the passed in texture.
@@ -179,6 +199,15 @@ namespace TextureLogic
              */
             void textureSelected(const Texture *texture);
 
+            /**
+             * Forwards request to all texture button areas that represent the modified texture to now represent
+             * the saved modified texture.
+             *
+             * @param previousLocation location on the file system that the texture buttons had before the modified texture was saved
+             * @param newLocation new location on the file system of the saved modified texture
+             */
+            void updateTextureButtonLocation(const QString &previousLocation, const QString &newLocation);
+
         private:
 
             /**
@@ -218,7 +247,9 @@ namespace TextureLogic
 
             GUI::Atlas::AtlasTabWidget *atlasTabWidget = nullptr;
             GUI::CurrentTexture::CurrentTextureTabWidget *currentTextureTabWidget = nullptr;
+            GUI::CurrentTexture::SpecularTexture::SpecularTextureTabWidget *specularTextureTabWidget  = nullptr;
             GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea = nullptr;
+            GUI::LoadResults::LoadedTextures *loadedTexturesWidget = nullptr;
 
             // See TextureBank.cpp for more details of these two variables
             std::vector<std::pair<std::vector<Texture>, std::vector<UnusedSpotIndexes>>> textures;

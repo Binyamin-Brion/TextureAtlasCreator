@@ -14,6 +14,11 @@ namespace GUI
 {
     namespace CurrentTexture
     {
+        namespace SpecularTexture
+        {
+            class DisplayArea;
+        }
+
         class PaintArea;
     }
 
@@ -105,7 +110,15 @@ namespace TextureLogic
              * @param zoom at which the specular map should be at
              * @return reference to the specular map resource at the given zoom
              */
-            QImage& getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>);
+            QImage& getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::SpecularTexture::DisplayArea>);
+
+            /**
+             * Get the specular map for the texture at the given zoom.
+             *
+             * @param zoom at which the specular map should be at
+             * @return reference to the specular map resource at the given zoom
+             */
+            QImage& getSpecularTextureDiffuseArea(TextureLogic::Zoom zoom , AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>);
 
             /**
              * Get the description associated with this texture.

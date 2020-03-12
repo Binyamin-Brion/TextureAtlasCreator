@@ -45,9 +45,9 @@ namespace GUI
                 void newSelectionBorderWidth(TextureLogic::Texture*, TextureLogic::Zoom, unsigned int);
 
                 /**
-                 * Emitted when the user saves texture. See internal note in SelectedTextureInformation.cpp in saveImage().
+                 *  Emitted when a modified texture was saved.
                  */
-                void reuploadTexture(const QString&, const TextureLogic::Texture*, unsigned int, unsigned int);
+                void updateTextureButtonLocation(const QString, const QString);
 
             public:
 

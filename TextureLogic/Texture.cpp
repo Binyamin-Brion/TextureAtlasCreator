@@ -67,7 +67,12 @@ namespace TextureLogic
         return _texture[GetZoomIndex(zoom)].getSelectionBorderWidth();
     }
 
-    QImage& Texture::getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>)
+    QImage& Texture::getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::SpecularTexture::DisplayArea>)
+    {
+        return _texture[GetZoomIndex(zoom)].getSpecularTexture();
+    }
+
+    QImage& Texture::getSpecularTextureDiffuseArea(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>)
     {
         return _texture[GetZoomIndex(zoom)].getSpecularTexture();
     }
