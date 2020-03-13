@@ -6,7 +6,6 @@
 #define TEXTUREATLASCREATOR_PAINTHISTORYCOMMAND_H
 
 #include <vector>
-#include "GUI/CurrentTexture/CurrentTextureImage.h"
 #include "PaintedArea.h"
 #include <QPixmap>
 #include <stack>

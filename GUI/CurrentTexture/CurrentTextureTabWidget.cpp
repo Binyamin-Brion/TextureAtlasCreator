@@ -6,14 +6,16 @@
 #include <QtWidgets/qscrollarea.h>
 #include "CurrentTextureTabWidget.h"
 
-#include "CurrentTextureImage.h"
-#include "TextureLogic/TextureBank.h"
 #include "ScrollArea.h"
 
 namespace GUI
 {
     namespace CurrentTexture
     {
+        // Note: a tab widget is used, even if there is only one tab, is that is provides a nice looking label as to
+        //      what the area held within the tab is about. This could be done with a separate label, but it was decided
+        //      that it doesn't look as good.
+
         /*
          *  The variable textures is not strictly required. This class could always call getTextures() on the texture bank,
          *  which would negate the need for the textures variable. It is held for two reasons:
@@ -34,7 +36,7 @@ namespace GUI
             currentTextureIndex = -1;
 
             // These are not created in the initialized list as it is more readable to create these here
-            paintAreaScrollArea = new ScrollArea{CurrentTextureImage::SelectedTexture, this};
+            paintAreaScrollArea = new ScrollArea{this};
 
             addTab(paintAreaScrollArea, "Selected Texture");
 

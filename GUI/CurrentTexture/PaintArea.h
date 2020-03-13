@@ -6,7 +6,6 @@
 #define TEXTUREATLASCREATOR_PAINTAREA_H
 
 #include <QtWidgets/QWidget>
-#include "CurrentTextureImage.h"
 #include "TextureLogic/Zoom.h"
 #include "PaintFunctions/Brush.h"
 #include "PaintFunctions/PaintedArea.h"
@@ -57,10 +56,9 @@ namespace GUI
                 /**
                   * Initializes this object with the parent passed in.
                   *
-                  * @param currentTextureImage whether the current render area is used for specular editing or to edit the texture as is
                   * @param parent widget that has ownership over this object.
                   */
-                explicit PaintArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
+                explicit PaintArea(QWidget *parent = nullptr);
 
                 /**
                  * Get the brush that is currently being used for painting.
@@ -121,6 +119,8 @@ namespace GUI
 
                 /**
                  * Update the drawing position of the texture in this object, if there is one, to account for the change in zoom.
+                 * This widget is also resized to match the new size of the texture at the new zoom level.
+                 *
                  * Note: zoom is in done in steps, ie from 100% to 200%, not from 100% to 400%. This negates the need to
                  *       pass in the new zoom value in to this function.
                  */
@@ -128,6 +128,8 @@ namespace GUI
 
                 /**
                  * Update the drawing position of the texture in this object, if there is one, to account for the change in zoom.
+                 * This widget is also resized to match the new size of the texture at the new zoom level.
+                 *
                  * Note: zoom is in done in steps, ie from 100% to 200%, not from 100% to 400%. This negates the need to
                  *       pass in the new zoom value in to this function.
                  */
@@ -180,8 +182,6 @@ namespace GUI
                 // Reference to the texture being displayed that can be modified
                 TextureLogic::Texture *texture = nullptr;
 
-                // Stores what type of texture is being displayed, the SelectedTexture or the Specular version of the SelectedTexture
-                CurrentTextureImage currentTextureImage;
                 TextureLogic::Zoom currentZoom;
 
                 // Keep track of the brush for each render area as each render area has its own different brush

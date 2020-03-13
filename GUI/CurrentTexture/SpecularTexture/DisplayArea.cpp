@@ -15,7 +15,7 @@ namespace GUI
 
             DisplayArea::DisplayArea(QWidget *parent)
                     :
-                    QWidget{parent}
+                        QWidget{parent}
             {
                 currentZoom = TextureLogic::Zoom::Normal;
             }
@@ -24,10 +24,19 @@ namespace GUI
             {
                 QPainter painter{this};
 
+                // Paint event can still be called even when no texture is selected.
                 if(specularTexture != nullptr)
                 {
                     painter.drawImage(QPoint{0, 0}, const_cast<::TextureLogic::Texture*>(specularTexture)->getSpecularTexture(currentZoom, {}));
                 }
+            }
+
+            void DisplayArea::repaintSpecularTexture()
+            {
+                // Note: calling QWidget::repaint() causes errors relating to threading (Qt internal errors, as this program does
+                //       not use threads). Thus some updates to the specular texture may have a small delay, but at least it works.
+                //       Not sure why using repaint() causes these issues.
+                QWidget::update();
             }
 
             void DisplayArea::setSpecularTexture(const ::TextureLogic::Texture *specularTexture)
@@ -75,11 +84,6 @@ namespace GUI
                         QWidget::repaint();
                     }
                 }
-            }
-
-            void DisplayArea::repaintSpecularTexture()
-            {
-                QWidget::update();
             }
         }
     }

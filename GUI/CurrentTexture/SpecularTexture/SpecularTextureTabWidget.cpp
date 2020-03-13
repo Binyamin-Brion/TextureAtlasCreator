@@ -12,6 +12,10 @@ namespace GUI
     {
         namespace SpecularTexture
         {
+            // Note: a tab widget is used, even if there is only one tab, is that is provides a nice looking label as to
+            //      what the area held within the tab is about. This could be done with a separate label, but it was decided
+            //      that it doesn't look as good.
+
             SpecularTextureTabWidget::SpecularTextureTabWidget(QWidget *parent)
                     :
                         QTabWidget(parent),
@@ -28,7 +32,7 @@ namespace GUI
 
                 if(texture != nullptr)
                 {
-                    // Required to index into the texturs stored in texture bank. See TextureBank.cpp
+                    // Required to index into the textures stored in texture bank. See TextureBank.cpp
                     formatIndex = TextureHelperFunctions::indexFormat(texture->getImage(TextureLogic::Zoom::Normal).format(), true);
 
                     for(const auto &i : textureBank->getTextures()[formatIndex].first)

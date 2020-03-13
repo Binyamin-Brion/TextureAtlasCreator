@@ -21,10 +21,9 @@ namespace GUI
         //       once before the user has made any changes to the texture. This incorrectly prematurely updates the information
         //       in the GUI information panel
 
-        PaintArea::PaintArea(CurrentTextureImage currentTextureImage, QWidget *parent)
+        PaintArea::PaintArea(QWidget *parent)
                     :
                         QWidget{parent},
-                        currentTextureImage{currentTextureImage},
                         previousMousePosition{-1, -1} // Before cursor is moved with texture selected, there is no previous cursor position
         {
             currentZoom = TextureLogic::Zoom::Normal;
@@ -120,18 +119,16 @@ namespace GUI
 
             if(texture != nullptr)
             {
-                switch(currentTextureImage)
-                {
-                    case CurrentTextureImage::SelectedTexture:
-                        painter.drawImage(QPoint{0, 0}, texture->getImage(currentZoom));
+                // Draw the diffuse texture even if the specular editing mode is selected as otherwise
+                // the user won't be able to see the diffuse texture if it was just selected. This is  problem
+                // as specular painting still relies seeing the diffuse texture.
+                painter.drawImage(QPoint{0, 0}, texture->getImage(currentZoom));
 
-                        // Note that only this case has to force the atlas widget to redraw as if this case is entered,
-                        // then the exact same texture shown in this widget is shown in the atlas widget. In order to
-                        // synchronize the two, after modifying the texture here where the updates are seen visually immediately,
-                        // the atlas widget has to be told to visually update the (same) texture it draws
-                        emit repaintSelectedTexture();
-                        break;
-                }
+                // Note that only this case has to force the atlas widget to redraw as if this case is entered,
+                // then the exact same texture shown in this widget is shown in the atlas widget. In order to
+                // synchronize the two, after modifying the texture here where the updates are seen visually immediately,
+                // the atlas widget has to be told to visually update the (same) texture it draws
+                emit repaintSelectedTexture();
 
                 // If statement to prevent the brush from being drawn the first time a texture is selected; would be
                 // a little bit weird to give a brush a position when the user hasn't moved cursor over render area with texture selected first
@@ -254,35 +251,18 @@ namespace GUI
             {
                 return texture->getImage(zoom);
             }
-
-//            switch(currentTextureImage)
-//            {
-//                case CurrentTextureImage::SelectedTexture:
-//                    return texture->getImage(zoom);
-//
-//                case CurrentTextureImage::SpecularTexture:
-//                    return texture->getSpecularTextureDiffuseArea(zoom, {});
-//            }
-
-            // This should never be reached, as the switch statement should cover all of the possible enum values. But
-            // in case an enum value is added.
-            Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\nInvalid code path taken\n");
         }
 
         PaintFunctions::PaintHistoryCommand* PaintArea::getReferredToImageHistory(TextureLogic::Zoom zoom) const
         {
-            switch(currentTextureImage)
+            if(brush.getPaintingSpecularTexture())
             {
-                case CurrentTextureImage::SelectedTexture:
-                    return texture->removeRecentPaintHistoryTexture(zoom, {});
-
-                case CurrentTextureImage::SpecularTexture:
-                    return texture->removeRecentPaintHistorySpecular(zoom, {});
+                return texture->removeRecentPaintHistorySpecular(zoom, {});
             }
-
-            // This should never be reached, as the switch statement should cover all of the possible enum values. But
-            // in case an enum value is added.
-            Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\nInvalid code path taken\n");
+            else
+            {
+                return texture->removeRecentPaintHistoryTexture(zoom, {});
+            }
         }
 
         void PaintArea::paintTexture(TextureLogic::Zoom zoom, QPoint mousePosition, const QImage &applyImage, QImage &targetImage, bool undoOperation)
@@ -376,15 +356,13 @@ namespace GUI
                 // This empties the paint sequence, and makes it ready to hold a new paint sequence when the user starts painting again
                 auto paintHistoryCommand = new PaintFunctions::PaintHistoryCommand{paintSequence[TextureLogic::GetZoomIndex(zoom)]};
 
-                switch(currentTextureImage)
+                if(brush.getPaintingSpecularTexture())
                 {
-                    case CurrentTextureImage::SelectedTexture:
-                        texture->addPaintHistoryTexture(zoom, paintHistoryCommand, {});
-                        break;
-
-                    case CurrentTextureImage::SpecularTexture:
-                        texture->addPaintHistorySpecular(zoom, paintHistoryCommand, {});
-                        break;
+                    texture->addPaintHistorySpecular(zoom, paintHistoryCommand, {});
+                }
+                else
+                {
+                    texture->addPaintHistoryTexture(zoom, paintHistoryCommand, {});
                 }
             }
 

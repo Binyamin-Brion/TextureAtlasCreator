@@ -11,10 +11,10 @@ namespace GUI
 {
     namespace CurrentTexture
     {
-        ScrollArea::ScrollArea(CurrentTextureImage currentTextureImage, QWidget *parent)
+        ScrollArea::ScrollArea(QWidget *parent)
                     :
                         QScrollArea{parent},
-                        paintArea{new PaintArea{currentTextureImage, this}}
+                        paintArea{new PaintArea{this}}
         {
             setWidget(paintArea);
 

@@ -6,7 +6,6 @@
 #define TEXTUREATLASCREATOR_SCROLLAREA_H
 
 #include <QtWidgets/QScrollArea>
-#include "CurrentTextureImage.h"
 #include "TextureLogic/Zoom.h"
 
 namespace PaintFunctions
@@ -60,10 +59,9 @@ namespace GUI
                 /**
                  * Initializes this object with the parent passed in.
                  *
-                 * @param currentTextureImage whether the current render area is used for specular editing or to edit the texture as is
                  * @param parent widget that has ownership over this object.
                  */
-                explicit ScrollArea(CurrentTextureImage currentTextureImage, QWidget *parent = nullptr);
+                explicit ScrollArea(QWidget *parent = nullptr);
 
                 /**
                  * When the cursor enters this widget, it automatically grabs the focus of the keyboard so that
