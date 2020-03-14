@@ -295,7 +295,7 @@ namespace Atlas
                         // This ensures that checks on valid cursor positions with an open new selected texture remain valid.
                         if(atlasWidget->checkTextureNotWithinViewPort(i.texture->getImage(currentZoom).size()))
                         {
-                    //        return;
+                            return;
                         }
 
                         // Put back the existing selected texture, if it exists, so that a new texture can be selected

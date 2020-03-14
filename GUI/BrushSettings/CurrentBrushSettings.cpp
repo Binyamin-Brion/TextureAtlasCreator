@@ -5,13 +5,11 @@
 #include "CurrentBrushSettings.h"
 
 #include <QLabel>
-#include <QPushButton>
 #include <QHBoxLayout>
-#include <QLineEdit>
 #include <QColorDialog>
-#include <QRadioButton>
 #include <QtWidgets/QMessageBox>
 #include "PaintFunctions/Brush.h"
+#include "ui_brushSettings.h"
 
 namespace GUI
 {
@@ -22,54 +20,28 @@ namespace GUI
         CurrentBrushSettings::CurrentBrushSettings(QWidget *parent)
                                 :
                                     QWidget{parent},
-                                    layout{new QHBoxLayout{this}},
-                                    currentBrushColourLabel{new QLabel{this}},
-                                    currentBrushColourButton{new QPushButton{this}},
-                                    currentBrushWidthLabel{new QLabel{this}},
-                                    currentBrushWidthLineEdit{new QLineEdit{this}},
-                                    colourDialog{new QColorDialog{this}},
-                                    drawingSpecularTexture{new QRadioButton{this}}
+                                    ui{new Ui::BrushSettings},
+                                    colourDialog{new QColorDialog{this}}
 
         {
+            ui->setupUi(this);
+
+            previousDiffuseColour = QColor{255, 255, 255};
+
+            previousSpecularDrawingColour = QColor{255, 255, 255};
+
             currentZoom = TextureLogic::Zoom::Normal;
 
-            // Setup the GUI components and add them to a layout as required
-
-            currentBrushColourLabel->setText("Current Colour: ");
-
-            currentBrushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(QColor{0, 0, 0}));
-
-            currentBrushWidthLabel->setText("Brush Width (in pixels): ");
-
-            currentBrushWidthLineEdit->setText("");
-
-            layout->addWidget(currentBrushColourLabel);
-            layout->addWidget(currentBrushColourButton, Qt::AlignLeft);
-
-            layout->addWidget(currentBrushWidthLabel);
-            layout->addWidget(currentBrushWidthLineEdit);
-
-            layout->addWidget(drawingSpecularTexture);
-
-            setLayout(layout);
-
             // Show a colour dialog if the colour brush button is pressed
-            connect(currentBrushColourButton, SIGNAL(clicked()), this, SLOT(handleColourButtonPressed()));
+            connect(ui->brushColourButton, SIGNAL(clicked()), this, SLOT(handleColourButtonPressed()));
 
             //  Update the brush to the selected colour if a new one is chosen
             connect(colourDialog, SIGNAL(colorSelected(QColor)), this, SLOT(updateBrushColour(QColor)));
 
             // Update the brush size to the new size specified in the appropriate QLabel
-            connect(currentBrushWidthLineEdit, SIGNAL(returnPressed()), this, SLOT(updateBrushSize()));
+            connect(ui->brushWidthLineEdit, SIGNAL(returnPressed()), this, SLOT(updateBrushSize()));
 
-            connect(drawingSpecularTexture, &QRadioButton::toggled, [this](bool value)
-            {
-                // Just in case this connection is executed before it should be
-                if(brush != nullptr)
-                {
-                    brush->setPaintingSpecularTexture(value);
-                }
-            });
+            connect(ui->editSpecularTexture, SIGNAL(toggled(bool)), this, SLOT(switchDrawingMode(bool)));
         }
 
         // Beginning of public functions
@@ -82,9 +54,9 @@ namespace GUI
             QColor brushColour = brush.getPaintImage(currentZoom).pixelColor(0, 0);
 
             // Show the properties of the new brush in this widget
-            currentBrushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(brushColour));
+            ui->brushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(brushColour));
 
-            currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush.getPaintImage(currentZoom).size().width())));
+            ui->brushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush.getPaintImage(currentZoom).size().width())));
         }
 
         void CurrentBrushSettings::updateSelectedTextureSize(QSize size, QSize brushSize)
@@ -95,15 +67,15 @@ namespace GUI
 
             if(size.width() == -1) // No texture is selected in the texture atlas, thus no texture to paint. Brush width cannot be set until a texture is selected.
             {
-                currentBrushWidthLineEdit->setText("No texture selected");
+                ui->brushWidthLineEdit->setText("No texture selected");
 
-                currentBrushWidthLineEdit->setEnabled(false);
+                ui->brushWidthLineEdit->setEnabled(false);
             }
             else
             {
-                currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brushSize.width())));
+                ui->brushWidthLineEdit->setText(QString::fromStdString(std::to_string(brushSize.width())));
 
-                currentBrushWidthLineEdit->setEnabled(true);
+                ui->brushWidthLineEdit->setEnabled(true);
             }
         }
 
@@ -113,7 +85,7 @@ namespace GUI
 
             // With a different zoom, the brush changes its size so that it remains relative to the size of the texture,
             // which changes when the zoom does. This is displayed as required in this widget.
-            currentBrushWidthLineEdit->setText(QString::number(brush->getPaintImage(currentZoom).width()));
+            ui->brushWidthLineEdit->setText(QString::number(brush->getPaintImage(currentZoom).width()));
         }
 
         // Beginning of private slots
@@ -123,18 +95,69 @@ namespace GUI
             colourDialog->show();
         }
 
+        void CurrentBrushSettings::switchDrawingMode(bool value)
+        {
+            if(brush != nullptr) // Could be called before the brush reference is set, depending on the behaviour of Qt
+            {
+                brush->setPaintingSpecularTexture(value);
+
+                if(brush->getPaintingSpecularTexture())
+                {
+                    colourDialog->setCurrentColor(previousSpecularDrawingColour);
+
+                    ui->brushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(previousSpecularDrawingColour));
+
+                    brush->setPaintTypeSolid(currentZoom, brush->getPaintImage(currentZoom).size(), previousSpecularDrawingColour);
+                }
+                else
+                {
+                    colourDialog->setCurrentColor(previousDiffuseColour);
+
+                    ui->brushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(previousDiffuseColour));
+
+                    brush->setPaintTypeSolid(currentZoom, brush->getPaintImage(currentZoom).size(), previousDiffuseColour);
+                }
+            }
+        }
+
         void CurrentBrushSettings::updateBrushColour(QColor selectedColour)
         {
-            currentBrushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(selectedColour));
+            // In specular painting mode, only grey-scale values area allowed
+            if(brush->getPaintingSpecularTexture() &&
+              (selectedColour.red() != selectedColour.green() ||
+               selectedColour.red() != selectedColour.blue() ||
+               selectedColour.green() != selectedColour.blue()))
+            {
+                int averageColorValue = (selectedColour.red() + selectedColour.green() + selectedColour.blue()) / 3;
+
+                selectedColour = QColor{averageColorValue, averageColorValue, averageColorValue};
+
+                QString newColourString = QString::number(averageColorValue) + " , " + QString::number(averageColorValue) + " , " + QString::number(averageColorValue) + ".";
+
+                QMessageBox::warning(this, "Invalid colour chosen",
+                        "When drawing in specular mode, a grey-scale colour must be chosen.\n"
+                        "The chosen colour has been averaged to: " + newColourString, QMessageBox::Ok);
+            }
+
+            ui->brushColourButton->setStyleSheet(createStyleSheet_CurrentBrushColour(selectedColour));
 
             brush->setPaintTypeSolid(currentZoom, brush->getPaintImage(currentZoom).size(), selectedColour);
+
+            if(brush->getPaintingSpecularTexture())
+            {
+                previousSpecularDrawingColour = selectedColour;
+            }
+            else
+            {
+                previousDiffuseColour = selectedColour;
+            }
         }
 
         void CurrentBrushSettings::updateBrushSize()
         {
             bool validIntegerSizeSpecified = false;
 
-            int enteredWidth = currentBrushWidthLineEdit->text().toInt(&validIntegerSizeSpecified);
+            int enteredWidth = ui->brushWidthLabel->text().toInt(&validIntegerSizeSpecified);
 
             if(!validIntegerSizeSpecified || (enteredWidth > selectedTextureSize.width() || enteredWidth > selectedTextureSize.height() || enteredWidth <= 0))
             {
@@ -145,7 +168,7 @@ namespace GUI
                                      QMessageBox::Ok);
 
                 // Visually show the brush size as what it was before the user tried to change the brush size
-                currentBrushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush->getPaintImage(currentZoom).size().width())));
+                ui->brushWidthLabel->setText(QString::fromStdString(std::to_string(brush->getPaintImage(currentZoom).size().width())));
             }
             else
             {

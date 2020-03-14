@@ -9,6 +9,7 @@
 
 #include <QMouseEvent>
 #include <QtWidgets/QShortcut>
+#include <QtWidgets/QMessageBox>
 
 namespace GUI
 {
@@ -86,6 +87,15 @@ namespace GUI
             {
                 if(texture != nullptr)
                 {
+                    // Drawing is not allowed on other formats as such operations are not valid
+                    if(textureFormat != QImage::Format_RGB32 && textureFormat != QImage::Format_ARGB32)
+                    {
+                        QMessageBox::warning(this, "Invalid Operation", "The chosen texture does have a supported format\n"
+                                                                        "for paint operations.", QMessageBox::Ok);
+
+                        return;
+                    }
+
                     // Note that if a user clicks left mouse button, paint operation is done once at the position of the cursor
                     for(auto zoom : TextureLogic::AllZoomValues)
                     {
@@ -146,11 +156,11 @@ namespace GUI
 
             if(texture != nullptr)
             {
-                setMinimumSize(texture->getImage(currentZoom).size());
-                setMaximumSize(texture->getImage(currentZoom).size());
-
                 // The passed in zoom level should not matter here. currentZoom used here for consistency
                 textureFormat = texture->getImage(currentZoom).format();
+
+                setMinimumSize(texture->getImage(currentZoom).size());
+                setMaximumSize(texture->getImage(currentZoom).size());
             }
 
             QWidget::repaint();

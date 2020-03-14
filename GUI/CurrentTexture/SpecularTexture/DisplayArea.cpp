@@ -45,6 +45,17 @@ namespace GUI
 
                 if(specularTexture != nullptr)
                 {
+                    QImage::Format textureFormat = specularTexture->getImage(::TextureLogic::Zoom::Normal).format();
+
+                    // Drawing is not allowed on other formats as such operations are not valid; though in this case viewing
+                    // is not allowed as such textures are assumed to not have specular textures
+                    if(textureFormat != QImage::Format_RGB32 && textureFormat != QImage::Format_ARGB32)
+                    {
+                        setEnabled(false);
+
+                        return;
+                    }
+
                     setMinimumSize(specularTexture->getImage(currentZoom).size());
                     setMaximumSize(specularTexture->getImage(currentZoom).size());
                 }

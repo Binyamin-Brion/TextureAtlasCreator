@@ -180,6 +180,13 @@ namespace GUI
                 // Otherwise process the event as normal, which would move the scroll bars.
                 QScrollArea::wheelEvent(event);
             }
+
+            // To prevent control issues if the user zooms in while a texture is selected, and the zoom in is not valid
+            // because the texture is outside of the viewport, this variable has to be reset. If it is not, after the user
+            // gets a message about an invalid zoom, the wheel events continue to erroneously attempt to process a wheel request
+            // as a zoom, even if user is not on control key anymore. This action means every time a user zooms, they have
+            // to repress the control key. This is better than unexpected behaviour.
+            controlKeyDown = false;
         }
 
         void ScrollArea::zoomIn()

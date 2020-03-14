@@ -8,16 +8,16 @@
 #include <QtWidgets/QWidget>
 #include <TextureLogic/Zoom.h>
 
-class QLabel;
-class QHBoxLayout;
-class QPushButton;
-class QLineEdit;
 class QColorDialog;
-class QRadioButton;
 
 namespace PaintFunctions
 {
     class Brush;
+}
+
+namespace Ui
+{
+    class BrushSettings;
 }
 
 namespace GUI
@@ -77,6 +77,15 @@ namespace GUI
                 void handleColourButtonPressed();
 
                 /**
+                 * Called when the user toggles the radio button controlling if the paint operations are to be applied to
+                 * the specular texture. Updates the brush to the previous colour used for the mode that the paint operations
+                 * are now in.
+                 *
+                 * @param value true if the user is in specular painting mode
+                 */
+                void switchDrawingMode(bool value);
+
+                /**
                  * Sets the brush to the colour passed in.
                  *
                  * @param selectedColour colour of the brush after the user chose a different colour
@@ -98,20 +107,10 @@ namespace GUI
                  */
                 QString createStyleSheet_CurrentBrushColour(QColor colour) const;
 
-                QHBoxLayout *layout = nullptr;
-
-                // Following two sets of QLabel and QPushButton are always shown and display information about the current brush
-                QLabel *currentBrushColourLabel = nullptr;
-                QPushButton *currentBrushColourButton = nullptr;
-
-                QLabel *currentBrushWidthLabel = nullptr;
-                QLineEdit *currentBrushWidthLineEdit = nullptr;
+                Ui::BrushSettings *ui = nullptr;
 
                 // Shown when the user wants to select a new colour for the brush
                 QColorDialog *colourDialog = nullptr;
-
-                QLabel *drawingSpecularTextureLabel = nullptr;
-                QRadioButton *drawingSpecularTexture = nullptr;
 
                 PaintFunctions::Brush *brush = nullptr;
 
@@ -120,6 +119,11 @@ namespace GUI
 
                 // Keep track of the zoom of RenderArea so the brush size can be queried from the Brush
                 TextureLogic::Zoom currentZoom;
+
+                // Keep track of what the colour of the current paint mode is so that when switching back to the mode,
+                // the user does not need to respecify the colour
+                QColor previousDiffuseColour;
+                QColor previousSpecularDrawingColour;
         };
     }
 }
