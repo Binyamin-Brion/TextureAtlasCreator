@@ -106,8 +106,9 @@ namespace GUI
                  * @param textureLocation
                  * @param intersectionBorderWidth
                  * @param selectionBorderWidth
+                 * @param loadingProject true if this function is called when loading a project
                  */
-                void openTexture(QString textureButtonAreaName, QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
+                void openTexture(QString textureButtonAreaName, QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, bool loadingProject);
 
                 /**
                  *  Paints the texture buttons representing the currently selected texture when the texture is painted.

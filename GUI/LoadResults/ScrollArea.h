@@ -43,8 +43,9 @@ namespace GUI
                  * @param textureLocation location of the texture the texture button should associate with
                  * @param intersectionBorderWidth of the texture to be loaded
                  * @param selectionBorderWidth of the texture to be loaded
+                 * @param loadingProject true if this function is called when loading a project
                  */
-                void addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
+                void addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, bool loadingProject);
 
                 /**
                  *  Removes all of the texture buttons. Used when a texture button is to be deleted. Forwards call to the texture button area.
@@ -67,6 +68,12 @@ namespace GUI
               */
                 bool getUnsavedChanges() const;
 
+                /**
+                 * Called when the selected texture has been painted, and the appropriate texture buttons have to be updated
+                 * to reflect this visual change.
+                 *
+                 * @param texture reference to the texture that was changed
+                 */
                 void paintTextureButton(const ::TextureLogic::Texture *texture);
 
                 /**

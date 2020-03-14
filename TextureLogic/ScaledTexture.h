@@ -85,7 +85,7 @@ namespace TextureLogic
              * @param intersectionBorderWidth of the texture at the passed in zoom level
              * @param selectionBorderWidth of the texture at the passed in zoom level
              */
-            void initialize(const QString &textureLocation, Zoom zoom, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
+            void initialize(const QString &textureLocation, const QString &specularTextureLocation, Zoom zoom, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
 
             /**
              * Gets the history of the most recent specular map paint history. If there is no more recent paint history, which would happen

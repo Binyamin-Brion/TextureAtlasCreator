@@ -68,7 +68,7 @@ namespace GUI
             connect(optionsMenu, SIGNAL(deleteTextureButtonTriggered()), this, SLOT(deleteTextureButton()));
         }
 
-        void TextureButtonArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
+        void TextureButtonArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, bool loadingProject)
         {
             // A texture button cannot be present more than one texture button representing the same texture, as that is redundant
             for(const auto &i : textureButtons)
@@ -87,8 +87,17 @@ namespace GUI
                 }
             }
 
-            // Try loading the image first; if that operation fails, then there is no point continuing to create
-            // a texture pushbutton for that image.
+            if(!loadingProject && TextureButton::textureNameExists(textureLocation))
+            {
+                // When saving a project, the names of a texture are used in the saving process. Duplicate textures could mess this up.
+
+                QMessageBox::warning(this, "Texture Name Already Exists", "A texture with the name: " + TextureHelperFunctions::getImageName(textureLocation) + " already exists."
+                                                                                                                                                                "\n Rename the texture with the offending name first.", QMessageBox::Ok);
+
+                return;
+            }
+
+            // Try loading the image first; if the texture is already loaded, then this call has no effect
             textureBank->storeNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
 
             // The newly created button will be swapped the place holder widget with the newly created place-holder; see the description at the top of
@@ -207,7 +216,9 @@ namespace GUI
 
             for(const auto &i : textureButtons)
             {
-                saveStream << i->getTextureLocation() << " -> " << textureBank->getIntersectionWidth(i->getTextureLocation()) << " , "
+                QString localTextureLocation = saveLocation.left(saveLocation.lastIndexOf('/')) + '/' + TextureHelperFunctions::getImageName(i->getTextureLocation()) + '.' + TextureHelperFunctions::getImageFormat(i->getTextureLocation());
+
+                saveStream << localTextureLocation << " -> " << textureBank->getIntersectionWidth(i->getTextureLocation()) << " , "
                            << textureBank->getSelectionWidth(i->getTextureLocation()) << '\n';
             }
 

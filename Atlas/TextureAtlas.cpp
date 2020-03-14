@@ -585,10 +585,25 @@ namespace Atlas
 
             yDrawPosition *= zoomFactor;
 
-            saveStream << "Texture: " << i.texture->textureLocation() << " -> Position: " << xDrawingPosition << " , " << yDrawPosition << '\n';
-        }
+            QString localTextureLocation = saveLocation.left(saveLocation.lastIndexOf('/')) + '/' + i.texture->textureName() + '.' + i.texture->textureFormat();
 
-        saveStream << "\n\n=======================================\n\n";
+            saveStream << "Texture: " << localTextureLocation << " -> Position: " << xDrawingPosition << " , " << yDrawPosition << '\n';
+
+            if(!QFile::exists(localTextureLocation))
+            {
+                i.texture->getImage(::TextureLogic::Zoom::Normal).save(localTextureLocation);
+            }
+
+            localTextureLocation.remove('.' + i.texture->textureFormat());
+            localTextureLocation += "_Specular." + i.texture->textureFormat();
+
+            std::string specularSave = localTextureLocation.toStdString();
+
+            if(!QFile::exists(localTextureLocation))
+            {
+                i.texture->getSpecularTexture(::TextureLogic::Zoom::Normal).save(localTextureLocation);
+            }
+        }
 
         if(selectedExistingTexture->isOpen())
         {
@@ -596,8 +611,26 @@ namespace Atlas
 
             float yDrawingPosition = selectedExistingTexture->getDrawingCoordinates().y() * zoomFactor;
 
+            QString localTextureLocation = saveLocation.left(saveLocation.lastIndexOf('/')) + '/' +
+                                            selectedExistingTexture->getImageForDrawing().textureName() + '.' + selectedExistingTexture->getImageForDrawing().textureFormat();
+
             saveStream << "Texture: " << selectedExistingTexture->getTextureLocation() << " -> Position: " << xDrawingPosition << " , " << yDrawingPosition << '\n';
+
+            if(!QFile::exists(localTextureLocation))
+            {
+                selectedExistingTexture->getImageForDrawing().getImage(::TextureLogic::Zoom::Normal).save(localTextureLocation);
+            }
+
+            localTextureLocation.remove('.' + selectedExistingTexture->getImageForDrawing().textureFormat());
+            localTextureLocation += "_Specular." + selectedExistingTexture->getImageForDrawing().textureFormat();
+
+            if(!QFile::exists(localTextureLocation))
+            {
+                selectedExistingTexture->getImageForDrawing().getSpecularTexture(::TextureLogic::Zoom::Normal).save(localTextureLocation);
+            }
         }
+
+        saveStream << "\n\n=======================================\n\n";
 
         unsavedChanges = false;
     }
@@ -818,7 +851,7 @@ namespace Atlas
             textureDrawingPositions.back().surroundingBorder = selectedTexture->getSurroundingBorderForDrawing();
 
             for(int i = 0; i < textures->size(); ++i)
-            {
+            { printf("%d \n", GUI::TextureHelperFunctions::indexFormat(atlasFormat));
                 if((*textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[i].textureLocation() == selectedTexture->getTextureLocation())
                 {
                     textureDrawingPositions.back().index = i;

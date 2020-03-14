@@ -6,7 +6,7 @@
 #define TEXTUREATLASCREATOR_MAINWINDOW_H
 
 #include <QtWidgets/QMainWindow>
-#include "ui_mainwindow.h"
+#include "Atlas/AtlasTabWidget.h"
 #include <memory>
 
 namespace TextureLogic
@@ -14,8 +14,15 @@ namespace TextureLogic
     class TextureBank;
 }
 
+namespace Ui
+{
+    class MainWindow;
+}
+
 namespace GUI
 {
+    class NameForm;
+
     /**
      * The main window for this program. Holds all of the other widgets and their resources.
      * Also sets up the connections between those widgets.
@@ -101,18 +108,11 @@ namespace GUI
              */
             void closeProject();
 
-            /**
-             * Get a path to the texture being loaded from a project file. Abstracts difference between behaviour
-             * when debugging and running release-mode program.
-             *
-             * @param loadedPath to the texture as specified in the file
-             * @return texture location to be used when loading a project
-             */
-            QString createPathToTexture(QString loadedPath);
-
             Ui::MainWindow *ui = nullptr;
+            NameForm *nameFormUi = nullptr;
             std::unique_ptr<::TextureLogic::TextureBank> textureBank;
             QString previousSaveLocation;
+            QString projectName;
             const QString projectExtension = ".tac";
     };
 }

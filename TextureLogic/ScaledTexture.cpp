@@ -44,7 +44,7 @@ namespace TextureLogic
         return specularTexture;
     }
 
-    void ScaledTexture::initialize(const QString &textureLocation, TextureLogic::Zoom zoom, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
+    void ScaledTexture::initialize(const QString &textureLocation,  const QString &specularTextureLocation, TextureLogic::Zoom zoom, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
     {
         // See Texture.cpp for why there is no constructor in this class.
 
@@ -63,10 +63,17 @@ namespace TextureLogic
 
         image = image.scaled(newImageWidth, newImageHeight, Qt::KeepAspectRatio);
 
-        specularTexture = QImage{newImageWidth, newImageHeight, image.format()};
+        if(!specularTexture.load(specularTextureLocation))
+        {
+            specularTexture = QImage{newImageWidth, newImageHeight, image.format()};
 
-        // By default, the specular texture is completely black as there are no reflections in diffuse map unless otherwise specified
-        specularTexture.fill(QColor{0, 0, 0});
+            // By default, the specular texture is completely black as there are no reflections in diffuse map unless otherwise specified
+            specularTexture.fill(QColor{0, 0, 0});
+        }
+        else
+        {
+            specularTexture = specularTexture.scaled(newImageWidth, newImageHeight, Qt::KeepAspectRatio);
+        }
 
         this->intersectionBorderWidth = intersectionBorderWidth * zoomFactorValue;
 

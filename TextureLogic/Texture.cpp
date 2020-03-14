@@ -11,15 +11,6 @@ namespace TextureLogic
                 :
                     _textureLocation{texturePath}
     {
-        // Since the scaled textures are stored in an array, if they do not have default constructors then initialization
-        // the array becomes hard, as the array, and therefore the scaled textures, are created before this constructor body is run.
-        // Having the scaled texture have an initialize function is a solution to this problem.
-
-        for(auto &i : AllZoomValues)
-        {
-            _texture[GetZoomIndex(i)].initialize(_textureLocation, i, intersectionBorderWidth, selectionBorderWidth);
-        }
-
         // To ensure everything works as expected on Windows and Linux, ensure only forward slashes in file system locations.
         _textureLocation.replace('\\', '/');
 
@@ -31,6 +22,19 @@ namespace TextureLogic
 
         // File type not part of texture name.
         _textureName.chop(_textureFormat.size() + 1);
+
+        QString specularTextureLocation = texturePath;
+        specularTextureLocation.remove('.' + _textureFormat);
+        specularTextureLocation += "_Specular." + _textureFormat;
+
+        // Since the scaled textures are stored in an array, if they do not have default constructors then initialization
+        // the array becomes hard, as the array, and therefore the scaled textures, are created before this constructor body is run.
+        // Having the scaled texture have an initialize function is a solution to this problem.
+
+        for(auto &i : AllZoomValues)
+        {
+            _texture[GetZoomIndex(i)].initialize(_textureLocation, specularTextureLocation, i, intersectionBorderWidth, selectionBorderWidth);
+        }
     }
 
     void Texture::addPaintHistorySpecular(Zoom zoom, PaintFunctions::PaintHistoryCommand *paintHistoryCommand, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>)

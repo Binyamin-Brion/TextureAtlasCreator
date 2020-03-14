@@ -11,7 +11,10 @@ namespace GUI
     {
         // Beginning of public functions
 
-        ChooseTexture::ChooseTexture(QWidget *parent) : QDialog{parent}, ui{new Ui::TextureChooser}
+        ChooseTexture::ChooseTexture(QWidget *parent)
+                        :
+                            QDialog{parent},
+                            ui{new Ui::TextureChooser}
         {
             ui->setupUi(this);
 
@@ -26,7 +29,7 @@ namespace GUI
             // Otherwise, if the user cancels the dialog, reset the dialog to a default state
             connect(ui->buttonBox, &QDialogButtonBox::accepted, [this]()
             {
-                emit textureChosen(ui->textureButtonAreaChooser->currentText(), ui->fileButton->text(), intersectionBorderWidth, selectionBorderWidth);
+                emit textureChosen(ui->textureButtonAreaChooser->currentText(), ui->fileButton->text(), intersectionBorderWidth, selectionBorderWidth, false);
 
                 resetDialog();
             });

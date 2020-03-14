@@ -36,10 +36,10 @@ add_executable(TextureAtlasCreator main.cpp TextureLogic/ScaledTexture.cpp Textu
         PaintFunctions/Brush.cpp PaintFunctions/Brush.h PaintFunctions/PaintHistoryCommand.cpp PaintFunctions/PaintHistoryCommand.h
         PaintFunctions/PaintedArea.h GUI/BrushSettings/CurrentBrushSettings.cpp GUI/BrushSettings/CurrentBrushSettings.h GUI/CurrentTexture/ScrollArea.cpp
         GUI/CurrentTexture/ScrollArea.h GUI/TextureInformation/TextureInfoScrollArea.cpp GUI/TextureInformation/TextureInfoScrollArea.h GUI/TextureInformation/SelectedTextureInformation.cpp
-        GUI/TextureInformation/SelectedTextureInformation.h GUI/TextureInformation/SaveQualitySlider.cpp GUI/TextureInformation/SaveQualitySlider.h GUI/LoadResults/OptionsMenu.cpp
+        GUI/TextureInformation/SelectedTextureInformation.h GUI/LoadResults/OptionsMenu.cpp
         GUI/LoadResults/OptionsMenu.h GUI/Dialogs/AddNewTab.cpp GUI/Dialogs/AddNewTab.h GUI/Atlas/AtlasTabOptionsMenu.cpp GUI/Atlas/AtlasTabOptionsMenu.h GUI/Dialogs/AddNewAtlasTab.cpp
         GUI/Dialogs/AddNewAtlasTab.h GUI/TextureHelperFunctions/TextureFormats.cpp GUI/TextureHelperFunctions/TextureFormats.h TextureLogic/Zoom.cpp Atlas/AtlasInformationBundle.h
         Atlas/AtlasInformationBundle.cpp ProjectLoader/TextureAtlasLoader.h ProjectLoader/TextureButtonAreaLoader.h ProjectLoader/ProjectParser.cpp ProjectLoader/ProjectParser.h
-        Tests/ProjectLoader/TestProjectLoader.cpp Tests/ProjectLoader/TestProjectLoader.h GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.cpp GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.h GUI/CurrentTexture/SpecularTexture/ScrollArea.cpp GUI/CurrentTexture/SpecularTexture/ScrollArea.h GUI/CurrentTexture/SpecularTexture/DisplayArea.cpp GUI/CurrentTexture/SpecularTexture/DisplayArea.h)
+        Tests/ProjectLoader/TestProjectLoader.cpp Tests/ProjectLoader/TestProjectLoader.h GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.cpp GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.h GUI/CurrentTexture/SpecularTexture/ScrollArea.cpp GUI/CurrentTexture/SpecularTexture/ScrollArea.h GUI/CurrentTexture/SpecularTexture/DisplayArea.cpp GUI/CurrentTexture/SpecularTexture/DisplayArea.h GUI/NameForm.cpp GUI/NameForm.h)
 
 target_link_libraries(TextureAtlasCreator ${Qt5Widgets_LIBRARIES} ${Qt5Test_LIBRARIES})

@@ -84,6 +84,14 @@ namespace GUI
                 static void decrementTextureRepresentation(const QString &textureLocation);
 
                 /**
+                 * Checks if there are any textures loaded with the same name as what was passed in.
+                 *
+                 * @param textureLocation location from which to extract name of the texture that is being loaded
+                 * @return true if there is a texture with the same name
+                 */
+                static bool textureNameExists(const QString &textureLocation);
+
+                /**
                  *  Get the map holding how many texture buttons are representing a given texture.
                  *
                  * @return map counting how many texture buttons are representing a texture

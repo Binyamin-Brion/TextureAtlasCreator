@@ -35,7 +35,7 @@ namespace GUI
 
             chooseTexture = new Dialogs::ChooseTexture{this};
 
-            connect(chooseTexture, SIGNAL(textureChosen(QString, QString, unsigned int, unsigned int)), this, SLOT(openTexture(QString, QString, unsigned int, unsigned int)));
+            connect(chooseTexture, SIGNAL(textureChosen(QString, QString, unsigned int, unsigned int, bool)), this, SLOT(openTexture(QString, QString, unsigned int, unsigned int, bool)));
 
             // By default there is always at least one tab to hold texture buttons
             addTextureButtonArea("Default");
@@ -341,7 +341,7 @@ namespace GUI
             }
         }
 
-        void LoadedTextures::openTexture(QString textureButtonAreaName, QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
+        void LoadedTextures::openTexture(QString textureButtonAreaName, QString textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth,  bool loadingProject)
         {
             // Remember that the user can choose into what button area to load a texture button into; therefore that
             // area has to be found first before it can be added there
@@ -349,7 +349,7 @@ namespace GUI
             {
                 if(i.second == textureButtonAreaName)
                 {
-                    i.first->addTextureButton(textureLocation, intersectionBorderWidth, selectionBorderWidth);
+                    i.first->addTextureButton(textureLocation, intersectionBorderWidth, selectionBorderWidth, loadingProject);
 
                     return;
                 }

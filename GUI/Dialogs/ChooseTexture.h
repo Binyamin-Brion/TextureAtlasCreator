@@ -29,8 +29,9 @@ namespace GUI
                  *   2. Location to the texture chosen on the file system
                  *   3. Intersection width for the texture chosen
                  *   4. Selection width for the texture chosen
+                 *   5. true if loading a project. False in this case.
                  */
-                void textureChosen(QString, QString, unsigned int, unsigned int);
+                void textureChosen(QString, QString, unsigned int, unsigned int, bool);
 
             public:
 

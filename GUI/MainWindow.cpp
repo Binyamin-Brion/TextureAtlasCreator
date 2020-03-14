@@ -9,13 +9,16 @@
 #include "MainWindow.h"
 #include "TextureLogic/TextureBank.h"
 #include "ProjectLoader/ProjectParser.h"
+#include "NameForm.h"
+#include "ui_mainwindow.h"
 
 namespace GUI
 {
     MainWindow::MainWindow(QWidget *parent)
                 :
                     QMainWindow{parent},
-                    ui{new Ui::MainWindow}, textureBank{std::make_unique<TextureLogic::TextureBank>()}
+                    ui{new Ui::MainWindow}, textureBank{std::make_unique<TextureLogic::TextureBank>()},
+                    nameFormUi{new NameForm{this}}
     {
         ui->setupUi(this);
 
@@ -155,6 +158,7 @@ namespace GUI
 
         // Don't automatically overwrite previously saved location if there is one
         previousSaveLocation.clear();
+        projectName.clear();
     }
 
     void MainWindow::openProject()
@@ -198,25 +202,25 @@ namespace GUI
 
             for(const auto &j : i.textures)
             {
-                QString textureLocation = createPathToTexture(j.textureLocation);
+                ui->loadedTextures->openTexture(i.areaName, j.textureLocation, j.intersectionWidth, j.selectionWidth, true);
 
-                ui->loadedTextures->openTexture(i.areaName, textureLocation, j.intersectionWidth, j.selectionWidth);
-
-                loadedTexturesBorderWidths.insert(textureLocation, std::make_pair(j.intersectionWidth, j.selectionWidth));
+                loadedTexturesBorderWidths.insert(j.textureLocation, std::make_pair(j.intersectionWidth, j.selectionWidth));
             }
         }
 
         for(const auto &i : projectParser.getTextureAtlases())
         {
+            static int index = 0;
+
             ui->atlasWidget->addAtlasWidget(i.atlasName, i.atlasSize, TextureHelperFunctions::convertToFormat(i.format));
+
+            ui->atlasWidget->setCurrentIndex(index++);
 
             for(const auto &j : i.textures)
             {
-                QString textureLocation = createPathToTexture(j.textureLocation);
-
                 // Certain logic is required when adding a texture to an atlas. Therefore go through the process program would take to add a texture to an atlas
                 // during runtime when user clicks a texture button.
-                textureBank->textureButtonPressedMainWindow(i.atlasName, textureLocation, loadedTexturesBorderWidths[textureLocation].first, loadedTexturesBorderWidths[textureLocation].second, j.position, {});
+                textureBank->textureButtonPressedMainWindow(i.atlasName, j.textureLocation, loadedTexturesBorderWidths[j.textureLocation].first, loadedTexturesBorderWidths[j.textureLocation].second, j.position, {});
             }
         }
 
@@ -224,11 +228,27 @@ namespace GUI
 
         // Don't automatically overwrite previously saved location if there is one
         previousSaveLocation.clear();
+
+        projectName.clear();
     }
 
     void MainWindow::saveAsProject()
     {
-        previousSaveLocation = QFileDialog::getSaveFileName(this, "Save Project As", QDir::homePath(), projectExtension) + projectExtension;
+        if(projectName.isEmpty())
+        {
+            nameFormUi->exec();
+
+            projectName = nameFormUi->getChosenName();
+
+            if(projectName.isEmpty())
+            {
+                QMessageBox::critical(this, "Invalid Project Name", "A name must be entered for the project.", QMessageBox::Ok);
+
+                return;
+            }
+        }
+
+        previousSaveLocation = QFileDialog::getExistingDirectory(this, "Save Project As", QDir::homePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
         // User closed the file selection dialog without choosing anything
         if(previousSaveLocation.isEmpty())
@@ -236,12 +256,33 @@ namespace GUI
             return;
         }
 
-        QFile saveFile{previousSaveLocation};
+        previousSaveLocation += '/' + projectName;
 
-        if(saveFile.exists())
+        QDir directoryMaker;
+
+        if(directoryMaker.exists(previousSaveLocation))
         {
-            saveFile.remove();
+            int response = QMessageBox::information(this, "Save Location Already Exists", "Overwrite it?",
+                                                    QMessageBox::Yes | QMessageBox::Cancel);
+
+            if(response != QMessageBox::Yes)
+            {
+                return;
+            }
+
+            directoryMaker.remove(previousSaveLocation);
         }
+
+        // If this fails, the original save location is lost if it existed. However, used already indicated they don't care
+        // if it gets removed in the above warning.
+        if(!directoryMaker.mkdir(previousSaveLocation))
+        {
+            QMessageBox::critical(this, "Unable To Create Save Directory", "An unknown error occurred.", QMessageBox::Ok);
+
+            return;
+        }
+
+        previousSaveLocation += "/ProjectName" + projectExtension;
 
         try
         {
@@ -257,7 +298,7 @@ namespace GUI
 
     void MainWindow::saveProject()
     {
-        if(previousSaveLocation.isEmpty())
+        if(previousSaveLocation.isEmpty() || projectName.isEmpty())
         {
             saveAsProject();
 
@@ -309,39 +350,11 @@ namespace GUI
         previousSaveLocation.clear();
     }
 
-    QString MainWindow::createPathToTexture(QString loadedPath)
-    {
-        // For testing purposes, it is assumed that test project files can be loaded into the program.
-        // To ensure that assets are available, the texture locations have to be specified relative to this program folder.
-
-        #ifdef QT_DEBUG
-
-                if(loadedPath.startsWith('/'))
-                {
-                    QDir executableDirectory = QDir::current();
-
-                    if(!executableDirectory.cdUp())
-                    {
-                        Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\n\nFailure to get to test asset folder.\n\n");
-                    }
-
-                    if(!executableDirectory.cd("Assets/Test"))
-                    {
-                        Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\n\nFailure to get to test asset folder.\n\n");
-                    }
-
-                    loadedPath = executableDirectory.path() + loadedPath;
-                }
-
-        #endif
-
-        return loadedPath;
-    }
-
     void MainWindow::showPercentageUsed(::Atlas::AtlasInformationBundle atlasInformationBundle)
     {
         ui->atlasFormatLabel->setText("Atlas Format: " + TextureHelperFunctions::convertToString(atlasInformationBundle.textureFormat));
         ui->numberTexturesLabel->setText("Number of Textures in Atlas: " + QString::number(atlasInformationBundle.numberTexturesUsed));
         ui->percentageAtlasUsed->setText("Percentage Atlas Used: " + QString::number(atlasInformationBundle.percentageAtlasUsed));
     }
+
 }

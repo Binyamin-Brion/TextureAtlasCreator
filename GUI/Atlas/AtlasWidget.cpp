@@ -25,6 +25,8 @@ namespace GUI
             setMinimumSize(atlasSize);
             setMaximumSize(atlasSize);
 
+            textureAtlas->setAtlasSize(atlasSize);
+
             // Widget needs to track cursor if a texture is being dragged around
             setMouseTracking(true);
 

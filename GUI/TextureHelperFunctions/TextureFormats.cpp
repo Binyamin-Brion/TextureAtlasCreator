@@ -38,6 +38,31 @@ namespace GUI
             return requestedFormatLocation->formatStringRepresentation;
         }
 
+        QString getImageFormat(QString textureLocation)
+        {
+            textureLocation = textureLocation.replace('\\', '/');
+
+            // File type (and therefore texture type here) is everything after the period in a file location.
+            return  textureLocation.right(textureLocation.size() - textureLocation.lastIndexOf('.') - 1);
+        }
+
+        QString getImageName(QString textureLocation)
+        {
+            // To ensure everything works as expected on Windows and Linux, ensure only forward slashes in file system locations.
+            textureLocation = textureLocation.replace('\\', '/');
+
+            // The texture name is any text after the last slash, minus text after the period denoting the file type.
+            QString textureName = textureLocation.right(textureLocation.size() - textureLocation.lastIndexOf('/') - 1);
+
+            // File type (and therefore texture type here) is everything after the period in a file location.
+            QString textureFormat = textureName.right(textureLocation.size() - textureLocation.lastIndexOf('.') - 1);
+
+            // File type not part of texture name.
+            textureName.chop(textureFormat.size() + 1);
+
+            return textureName;
+        }
+
         std::vector<InternalFormatPair> internalFormatPairRepresentations()
         {
             // There is a need to use both the actual enum for the format of the string (as when saving) and its string

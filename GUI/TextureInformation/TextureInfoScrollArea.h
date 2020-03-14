@@ -23,7 +23,7 @@ namespace GUI
 
         /**
          *  Provides a scrollable view for the SelectedTextureInformation Widget.
-         *  Since that widget cannot fit all of its content into the screen space given to it,
+         *  Since that widget may potentially not fit all of its content into the screen space given to it,
          *  a scrollable view is needed to view all of it.
          */
 

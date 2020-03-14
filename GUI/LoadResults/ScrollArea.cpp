@@ -22,9 +22,9 @@ namespace GUI
             setWidget(textureButtonArea);
         }
 
-        void ScrollArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth)
+        void ScrollArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, bool loadingProject)
         {
-            textureButtonArea->addTextureButton(textureLocation, intersectionBorderWidth, selectionBorderWidth);
+            textureButtonArea->addTextureButton(textureLocation, intersectionBorderWidth, selectionBorderWidth, loadingProject);
         }
 
         void ScrollArea::deleteTextureButtons(bool closingProgram)

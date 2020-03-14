@@ -103,17 +103,6 @@ namespace GUI
                 void intersectionZoomComboBoxChanged(int index);
 
                 /**
-                 *  Checks that the new save quality number is valid and within the possible range, and updates the
-                 *  save quality slider to show the same number.
-                 */
-                void saveQualityChanged();
-
-                /**
-                 *  Handles the logic of saving a new copy of the selected texture.
-                 */
-                void saveTexturePressed();
-
-                /**
                  *  Checks that the user entered a valid number for the selection border width before emitting the
                  *  newSelectionBorderWidth signal.
                  */
@@ -126,11 +115,6 @@ namespace GUI
                  * @param index into the list of zoom options
                  */
                 void selectionZoomComboBoxChanged(int index);
-
-                /**
-                 *  Associates the entered description in the text description field with the currently selected texture.
-                 */
-                void textureDescriptionChanged();
 
                 /**
                  *  Checks that the new texture name is valid.

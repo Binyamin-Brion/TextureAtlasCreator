@@ -59,11 +59,8 @@ namespace ProjectLoader
             // Signals the end of a section within the project file
             if(qString.contains('='))
             {
-                processingAtlas = false;
-                processingButtonArea = false;
-
                 // Condition is true if a texture button area was the last thing processed
-                if(!textureButtonAreaLoader.textures.empty())
+                if(processingButtonArea)
                 {
                     textureButtonAreas.push_back(textureButtonAreaLoader);
 
@@ -71,7 +68,7 @@ namespace ProjectLoader
                 }
 
                 // Condition is true if a texture atlas was the last thing processed
-                if(!textureAtlasLoader.textures.empty())
+                if(processingAtlas)
                 {
                     textureAtlases.push_back(textureAtlasLoader);
 
@@ -79,6 +76,9 @@ namespace ProjectLoader
 
                     atlasInformationIndex = 0;
                 }
+
+                processingAtlas = false;
+                processingButtonArea = false;
             }
 
             // If a line results in parsing a button area, then parseArea() will not do anything and this is true the other way around

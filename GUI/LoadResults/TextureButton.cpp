@@ -4,6 +4,7 @@
 
 #include "TextureButton.h"
 #include <QMap>
+#include "GUI/TextureHelperFunctions/TextureFormats.h"
 #include "../TextureLogic/Texture.h"
 
 namespace GUI
@@ -105,6 +106,23 @@ namespace GUI
 
             // Leave some border of the button visible around the icon so it still looks like a button
             setIconSize(QSize{140, 140});
+        }
+
+        bool TextureButton::textureNameExists(const QString &textureLocation)
+        {
+            QMapIterator<QString, int> i{textureRepresentationCount};
+
+            while(i.hasNext())
+            {
+                i.next();
+
+                if(TextureHelperFunctions::getImageName(i.key()) == TextureHelperFunctions::getImageName(textureLocation))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         const QMap<QString, int> &TextureButton::getTextureRepresentationCount()

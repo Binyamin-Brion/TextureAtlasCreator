@@ -36,6 +36,10 @@ namespace GUI
          */
         QString convertToString(QImage::Format imageFormat);
 
+        QString getImageFormat(QString textureLocation);
+
+        QString getImageName(QString textureLocation);
+
         /**
          * Returns a list of Qt enum formats along with their string representation.
          *

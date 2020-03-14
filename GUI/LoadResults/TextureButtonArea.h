@@ -65,8 +65,9 @@ namespace GUI
                  * @param textureLocation location of the texture this button represents
                  * @param intersectionBorderWidth specified intersection width in the texture loading dialog
                  * @param selectionBorderWidth specified selection width in the texture loading dialog
+                 * @param loadingProject true if this function is called when loading a project
                  */
-                void addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth);
+                void addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, bool loadingProject);
 
                 /**
                  *  This does not directly delete texture buttons; when this area is deleted all of the buttons are automatically deleted.
