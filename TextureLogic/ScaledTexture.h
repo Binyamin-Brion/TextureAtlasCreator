@@ -75,7 +75,7 @@ namespace TextureLogic
              *
              * @return reference to the specular map
              */
-            QImage& getSpecularTexture();
+            const QImage& getSpecularTexture() const;
 
             /**
              * Serves as the constructor for this class, initializing all required variables.

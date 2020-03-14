@@ -110,15 +110,7 @@ namespace TextureLogic
              * @param zoom at which the specular map should be at
              * @return reference to the specular map resource at the given zoom
              */
-            QImage& getSpecularTexture(TextureLogic::Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::SpecularTexture::DisplayArea>);
-
-            /**
-             * Get the specular map for the texture at the given zoom.
-             *
-             * @param zoom at which the specular map should be at
-             * @return reference to the specular map resource at the given zoom
-             */
-            QImage& getSpecularTextureDiffuseArea(TextureLogic::Zoom zoom , AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>);
+            const QImage& getSpecularTexture(TextureLogic::Zoom zoom) const;
 
             /**
              * Get the description associated with this texture.

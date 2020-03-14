@@ -155,8 +155,10 @@ namespace Atlas
         return currentZoom;
     }
 
-    bool TextureAtlas::exportImage(const QString &exportLocation) const
+    bool TextureAtlas::exportImage(const QString &exportLocation, const QString &exportLocationSpecular) const
     {
+        printf("Saving to: %s, %s \n", exportLocation.toStdString().c_str(), exportLocationSpecular.toStdString().c_str());
+
         // Exporting is done at the Normal zoom level, as that is true representation of the sizes that the user
         // has input into the program. To account for this without having to change the zoom onscreen, the ratio
         // between the current zoom and the normal zoom is calculated so it is known what the exported atlas should be.
@@ -164,10 +166,12 @@ namespace Atlas
         // which should not affect the final exported atlas size.
         float zoomFactor = TextureLogic::GetZoomValue(TextureLogic::Zoom::Normal) / TextureLogic::GetZoomValue(currentZoom);
 
-        QImage image = QPixmap(atlasSize * zoomFactor).toImage();
+        QImage diffuseTexture = QPixmap(atlasSize * zoomFactor).toImage();
+        QImage specularTexture = QPixmap(atlasSize * zoomFactor).toImage();
 
         // The exported image should have the same format as what the atlas was specified to have when it was created
-        image = image.convertToFormat(atlasFormat);
+        diffuseTexture = diffuseTexture.convertToFormat(atlasFormat);
+        specularTexture = specularTexture.convertToFormat(atlasFormat);
 
         for(const auto &i : textureDrawingPositions)
         {
@@ -183,7 +187,8 @@ namespace Atlas
             {
                 for(int y = 0; y < i.texture->getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
                 {
-                    image.setPixelColor(xDrawingPosition + x, yDrawPosition + y, i.texture->getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
+                    diffuseTexture.setPixelColor(xDrawingPosition + x, yDrawPosition + y, i.texture->getImage(::TextureLogic::Zoom::Normal).pixelColor(x, y));
+                    specularTexture.setPixelColor(xDrawingPosition + x, yDrawPosition + y, i.texture->getSpecularTexture(::TextureLogic::Zoom::Normal).pixelColor(x, y));
                 }
             }
         }
@@ -197,12 +202,16 @@ namespace Atlas
             {
                 for(int y = 0; y <  selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
                 {
-                    image.setPixelColor(selectedExistingTexture->getDrawingCoordinates().x() + x, selectedExistingTexture->getDrawingCoordinates().y() + y, selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
+                    diffuseTexture.setPixelColor(selectedExistingTexture->getDrawingCoordinates().x() + x, selectedExistingTexture->getDrawingCoordinates().y() + y,
+                            selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
+
+                    specularTexture.setPixelColor(selectedExistingTexture->getDrawingCoordinates().x() + x, selectedExistingTexture->getDrawingCoordinates().y() + y,
+                            selectedExistingTexture->getImageForDrawing().getSpecularTexture(::TextureLogic::Zoom::Normal).pixelColor(x, y));
                 }
             }
         }
 
-        return image.save(exportLocation);
+        return diffuseTexture.save(exportLocation) && specularTexture.save(exportLocationSpecular);
     }
 
     void TextureAtlas::keyPressed(int keyID)

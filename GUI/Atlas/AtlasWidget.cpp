@@ -72,7 +72,9 @@ namespace GUI
 
         void AtlasWidget::exportTexture()
         {
-            QString newFileLocation = QFileDialog::getSaveFileName(this, tr("Save Image"), "", tr(""));
+            // Tried to have option to save as png in file dialog, but it doesn't show up for some reason. Have to do
+            // this manually in code later in the function
+            QString newFileLocation = QFileDialog::getSaveFileName(this, tr("Save Image"), QDir::homePath());
 
             // If no location is selected to save to, then do not attempt to export the atlas
             if(newFileLocation.isEmpty())
@@ -80,11 +82,37 @@ namespace GUI
                 return;
             }
 
+            QString newFileLocationSpecular = newFileLocation;
+
+            // Export as png file for maximum quality.
+            if(!newFileLocation.contains(".png"))
+            {
+                newFileLocation += ".png";
+                newFileLocationSpecular +=  "_Specular.png";
+            }
+            else
+            {
+                newFileLocationSpecular = newFileLocationSpecular.remove(".png");
+                newFileLocationSpecular += "_Specular.png";
+            }
+
+            if(!checkValidLocation(newFileLocation))
+            {
+                // Abort operation if user decided to cancel operation after receiving notice that the location they chose
+                // already exists.
+                return;
+            }
+
+            if(!checkValidLocation(newFileLocationSpecular))
+            {
+                // Same logic as the above if-block
+                return;
+            }
+
             // Export as a png image, to make sure no quality is lost from the texture atlas. User can convert to
             // different formats if desired using external tools.
-            newFileLocation += ".png";
 
-            if(!textureAtlas->exportImage(newFileLocation))
+            if(!textureAtlas->exportImage(newFileLocation, newFileLocationSpecular))
             {
                 QMessageBox::critical(this, "Error Exporting Image", "Failed to save the texture atlas.", QMessageBox::Ok);
             }
@@ -383,6 +411,35 @@ namespace GUI
             c.setPos(mapToGlobal(QPoint{x, y}));
 
             setCursor(c);
+        }
+
+        bool AtlasWidget::checkValidLocation(QString &chosenLocation)
+        {
+            while(true)
+            {
+                if(QFile::exists(chosenLocation))
+                {
+                    int response = QMessageBox::warning(this, "Overwrite Confirmation", "The location to be used for saving the texture: \n" +
+                                                                                        chosenLocation + " already exists. Save to a new location?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+                    if(response == QMessageBox::Yes)
+                    {
+                        chosenLocation = QFileDialog::getSaveFileName(this, tr("Save Image"), "", tr(""));
+
+                        chosenLocation += ".png";
+
+                        continue;
+                    }
+                    else if(response == QMessageBox::Cancel)
+                    {
+                        QMessageBox::information(this, "Cancel Save Operation", "The save operation has been cancelled.", QMessageBox::Ok);
+
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
 
         bool AtlasWidget::lockCursorToViewPort(int &mouseX, int &mouseY)

@@ -27,7 +27,7 @@ namespace GUI
                 // Paint event can still be called even when no texture is selected.
                 if(specularTexture != nullptr)
                 {
-                    painter.drawImage(QPoint{0, 0}, const_cast<::TextureLogic::Texture*>(specularTexture)->getSpecularTexture(currentZoom, {}));
+                    painter.drawImage(QPoint{0, 0}, specularTexture->getSpecularTexture(currentZoom));
                 }
             }
 

@@ -39,7 +39,7 @@ namespace TextureLogic
         return selectionBorderWidth;
     }
 
-    QImage& ScaledTexture::getSpecularTexture()
+    const QImage& ScaledTexture::getSpecularTexture() const
     {
         return specularTexture;
     }

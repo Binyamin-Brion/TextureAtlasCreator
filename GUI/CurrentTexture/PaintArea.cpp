@@ -255,7 +255,7 @@ namespace GUI
         {
             if(brush.getPaintingSpecularTexture())
             {
-                return texture->getSpecularTextureDiffuseArea(zoom, {});
+                return texture->getSpecularTexture(zoom);
             }
             else
             {

@@ -243,6 +243,16 @@ namespace GUI
             private:
 
                 /**
+                 * Checks if the passed in location already exists. If it does, the user will be asked to either choose a
+                 * new location, overwrite the existing location, or abort the entire save operation.
+                 *
+                 * @param chosenLocation location to check if it already exists. Any new location chosen here is reflected in
+                 *        this variable.
+                 * @return true if the save operation should proceed
+                 */
+                bool checkValidLocation(QString &chosenLocation);
+
+                /**
                  * Ensures that when the user is dragging a texture, they cannot move the cursor outside of the viewport,
                  * effectively helping to lock the cursor to the part of the widget that is visible.
                  *
