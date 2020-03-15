@@ -116,11 +116,6 @@ namespace GUI
                  */
                 void selectionZoomComboBoxChanged(int index);
 
-                /**
-                 *  Checks that the new texture name is valid.
-                 */
-                void textureNameChanged();
-
             private:
 
                 /**

@@ -87,7 +87,7 @@ namespace GUI
                 // See internal note at CurrentTextureTabWidget.cpp
                 std::vector<std::pair<std::vector<TextureLogic::Texture>, std::vector<unsigned int>>> *textures = nullptr;
                 // Index into the textures vector; indicates if a texture is selected (if no texture is selected, then has value of -1)
-                int currentTextureIndex;
+                int currentTextureIndex = -1;
 
                 TextureLogic::TextureBank *textureBank = nullptr;
         };

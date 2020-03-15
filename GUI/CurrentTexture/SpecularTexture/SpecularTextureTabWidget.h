@@ -76,7 +76,7 @@ namespace GUI
 
                 private:
                     ScrollArea *displayScrollArea = nullptr;
-                    int currentTextureIndex;
+                    int currentTextureIndex = -1;
                     unsigned int formatIndex;
                     const TextureLogic::TextureBank *textureBank = nullptr;
             };

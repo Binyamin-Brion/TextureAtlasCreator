@@ -23,8 +23,6 @@ namespace GUI
 
             ui->setupUi(this);
 
-           connect(ui->textureNameLineEdit, SIGNAL(returnPressed()), this, SLOT(textureNameChanged()));
-
            connect(ui->intersectionBorderWidthLineEdit, SIGNAL(returnPressed()), this, SLOT(intersectionBorderWidthChanged()));
 
            connect(ui->selectionBorderWidthLineEdit, SIGNAL(returnPressed()), this, SLOT(selectionBorderWidthChanged()));
@@ -61,8 +59,6 @@ namespace GUI
 
         void SelectedTextureInformation::selectedTextureModified()
         {
-            static int textureModifyCount = 0;
-
             // This check should not be needed as the render area and this widget are synchronized in the widget that is selected.
             // The only way for a texture to be modified is if the render area holds a selected texture, in which case so does this widget
             if(texture != nullptr)
@@ -71,10 +67,6 @@ namespace GUI
                 {
                     return;
                 }
-
-                texture->setTextureName(texture->textureName() + "_Modified_" + QString::number(textureModifyCount++), {});
-
-                ui->textureNameLineEdit->setText(texture->textureName());
 
                 QString previousTextureLocation = texture->textureLocation();
 
@@ -117,7 +109,6 @@ namespace GUI
 
             ui->intersectionBorderWidthLineEdit->setEnabled(true);
             ui->selectionBorderWidthLineEdit->setEnabled(true);
-            ui->textureNameLineEdit->setEnabled(true);
             ui->intersectionZoomComboxBox->setEnabled(true);
             ui->selectionZoomComboBox->setEnabled(true);
 
@@ -129,7 +120,6 @@ namespace GUI
 
             ui->intersectionBorderWidthLineEdit->setText(QString::number(texture->getIntersectionBorderWidth(zoomPairs[ui->intersectionZoomComboxBox->currentIndex()].zoom)));
             ui->selectionBorderWidthLineEdit->setText(QString::number(texture->getSelectedBorderWidth(zoomPairs[ui->selectionZoomComboBox->currentIndex()].zoom)));
-            ui->textureNameLineEdit->setText(texture->textureName());
             ui->textureLocationLabel->setText("Original Texture Location: " + texture->textureLocation());
             ui->textureWidthLabel->setText("Texture Width: " + QString::number(textureImage.width()));
             ui->textureHeightLabel->setText("Texture Height: " + QString::number(textureImage.height()));
@@ -201,31 +191,6 @@ namespace GUI
                 ui->selectionBorderWidthLineEdit->setText(QString::number(texture->getSelectedBorderWidth(zoomPairs[index].zoom)));
             }
         }
-
-        void SelectedTextureInformation::textureNameChanged()
-        {
-            // Note that even if return is pressed, the texture is not changed until the texture is saved.
-            // This is because due to how textures are loaded when a texture button is pressed (texture location is given to find an image)
-            // the user will still not be able to load the old texture with the old name in. Therefore there is no point in doing so now.
-            if(ui->textureNameLineEdit->text().contains("_Modified_"))
-            {
-                QMessageBox::warning(this, tr("Error: Invalid Texture Name"), "Cannot have a texture name with the word Modified.", QMessageBox::Ok);
-
-                return;
-            }
-            else if(ui->textureNameLineEdit->text() == texture->textureName())
-            {
-                QMessageBox::warning(this, tr("Error: Invalid Texture Name"), "You must choose unique name, different than an existing texture's!", QMessageBox::Ok);
-
-                return;
-            }
-
-            if(texture != nullptr)
-            {
-                texture->setTextureName(ui->textureNameLineEdit->text(), {});
-            }
-        }
-
         // Beginning of private functions
 
         int SelectedTextureInformation::checkValidBorderWidth(QLineEdit *lineEdit, int maxValue)
@@ -265,7 +230,6 @@ namespace GUI
 
             ui->intersectionBorderWidthLineEdit->setEnabled(false);
             ui->selectionBorderWidthLineEdit->setEnabled(false);
-            ui->textureNameLineEdit->setEnabled(false);
             ui->intersectionZoomComboxBox->setEnabled(false);
             ui->selectionZoomComboBox->setEnabled(false);
         }

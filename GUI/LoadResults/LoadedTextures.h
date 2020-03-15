@@ -200,7 +200,7 @@ namespace GUI
                 OptionsMenu *optionsMenu = nullptr;
 
                 const ::TextureLogic::Texture *selectedTexture = nullptr;
-                int currentTextureIndex;
+                int currentTextureIndex = -1;
                 unsigned int formatIndex;
         };
     }

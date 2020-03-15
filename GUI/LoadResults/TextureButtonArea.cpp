@@ -70,29 +70,13 @@ namespace GUI
 
         void TextureButtonArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, bool loadingProject)
         {
-            // A texture button cannot be present more than one texture button representing the same texture, as that is redundant
-            for(const auto &i : textureButtons)
-            {
-                if(i->getTextureLocation() == textureLocation)
-                {
-                    std::string errorMessage;
-
-                    errorMessage += "The texture " + textureLocation.toStdString() + " has already been loaded into the current tab.\n\n";
-                    errorMessage += "Duplicate textures button cannot exist in the same tab.\n";
-                    errorMessage += "The requested operation will be aborted.";
-
-                    QMessageBox::warning(this, tr("Error: Texture Already Loaded"), errorMessage.c_str(), QMessageBox::Ok);
-
-                    return;
-                }
-            }
 
             if(!loadingProject && TextureButton::textureNameExists(textureLocation))
             {
                 // When saving a project, the names of a texture are used in the saving process. Duplicate textures could mess this up.
 
-                QMessageBox::warning(this, "Texture Name Already Exists", "A texture with the name: " + TextureHelperFunctions::getImageName(textureLocation) + " already exists."
-                                                                                                                                                                "\n Rename the texture with the offending name first.", QMessageBox::Ok);
+                QMessageBox::warning(this, "Texture Already Loaded", "A texture with the name: " + TextureHelperFunctions::getImageName(textureLocation) + " already exists.\n"
+                                                                                                                                                           "Rename the texture being loaded.");
 
                 return;
             }
