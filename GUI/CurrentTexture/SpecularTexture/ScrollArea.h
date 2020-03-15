@@ -6,6 +6,7 @@
 #define TEXTUREATLASCREATOR_SPECULAR_TEXTURE_SCROLLAREA_H
 
 #include <QtWidgets/QScrollArea>
+#include "../TextureLogic/Zoom.h"
 
 namespace TextureLogic
 {
@@ -29,6 +30,13 @@ namespace GUI
             class ScrollArea : public QScrollArea
             {
                     Q_OBJECT
+
+                signals:
+
+                    /**
+                      *  Emitted when the zoom of the specular display area changes.
+                      */
+                    void zoomChanged(::TextureLogic::Zoom);
 
                 public:
 

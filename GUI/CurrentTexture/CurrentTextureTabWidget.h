@@ -45,7 +45,7 @@ namespace GUI
                 /**
                  *  Emitted when the zoom changes. Emits the new zoom level.
                  */
-                void zoomChanged(TextureLogic::Zoom);
+                void zoomChanged(::TextureLogic::Zoom);
 
             public:
 

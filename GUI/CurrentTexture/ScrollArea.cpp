@@ -105,6 +105,9 @@ namespace GUI
                 // Otherwise process the event as normal, which would move the scroll bars.
                 QScrollArea::wheelEvent(event);
             }
+
+            // See GUI/Atlas/ScrollArea.cpp for explanation of why this is done
+            controlKeyDown = false;
         }
     }
 }

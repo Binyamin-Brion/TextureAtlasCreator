@@ -614,7 +614,7 @@ namespace Atlas
             QString localTextureLocation = saveLocation.left(saveLocation.lastIndexOf('/')) + '/' +
                                             selectedExistingTexture->getImageForDrawing().textureName() + '.' + selectedExistingTexture->getImageForDrawing().textureFormat();
 
-            saveStream << "Texture: " << selectedExistingTexture->getTextureLocation() << " -> Position: " << xDrawingPosition << " , " << yDrawingPosition << '\n';
+            saveStream << "Texture: " << localTextureLocation  << " -> Position: " << xDrawingPosition << " , " << yDrawingPosition << '\n';
 
             if(!QFile::exists(localTextureLocation))
             {

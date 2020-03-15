@@ -2,8 +2,8 @@
 // Created by BinyBrion on 10/2/2019.
 //
 
-#ifndef TEXTUREATLASCREATOR_SCROLLAREA_H
-#define TEXTUREATLASCREATOR_SCROLLAREA_H
+#ifndef TEXTUREATLASCREATOR_PAINT_AREA_SCROLLAREA_H
+#define TEXTUREATLASCREATOR_PAINT_AREA_SCROLLAREA_H
 
 #include <QtWidgets/QScrollArea>
 #include "TextureLogic/Zoom.h"
@@ -52,7 +52,7 @@ namespace GUI
                 /**
                  *  Emitted when the zoom changes. Emits the new zoom level.
                  */
-                void zoomChanged(TextureLogic::Zoom);
+                void zoomChanged(::TextureLogic::Zoom);
 
             public:
 

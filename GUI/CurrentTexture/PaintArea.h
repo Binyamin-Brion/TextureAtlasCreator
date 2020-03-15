@@ -79,7 +79,7 @@ namespace GUI
                  *
                  * @return zoom of the paint area
                  */
-                TextureLogic::Zoom getZoom() const;
+                ::TextureLogic::Zoom getZoom() const;
 
                 /**
                  * Handles mouse input.

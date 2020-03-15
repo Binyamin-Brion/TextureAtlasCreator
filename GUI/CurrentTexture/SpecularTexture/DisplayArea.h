@@ -38,6 +38,13 @@ namespace GUI
                     explicit DisplayArea(QWidget *parent = nullptr);
 
                     /**
+                     * Gets the zoom that this display area is currently at.
+                     *
+                     * @return zoom value of the display area
+                     */
+                    ::TextureLogic::Zoom getZoom() const;
+
+                    /**
                      * Handles requests to paint the selected texture, effectively showing the selected texture after
                      * it was painted.
                      *

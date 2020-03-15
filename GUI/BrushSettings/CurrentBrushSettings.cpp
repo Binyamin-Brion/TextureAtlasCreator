@@ -32,6 +32,10 @@ namespace GUI
 
             currentZoom = TextureLogic::Zoom::Normal;
 
+            ui->paintAreaZoom->setText("Paint Area Zoom: " + QString::number(::TextureLogic::GetZoomValue(currentZoom) * 100) + "%");
+            ui->specularDisplayZoom->setText("Specular Area Zoom: " + QString::number(::TextureLogic::GetZoomValue(currentZoom) * 100) + "%");
+            ui->textureZoomDimensions->setText("Texture Zoom Dimensions: N/A:");
+
             // Show a colour dialog if the colour brush button is pressed
             connect(ui->brushColourButton, SIGNAL(clicked()), this, SLOT(handleColourButtonPressed()));
 
@@ -70,22 +74,39 @@ namespace GUI
                 ui->brushWidthLineEdit->setText("No texture selected");
 
                 ui->brushWidthLineEdit->setEnabled(false);
+
+                ui->textureZoomDimensions->setText("Texture Zoom Dimensions: N/A:");
             }
             else
             {
                 ui->brushWidthLineEdit->setText(QString::fromStdString(std::to_string(brushSize.width())));
 
                 ui->brushWidthLineEdit->setEnabled(true);
+
+                ui->textureZoomDimensions->setText("Texture Zoom Dimensions: " + QString::number(selectedTextureSize.width()) + " x " + QString::number(selectedTextureSize.height()));
             }
         }
 
-        void CurrentBrushSettings::zoomChanged(TextureLogic::Zoom newZoom)
+        void CurrentBrushSettings::zoomChangedDisplayArea(::TextureLogic::Zoom newZoom)
         {
+            ui->specularDisplayZoom->setText("Specular Area Zoom: " + QString::number(::TextureLogic::GetZoomValue(newZoom) * 100) + "%");
+        }
+
+        void CurrentBrushSettings::zoomChangedPaintArea(::TextureLogic::Zoom newZoom)
+        {
+            float zoomFactor = TextureLogic::GetZoomValue(newZoom) / TextureLogic::GetZoomValue(currentZoom);
+
             currentZoom = newZoom;
 
             // With a different zoom, the brush changes its size so that it remains relative to the size of the texture,
             // which changes when the zoom does. This is displayed as required in this widget.
             ui->brushWidthLineEdit->setText(QString::number(brush->getPaintImage(currentZoom).width()));
+
+            ui->paintAreaZoom->setText("Paint Area Zoom: " + QString::number(::TextureLogic::GetZoomValue(newZoom) * 100) + "%");
+
+            selectedTextureSize *= zoomFactor;
+
+            ui->textureZoomDimensions->setText("Texture Zoom Dimensions: " + QString::number(selectedTextureSize.width()) + " x " + QString::number(selectedTextureSize.height()));
         }
 
         // Beginning of private slots
@@ -157,7 +178,7 @@ namespace GUI
         {
             bool validIntegerSizeSpecified = false;
 
-            int enteredWidth = ui->brushWidthLabel->text().toInt(&validIntegerSizeSpecified);
+            int enteredWidth = ui->brushWidthLineEdit->text().toInt(&validIntegerSizeSpecified);
 
             if(!validIntegerSizeSpecified || (enteredWidth > selectedTextureSize.width() || enteredWidth > selectedTextureSize.height() || enteredWidth <= 0))
             {
@@ -168,7 +189,7 @@ namespace GUI
                                      QMessageBox::Ok);
 
                 // Visually show the brush size as what it was before the user tried to change the brush size
-                ui->brushWidthLabel->setText(QString::fromStdString(std::to_string(brush->getPaintImage(currentZoom).size().width())));
+                ui->brushWidthLineEdit->setText(QString::fromStdString(std::to_string(brush->getPaintImage(currentZoom).size().width())));
             }
             else
             {

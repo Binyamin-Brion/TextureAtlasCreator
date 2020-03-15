@@ -63,11 +63,18 @@ namespace GUI
                 void updateSelectedTextureSize(QSize size, QSize brushSize);
 
                 /**
-                 * Called when the zoom of the RenderArea changes.
+                 * Called when the zoom of the specular display area changes.
                  *
-                 * @param newZoom updated zoom value of the RenderArea
+                 * @param newZoom updated zoom value of the specular display area
                  */
-                void zoomChanged(TextureLogic::Zoom newZoom);
+                void zoomChangedDisplayArea(::TextureLogic::Zoom newZoom);
+
+                /**
+                 * Called when the zoom of the PaintArea changes.
+                 *
+                 * @param newZoom updated zoom value of the PaintArea
+                 */
+                void zoomChangedPaintArea(::TextureLogic::Zoom newZoom);
 
             private slots:
 

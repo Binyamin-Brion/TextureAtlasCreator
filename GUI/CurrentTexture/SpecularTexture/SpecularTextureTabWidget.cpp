@@ -22,6 +22,8 @@ namespace GUI
                         displayScrollArea{new ScrollArea{this}}
             {
                 addTab(displayScrollArea, "Specular Texture");
+
+                connect(displayScrollArea, &ScrollArea::zoomChanged, [this](::TextureLogic::Zoom newZoomValue) { emit zoomChanged(newZoomValue); });
             }
 
             void SpecularTextureTabWidget::setSpecularTexture(const ::TextureLogic::Texture *texture)

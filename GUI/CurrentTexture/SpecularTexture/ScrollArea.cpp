@@ -71,19 +71,27 @@ namespace GUI
                     {
                         displayArea->zoomIn();
 
+                        emit zoomChanged(displayArea->getZoom());
+
                         QWidget::repaint();
 
                     } else if (event->angleDelta().y() < 0)
                     {
                         displayArea->zoomOut();
 
+                        emit zoomChanged(displayArea->getZoom());
+
                         QWidget::repaint();
                     }
-                } else
+                }
+                else
                 {
                     // Otherwise process the event as normal, which would move the scroll bars.
                     QScrollArea::wheelEvent(event);
                 }
+
+                // See GUI/Atlas/ScrollArea.cpp for explanation of why this is done
+                controlKeyDown = false;
             }
         }
     }

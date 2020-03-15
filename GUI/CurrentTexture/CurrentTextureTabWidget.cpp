@@ -42,7 +42,7 @@ namespace GUI
 
             // When the zoom, changes, the brush needs to know so that it can change its size so that its size remains constant
             // relative to the adjusted size of the texture
-            connect(paintAreaScrollArea, &ScrollArea::zoomChanged, [this](TextureLogic::Zoom newZoom) { emit zoomChanged(newZoom); });
+            connect(paintAreaScrollArea, &ScrollArea::zoomChanged, [this](::TextureLogic::Zoom newZoom) { emit zoomChanged(newZoom); });
 
 
             // Have to let texture atlas to know to repaint the selected texture as changes made in the render area are not automatically visible in the texture atlas

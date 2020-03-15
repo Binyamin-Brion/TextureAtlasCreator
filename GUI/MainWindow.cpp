@@ -143,9 +143,11 @@ namespace GUI
 
         connect(ui->currentTexture, SIGNAL(repaintSelectedTexture()), ui->loadedTextures, SLOT(paintTextureButtons()));
 
-        connect(ui->currentTexture, SIGNAL(selectedTextureChanged(QSize, QSize)), ui->brushSettings, (SLOT(updateSelectedTextureSize(QSize, QSize))));
+        connect(ui->currentTexture, SIGNAL(selectedTextureChanged(QSize, QSize)), ui->brushSettings, SLOT(updateSelectedTextureSize(QSize, QSize)));
 
-        connect(ui->currentTexture, SIGNAL(zoomChanged(TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChanged(TextureLogic::Zoom)));
+        connect(ui->specularTextureDisplay, SIGNAL(zoomChanged(::TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChangedDisplayArea(::TextureLogic::Zoom)));
+
+        connect(ui->currentTexture, SIGNAL(zoomChanged(::TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChangedPaintArea(::TextureLogic::Zoom)));
     }
 
     void MainWindow::newProject()

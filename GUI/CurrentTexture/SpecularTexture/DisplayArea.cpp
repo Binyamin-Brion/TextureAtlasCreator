@@ -20,6 +20,11 @@ namespace GUI
                 currentZoom = TextureLogic::Zoom::Normal;
             }
 
+            ::TextureLogic::Zoom DisplayArea::getZoom() const
+            {
+                return currentZoom;
+            }
+
             void DisplayArea::paintEvent(QPaintEvent *event)
             {
                 QPainter painter{this};

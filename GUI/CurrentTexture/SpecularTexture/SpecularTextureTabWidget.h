@@ -6,6 +6,7 @@
 #define TEXTUREATLASCREATOR_SPECULARTEXTURETABWIDGET_H
 
 #include <QtWidgets/QTabWidget>
+#include "../TextureLogic/Zoom.h"
 
 namespace TextureLogic
 {
@@ -28,6 +29,13 @@ namespace GUI
             class SpecularTextureTabWidget : public QTabWidget
             {
                     Q_OBJECT
+
+                signals:
+
+                    /**
+                     *  Emitted when the zoom of the specular display area changes.
+                     */
+                    void zoomChanged(::TextureLogic::Zoom);
 
                 public:
 

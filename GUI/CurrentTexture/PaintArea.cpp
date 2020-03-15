@@ -53,7 +53,7 @@ namespace GUI
             return textureFormat;
         }
 
-        TextureLogic::Zoom PaintArea::getZoom() const
+        ::TextureLogic::Zoom PaintArea::getZoom() const
         {
             return currentZoom;
         }

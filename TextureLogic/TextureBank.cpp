@@ -265,7 +265,10 @@ namespace TextureLogic
     {
         if(originalTextureUploadLocation.find(textureLocation.toStdString()) == originalTextureUploadLocation.end())
         {
-            Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Fatal internal error: requested texture has not been loaded into the texture bank first!");
+            QString errorMessage = "Fatal Internal Error: ";
+            errorMessage += textureLocation + " has not been loaded into the texture bank first!";
+
+            Q_ASSERT_X(false, __PRETTY_FUNCTION__, errorMessage.toStdString().c_str());
         }
 
         // The format of the texture that is requested is dependent on the format of the texture atlas that is currently
