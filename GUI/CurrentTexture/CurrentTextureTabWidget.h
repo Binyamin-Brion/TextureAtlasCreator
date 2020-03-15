@@ -56,7 +56,24 @@ namespace GUI
                  */
                 explicit CurrentTextureTabWidget(QWidget *parent = nullptr);
 
+                /**
+                 *  Notifies this object that unsaved changes have been saved.
+                 */
+                void changesSaved();
+
+                /**
+                 * Gets the reference to the brush used for painting.
+                 *
+                 * @return reference to painting brush
+                 */
                 ::PaintFunctions::Brush* getBrush();
+
+                /**
+                 * Returns whether there are any unsaved changes made to the texture.
+                 *
+                 * @return true if there are unsaved changes
+                 */
+                bool getUnsavedChanges() const;
 
                 /**
                  * Set the texture that can be painted. Forwards argument to the scroll area holding the render area.

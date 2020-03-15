@@ -25,6 +25,11 @@ namespace GUI
             connect(paintArea, &PaintArea::paintedSelectedTexture, [this]() { emit paintedSelectedTexture(); });
         }
 
+        void ScrollArea::changesSaved()
+        {
+            paintArea->changesSaved();
+        }
+
         void ScrollArea::enterEvent(QEvent *event)
         {
             QScrollArea::enterEvent(event);
@@ -40,6 +45,11 @@ namespace GUI
         QImage::Format ScrollArea::getCurrentTextureFormat() const
         {
             return paintArea->getCurrentTextureFormat();
+        }
+
+        bool ScrollArea::getUnsavedChanges() const
+        {
+            return paintArea->getUnsavedChanges();
         }
 
         TextureLogic::Zoom ScrollArea::getZoom() const

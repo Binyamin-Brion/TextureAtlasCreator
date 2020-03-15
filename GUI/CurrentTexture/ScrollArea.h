@@ -64,6 +64,11 @@ namespace GUI
                 explicit ScrollArea(QWidget *parent = nullptr);
 
                 /**
+                 *  Notifies this object that unsaved changes have been saved.
+                 */
+                void changesSaved();
+
+                /**
                  * When the cursor enters this widget, it automatically grabs the focus of the keyboard so that
                  * zoom shortcuts are received and processed as expected
                  *
@@ -84,6 +89,13 @@ namespace GUI
                  * @return format of the selected image. Note that if no image is selected, then an Qt::Invalid_Format is returned
                  */
                 QImage::Format getCurrentTextureFormat() const;
+
+                /**
+                 * Returns whether there are any unsaved changes made to the texture.
+                 *
+                 * @return true if there are unsaved changes
+                 */
+                bool getUnsavedChanges() const;
 
                 /**
                  * Get the current zoom of the area where the selected texture can be painted.

@@ -61,6 +61,11 @@ namespace GUI
                 explicit PaintArea(QWidget *parent = nullptr);
 
                 /**
+                 *  Notifies this object that unsaved changes have been saved.
+                 */
+                void changesSaved();
+
+                /**
                  * Get the brush that is currently being used for painting.
                  *
                  * @return brush being used to paint the selected texture
@@ -73,6 +78,13 @@ namespace GUI
                  * @return format of the selected image. Note that if no image is selected, then an Qt::Invalid_Format is returned
                  */
                 QImage::Format getCurrentTextureFormat();
+
+                /**
+                 * Returns whether there are any unsaved changes made to the texture.
+                 *
+                 * @return true if there are unsaved changes
+                 */
+                bool getUnsavedChanges() const;
 
                 /**
                  * Get the current zoom of the area where the selected texture can be painted.
@@ -196,6 +208,8 @@ namespace GUI
 
                 // The format that the texture being displayed. Used as a convenience variable.
                 QImage::Format textureFormat;
+
+                bool unsavedChanges = false;
         };
     }
 }

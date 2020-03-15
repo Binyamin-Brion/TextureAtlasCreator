@@ -41,6 +41,8 @@ namespace GUI
              */
             explicit MainWindow(QWidget *parent = nullptr);
 
+            void closeEvent(QCloseEvent *event) override;
+
             /**
              * See internal note at MainWindow.cpp.
              */

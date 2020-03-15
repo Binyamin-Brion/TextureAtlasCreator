@@ -175,13 +175,9 @@ namespace Atlas
 
         for(const auto &i : textureDrawingPositions)
         {
-            float xDrawingPosition = i.drawingPosition.x();
+            float xDrawingPosition = i.drawingPosition.x() * zoomFactor;
 
-            float yDrawPosition = i.drawingPosition.y();
-
-            xDrawingPosition *= zoomFactor;
-
-            yDrawPosition *= zoomFactor;
+            float yDrawPosition = i.drawingPosition.y() * zoomFactor;
 
             for(int x = 0; x < i.texture->getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
             {
@@ -198,14 +194,19 @@ namespace Atlas
         // that were added to the atlas, and as such the selectedTexture is not considered for exporting
         if(selectedExistingTexture->isOpen())
         {
+            float xDrawingPosition = selectedExistingTexture->getDrawingCoordinates().x() * zoomFactor;
+
+            float yDrawingPosition = selectedExistingTexture->getDrawingCoordinates().y() * zoomFactor;
+
             for(int x = 0; x < selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
             {
                 for(int y = 0; y <  selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
                 {
-                    diffuseTexture.setPixelColor(selectedExistingTexture->getDrawingCoordinates().x() + x, selectedExistingTexture->getDrawingCoordinates().y() + y,
+
+                    diffuseTexture.setPixelColor(xDrawingPosition + x, yDrawingPosition + y,
                             selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
 
-                    specularTexture.setPixelColor(selectedExistingTexture->getDrawingCoordinates().x() + x, selectedExistingTexture->getDrawingCoordinates().y() + y,
+                    specularTexture.setPixelColor(xDrawingPosition + x, yDrawingPosition + y,
                             selectedExistingTexture->getImageForDrawing().getSpecularTexture(::TextureLogic::Zoom::Normal).pixelColor(x, y));
                 }
             }
@@ -585,9 +586,16 @@ namespace Atlas
 
             yDrawPosition *= zoomFactor;
 
-            QString localTextureLocation = saveLocation.left(saveLocation.lastIndexOf('/')) + '/' + i.texture->textureName() + '.' + i.texture->textureFormat();
+            // Save the texture location as a relative path (so that if project folder is moved, loading a project still works)
+            QString localTextureLocation = '/' + i.texture->textureName() + '.' + i.texture->textureFormat();
 
             saveStream << "Texture: " << localTextureLocation << " -> Position: " << xDrawingPosition << " , " << yDrawPosition << '\n';
+
+            // But save an an actual copy of the texture in the folder that the user specified
+            QString saveLocationCopy = saveLocation;
+            saveLocationCopy.chop(saveLocationCopy.size() - saveLocationCopy.lastIndexOf('/'));
+
+            localTextureLocation = saveLocationCopy + localTextureLocation;
 
             if(!QFile::exists(localTextureLocation))
             {
@@ -611,10 +619,15 @@ namespace Atlas
 
             float yDrawingPosition = selectedExistingTexture->getDrawingCoordinates().y() * zoomFactor;
 
-            QString localTextureLocation = saveLocation.left(saveLocation.lastIndexOf('/')) + '/' +
-                                            selectedExistingTexture->getImageForDrawing().textureName() + '.' + selectedExistingTexture->getImageForDrawing().textureFormat();
+            // Same location save logic as the textures that are not selected
+            QString localTextureLocation =  '/' + selectedExistingTexture->getImageForDrawing().textureName() + '.' + selectedExistingTexture->getImageForDrawing().textureFormat();
 
             saveStream << "Texture: " << localTextureLocation  << " -> Position: " << xDrawingPosition << " , " << yDrawingPosition << '\n';
+
+            QString saveLocationCopy = saveLocation;
+            saveLocationCopy.chop(saveLocationCopy.size() - saveLocationCopy.lastIndexOf('/'));
+
+            localTextureLocation = saveLocationCopy + localTextureLocation;
 
             if(!QFile::exists(localTextureLocation))
             {

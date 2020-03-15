@@ -71,6 +71,21 @@ namespace GUI
         initializeWidgetConnections();
     }
 
+    void MainWindow::closeEvent(QCloseEvent *event)
+    {
+        if(ui->atlasWidget->getUnsavedAtlases() || ui->loadedTextures->getUnsavedTextureButtonAreas() || ui->currentTexture->getUnsavedChanges())
+        {
+            int response = QMessageBox::information(this, "Unsaved Changes", "Would you like to save your changes before exiting the application?", QMessageBox::Yes | QMessageBox::No);
+
+            if(response == QMessageBox::Yes)
+            {
+                saveProject();
+            }
+        }
+
+        QMainWindow::closeEvent(event);
+    }
+
     MainWindow::~MainWindow()
     {
         // For some reason, this destructor is required in order for the unique_ptr in use with the TextureBank to compile.
@@ -193,6 +208,13 @@ namespace GUI
             return;
         }
 
+        // The location of the textures that are saved are stored as a relative path to the folder they exist in.
+        // So instead of say /home/project/image.png, the location is stored as /image.png.
+        // Thus if the project folder is moved, the '/home/project' part is changed to the folder the user selected.
+        // This allows the project folder to be moved around but still be able to locate the textures within that folder.
+        QString openFolderLocation = openProjectLocation;
+        openFolderLocation.chop(openFolderLocation.size() - openFolderLocation.lastIndexOf('/'));
+
         // The selection and intersection border width are stored in the texture button area part of the project file.
         // When reading the results of the atlas project file, there has to be a way to reference the border widths for the
         // current texture. This variable does that.
@@ -204,7 +226,7 @@ namespace GUI
 
             for(const auto &j : i.textures)
             {
-                ui->loadedTextures->openTexture(i.areaName, j.textureLocation, j.intersectionWidth, j.selectionWidth, true);
+                ui->loadedTextures->openTexture(i.areaName, openFolderLocation + j.textureLocation, j.intersectionWidth, j.selectionWidth, true);
 
                 loadedTexturesBorderWidths.insert(j.textureLocation, std::make_pair(j.intersectionWidth, j.selectionWidth));
             }
@@ -220,11 +242,18 @@ namespace GUI
 
             for(const auto &j : i.textures)
             {
+                // When loading the textures, the relative paths have to be replaced by an absolute path for loading them
+                QString absoluteTexturePath = openFolderLocation + j.textureLocation;
+
                 // Certain logic is required when adding a texture to an atlas. Therefore go through the process program would take to add a texture to an atlas
                 // during runtime when user clicks a texture button.
-                textureBank->textureButtonPressedMainWindow(i.atlasName, j.textureLocation, loadedTexturesBorderWidths[j.textureLocation].first, loadedTexturesBorderWidths[j.textureLocation].second, j.position, {});
+                textureBank->textureButtonPressedMainWindow(i.atlasName, absoluteTexturePath, loadedTexturesBorderWidths[absoluteTexturePath].first, loadedTexturesBorderWidths[absoluteTexturePath].second, j.position, {});
             }
         }
+
+        // Prevent issue that occurs that a tab has not been selected yet as they were just loaded, meaning index is not a valid
+        // number. The index 0 is always valid as there is always an atlas tab in the program
+        ui->atlasWidget->setCurrentIndex(0);
 
         showPercentageUsed(ui->atlasWidget->getCurrentAtlasInformation());
 
@@ -284,13 +313,15 @@ namespace GUI
             return;
         }
 
-        previousSaveLocation += "/ProjectName" + projectExtension;
+        previousSaveLocation += '/' + projectName + projectExtension;
 
         try
         {
             ui->loadedTextures->saveLoadedTextures(previousSaveLocation);
 
             ui->atlasWidget->saveAtlases(previousSaveLocation);
+
+            ui->currentTexture->changesSaved();
         }
         catch(std::runtime_error &e)
         {
@@ -319,6 +350,8 @@ namespace GUI
             ui->loadedTextures->saveLoadedTextures(previousSaveLocation);
 
             ui->atlasWidget->saveAtlases(previousSaveLocation);
+
+            ui->currentTexture->changesSaved();
         }
         catch(std::runtime_error &e)
         {

@@ -38,6 +38,11 @@ namespace GUI
             new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z), this, SLOT(undoPaintOperation()));
         }
 
+        void PaintArea::changesSaved()
+        {
+            unsavedChanges = false;
+        }
+
         PaintFunctions::Brush& PaintArea::getBrush()
         {
             return brush;
@@ -51,6 +56,11 @@ namespace GUI
             }
 
             return textureFormat;
+        }
+
+        bool PaintArea::getUnsavedChanges() const
+        {
+            return unsavedChanges;
         }
 
         ::TextureLogic::Zoom PaintArea::getZoom() const
@@ -103,6 +113,8 @@ namespace GUI
                         float zoomFactor = TextureLogic::GetZoomValue(zoom) / TextureLogic::GetZoomValue(currentZoom);
 
                         paintTexture(zoom, event->pos() * zoomFactor, brush.getPaintImage(zoom), const_cast<QImage &>(getReferredToImage(zoom)), false);
+
+                        unsavedChanges = true;
                     }
 
                     QWidget::repaint();
@@ -219,6 +231,8 @@ namespace GUI
 
                 if(mostRecentPaintHistory == nullptr)
                 {
+                    unsavedChanges = false;
+
                     return;
                 }
 
@@ -231,6 +245,8 @@ namespace GUI
                     paintTexture(TextureLogic::Zoom::ALWAYS_AT_EMD, paintedArea->appliedArea, paintedArea->previousColour, const_cast<QImage&>(getReferredToImage(zoom)), true);
 
                     mostRecentPaintHistory->getAppliedAreas().pop();
+
+                    unsavedChanges = true;
                 }
 
                 // Since the resource held by this pointer is only referred to by this pointer now (as another pointer to it

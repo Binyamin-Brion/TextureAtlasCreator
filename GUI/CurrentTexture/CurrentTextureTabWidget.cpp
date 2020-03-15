@@ -58,9 +58,19 @@ namespace GUI
             });
         }
 
+        void CurrentTextureTabWidget::changesSaved()
+        {
+            paintAreaScrollArea->changesSaved();
+        }
+
         ::PaintFunctions::Brush* CurrentTextureTabWidget::getBrush()
         {
             return &paintAreaScrollArea->getBrush();
+        }
+
+        bool CurrentTextureTabWidget::getUnsavedChanges() const
+        {
+            return paintAreaScrollArea->getUnsavedChanges();
         }
 
         void CurrentTextureTabWidget::setSelectedTexture(TextureLogic::Texture *texture, AccessRestriction::PassKey<TextureLogic::TextureBank>)

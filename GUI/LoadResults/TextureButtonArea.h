@@ -91,6 +91,12 @@ namespace GUI
                  */
                 void mousePressEvent(QMouseEvent *event) override;
 
+                /**
+                 * Called to update the texture button representing the passed in texture. The button will be updated
+                 * to show the visual changes made to the texture.
+                 *
+                 * @param texture reference to the texture that was painted
+                 */
                 void paintTextureButton(const ::TextureLogic::Texture *texture);
 
                 /**

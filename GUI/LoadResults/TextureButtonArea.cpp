@@ -200,7 +200,8 @@ namespace GUI
 
             for(const auto &i : textureButtons)
             {
-                QString localTextureLocation = saveLocation.left(saveLocation.lastIndexOf('/')) + '/' + TextureHelperFunctions::getImageName(i->getTextureLocation()) + '.' + TextureHelperFunctions::getImageFormat(i->getTextureLocation());
+                // Save textures relative to the folder they are in so that the project folder can be moved around
+                QString localTextureLocation = '/' + TextureHelperFunctions::getImageName(i->getTextureLocation()) + '.' + TextureHelperFunctions::getImageFormat(i->getTextureLocation());
 
                 saveStream << localTextureLocation << " -> " << textureBank->getIntersectionWidth(i->getTextureLocation()) << " , "
                            << textureBank->getSelectionWidth(i->getTextureLocation()) << '\n';
