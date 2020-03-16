@@ -10,23 +10,24 @@ to do three things:
 * Gain experience with C++ and Qt
 * Learn how to deal with codebase that is constantly being modified and growing
 
-A sample view of how it looks can be seen below:
-
-![alt-text](https://github.com/Binyamin-Brion/TextureAtlasCreatorV2/blob/master/TextureCreatorSample.PNG)
-
 ## Features
 
 * Create atlases of arbitrary sizes and many different image formats
 * Ability to move textures around once placed to optimize available space
 * Specify borders around images within the atlases to deal with issues
   that pop up when mipmapping texture atlases
-* Apply simple edits (and undo them) to a texture within an atlas
-* Save edited textures as new textures for later use
+* Apply simple edits (and undo them) to a texture within an atlas, 
+  along with the texture's associated specular texture
 * View information about textures, such as their format, bit depth and size in bytes
 * Zoom to make it easier to view large or small atlases
+* Save project and work on it later
 
 _Note: While any textures can be used with this program, the built-in texture editor is intended for making small 
 changes to textures used in Minecraft. Serious alterations to textures should be done with an external program._
+
+## User Guide
+
+A user guide in both PDF and docx form is provided in the 'User Guide' folder, which is itself located in the root folder.
 
 ## Technologies Used
 
@@ -35,3 +36,14 @@ changes to textures used in Minecraft. Serious alterations to textures should be
 * CMake
 
 _Dark theme obtained from: http://www.yasinuludag.com/darkorange.stylesheet_
+
+
+A sample view of how it looks can be seen below:
+
+![alt-text](https://github.com/Binyamin-Brion/TextureAtlasCreator/blob/master/Assets/Sampe%20Project%20%20Output/Sample%20Project%20View.png)
+
+The exported atlas from the above sample project, along with the associated specular alas:
+
+![alt-text](https://github.com/Binyamin-Brion/TextureAtlasCreator/blob/master/Assets/Sampe%20Project%20%20Output/Sample%20Atlas%20Export.png)
+
+![alt-text](https://github.com/Binyamin-Brion/TextureAtlasCreator/blob/master/Assets/Sampe%20Project%20%20Output/Sample%20Atlas%20Export%20Specular.png)
