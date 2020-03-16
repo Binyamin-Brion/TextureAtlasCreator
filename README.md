@@ -35,6 +35,11 @@ A user guide in both PDF and docx form is provided in the 'User Guide' folder, w
 * Qt5.9.8
 * CMake
 
+## Compilation Note
+
+In addition to needing Qt5.9.8 and a C++14 compliant compiler, the location to the Qt installation will need to be updated
+in the CMake file to match where it is installed on the machine being used for compilation.
+
 _Dark theme obtained from: http://www.yasinuludag.com/darkorange.stylesheet_
 
 
@@ -42,7 +47,7 @@ A sample view of how it looks can be seen below:
 
 ![alt-text](https://github.com/Binyamin-Brion/TextureAtlasCreator/blob/master/Assets/Sampe%20Project%20%20Output/Sample%20Project%20View.png)
 
-The exported atlas from the above sample project, along with the associated specular alas:
+The exported atlas from the above sample project, along with the associated specular atlas:
 
 ![alt-text](https://github.com/Binyamin-Brion/TextureAtlasCreator/blob/master/Assets/Sampe%20Project%20%20Output/Sample%20Atlas%20Export.png)
 
