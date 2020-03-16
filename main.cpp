@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
 
     QDir dir = QDir::current();
     dir.cdUp();
+    dir.cd("Assets");
 
     QFile f(dir.path() + "/darkTheme.txt");
     if (!f.exists())
