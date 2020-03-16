@@ -9,6 +9,9 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# If compiling from scratch, the location to the Qt installation will have to be updated to match where it is installed
+# on the machine being used for compilation
+
 if(WIN32)
     set(CMAKE_PREFIX_PATH C:\\Qt\\Qt5.9.8\\5.9.8\\mingw53_32)
 endif(WIN32)
