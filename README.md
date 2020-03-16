@@ -40,8 +40,11 @@ A user guide in both PDF and docx form is provided in the 'User Guide' folder, w
 In addition to needing Qt5.9.8 and a C++14 compliant compiler, the location to the Qt installation will need to be updated
 in the CMake file to match where it is installed on the machine being used for compilation.
 
+## External Resource
+
 _Dark theme obtained from: http://www.yasinuludag.com/darkorange.stylesheet_
 
+## Sample Project
 
 A sample view of how it looks can be seen below:
 
