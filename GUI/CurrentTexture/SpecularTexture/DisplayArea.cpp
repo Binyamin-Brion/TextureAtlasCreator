@@ -27,6 +27,8 @@ namespace GUI
 
             void DisplayArea::paintEvent(QPaintEvent *event)
             {
+                Q_UNUSED(event);
+
                 QPainter painter{this};
 
                 // Paint event can still be called even when no texture is selected.

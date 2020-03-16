@@ -157,8 +157,6 @@ namespace Atlas
 
     bool TextureAtlas::exportImage(const QString &exportLocation, const QString &exportLocationSpecular) const
     {
-        printf("Saving to: %s, %s \n", exportLocation.toStdString().c_str(), exportLocationSpecular.toStdString().c_str());
-
         // Exporting is done at the Normal zoom level, as that is true representation of the sizes that the user
         // has input into the program. To account for this without having to change the zoom onscreen, the ratio
         // between the current zoom and the normal zoom is calculated so it is known what the exported atlas should be.
@@ -863,8 +861,8 @@ namespace Atlas
 
             textureDrawingPositions.back().surroundingBorder = selectedTexture->getSurroundingBorderForDrawing();
 
-            for(int i = 0; i < textures->size(); ++i)
-            { printf("%d \n", GUI::TextureHelperFunctions::indexFormat(atlasFormat));
+            for(unsigned int i = 0; i < textures->size(); ++i)
+            {
                 if((*textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[i].textureLocation() == selectedTexture->getTextureLocation())
                 {
                     textureDrawingPositions.back().index = i;

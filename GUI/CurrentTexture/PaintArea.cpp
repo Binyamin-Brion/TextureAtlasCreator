@@ -137,6 +137,8 @@ namespace GUI
 
         void PaintArea::paintEvent(QPaintEvent *event)
         {
+            Q_UNUSED(event);
+
             QPainter painter{this};
 
             if(texture != nullptr)

@@ -42,7 +42,7 @@ namespace TextureLogic
 
         // The vectors holding the textures of different formats have to be created first- otherwise a crash
         // will occur when trying to access them!
-        for(int i = 0; i < numberInternalFormats; ++i)
+        for(unsigned int i = 0; i < numberInternalFormats; ++i)
         {
             textures.push_back(std::make_pair<std::vector<Texture>, std::vector<unsigned int>>({}, {}));
         }

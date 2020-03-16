@@ -41,7 +41,17 @@ namespace GUI
              */
             explicit MainWindow(QWidget *parent = nullptr);
 
+            /**
+             * Asks the user to save if there are any unsaved changes before closing the program.
+             *
+             * @param event unused
+             */
             void closeEvent(QCloseEvent *event) override;
+
+            /**
+             * Sets the dark theme for this program. Call once at program start up.
+             */
+            void setTheme();
 
             /**
              * See internal note at MainWindow.cpp.

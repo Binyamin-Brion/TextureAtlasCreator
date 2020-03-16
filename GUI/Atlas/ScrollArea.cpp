@@ -45,6 +45,8 @@ namespace GUI
 
         void ScrollArea::enterEvent(QEvent *event)
         {
+            Q_UNUSED(event);
+
             // The scroll area takes control of all keyboard input once the cursor has entered it
             // to ensure that the short cuts to change the zoom are received and are not given to another widget.
             // This is not strictly required, but it does not hurt.
@@ -100,6 +102,8 @@ namespace GUI
 
         void ScrollArea::leaveEvent(QEvent *event)
         {
+            Q_UNUSED(event);
+
             QWidget::releaseKeyboard();
         }
 

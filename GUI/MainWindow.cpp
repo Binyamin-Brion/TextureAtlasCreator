@@ -6,6 +6,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QTextStream>
+#include <QApplication>
 #include "MainWindow.h"
 #include "TextureLogic/TextureBank.h"
 #include "ProjectLoader/ProjectParser.h"
@@ -17,8 +18,9 @@ namespace GUI
     MainWindow::MainWindow(QWidget *parent)
                 :
                     QMainWindow{parent},
-                    ui{new Ui::MainWindow}, textureBank{std::make_unique<TextureLogic::TextureBank>()},
-                    nameFormUi{new NameForm{this}}
+                    ui{new Ui::MainWindow},
+                    nameFormUi{new NameForm{this}},
+                    textureBank{std::make_unique<TextureLogic::TextureBank>()}
     {
         ui->setupUi(this);
 
@@ -84,6 +86,39 @@ namespace GUI
         }
 
         QMainWindow::closeEvent(event);
+    }
+
+    void MainWindow::setTheme()
+    {
+        QDir dir = QDir::current();
+
+        #ifdef QT_DEBUG
+            dir.cdUp();
+            dir.cd("Assets");
+        #endif
+
+        QFile f(dir.path() + "/darkTheme.txt");
+
+        if (!f.exists())
+        {
+            #ifdef QT_DEBUG
+
+                QMessageBox::warning(this, "Unable To Theme", "The theme for this program located in file ProjectRoot/Assets/darkTheme.txt was not found.\n"
+                                                              "The program will use the default theme.", QMessageBox::Ok);
+
+            #else
+
+                QMessageBox::warning(this, "Unable To Theme", "The theme for this program located in folder as the executable was not found.\n"
+                                                                  "The program will use the default theme.", QMessageBox::Ok);
+
+            #endif
+        }
+        else
+        {
+            f.open(QFile::ReadOnly | QFile::Text);
+            QTextStream textStream(&f);
+            qApp->setStyleSheet(textStream.readAll());
+        }
     }
 
     MainWindow::~MainWindow()
