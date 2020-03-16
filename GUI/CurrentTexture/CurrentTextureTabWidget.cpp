@@ -5,6 +5,7 @@
 #include <TextureLogic/TextureBank.h>
 #include <QtWidgets/qscrollarea.h>
 #include "CurrentTextureTabWidget.h"
+#include "HelperUtilities/Assert.h"
 
 #include "ScrollArea.h"
 
@@ -103,7 +104,7 @@ namespace GUI
                 // If the texture was not found in the texture bank, that is a fatal error
                 if(index == -1)
                 {
-                    Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
+                    ASSERT(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
                 }
 
                 // Make the brush be aware of the new size restrictions when changing the brush size as a result of the selected texture size changing,

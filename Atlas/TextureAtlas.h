@@ -7,7 +7,7 @@
 
 #include "TextureLogic/Texture.h"
 #include "Atlas/TextureDrawingPosition.h"
-#include "AccessRestriction/PassKey.h"
+#include "HelperUtilities/PassKey.h"
 
 class QPainter;
 

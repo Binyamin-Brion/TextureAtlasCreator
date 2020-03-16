@@ -6,7 +6,7 @@
 #define TEXTUREATLASCREATOR_ATLASTABWIDGET_H
 
 #include <QtWidgets/QTabWidget>
-#include "AccessRestriction/PassKey.h"
+#include "HelperUtilities/PassKey.h"
 #include "Atlas/TextureAtlas.h"
 #include "Atlas/AtlasInformationBundle.h"
 

@@ -7,7 +7,7 @@
 
 #include <QtGui/QImage>
 #include <stack>
-#include "AccessRestriction/PassKey.h"
+#include "HelperUtilities/PassKey.h"
 #include "Zoom.h"
 
 class QPainter;

@@ -2,8 +2,8 @@
 // Created by BinyBrion on 10/11/2019.
 //
 
-#ifndef TEXTUREATLASCREATOR_TEXTUREFORMATS_H
-#define TEXTUREATLASCREATOR_TEXTUREFORMATS_H
+#ifndef TEXTUREATLASCREATOR_HELPERFUNCTIONS_H
+#define TEXTUREATLASCREATOR_HELPERFUNCTIONS_H
 
 #include <QString>
 #include <QtGui/qimage.h>
@@ -62,17 +62,8 @@ namespace GUI
          * @return index of the format
          */
         unsigned int indexFormat(QImage::Format format, bool ignoreInvalidFormat = false);
-
-        /**
-         * Overload of indexFormat(). Performs the same logic but with a string instead of a QImage::Format.
-         *
-         * @param formatStringRepresentation see indexFormat()
-         * @param ignoreInvalidFormat see indexFormat()
-         * @return see indexFormat()
-         */
-        unsigned int indexFormatString(const QString &formatStringRepresentation, bool ignoreInvalidFormat = false);
     }
 }
 
 
-#endif //TEXTUREATLASCREATOR_TEXTUREFORMATS_H
+#endif //TEXTUREATLASCREATOR_HELPERFUNCTIONS_H

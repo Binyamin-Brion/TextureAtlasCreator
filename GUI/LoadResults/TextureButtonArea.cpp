@@ -84,9 +84,21 @@ namespace GUI
             // Try loading the image first; if the texture is already loaded, then this call has no effect
             textureBank->storeNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
 
-            // The newly created button will be swapped the place holder widget with the newly created place-holder; see the description at the top of
-            // this file for more information.
-            textureButtons.push_back(new TextureButton{textureLocation, intersectionBorderWidth, selectionBorderWidth, this});
+            try
+            {
+                // Keep this as a separate statement so if this constructor fails, the vecto holding the texture buttons is known to not be affected
+                TextureButton *textureButton = new TextureButton{textureLocation, intersectionBorderWidth, selectionBorderWidth, this};
+
+                // The newly created button will be swapped the place holder widget with the newly created place-holder; see the description at the top of
+                // this file for more information.
+                textureButtons.push_back(textureButton);
+            }
+            catch(std::runtime_error &e)
+            {
+                QMessageBox::critical(this, "Failed to load texture", e.what(), QMessageBox::Ok);
+
+                return;
+            }
 
             connect(textureButtons.back(), SIGNAL(buttonClicked(const QString&, unsigned int, unsigned int)), this, SLOT(textureButtonClicked(const QString&, unsigned int, unsigned int)));
 

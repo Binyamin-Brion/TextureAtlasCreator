@@ -8,7 +8,7 @@
 #include <QtWidgets/QWidget>
 #include <TextureLogic/Zoom.h>
 #include "ui_selectedTextureInformation.h"
-#include "GUI/TextureHelperFunctions/TextureFormats.h"
+#include "GUI/TextureHelperFunctions/HelperFunctions.h"
 
 namespace TextureLogic
 {

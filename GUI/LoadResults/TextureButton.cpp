@@ -4,7 +4,7 @@
 
 #include "TextureButton.h"
 #include <QMap>
-#include "GUI/TextureHelperFunctions/TextureFormats.h"
+#include "GUI/TextureHelperFunctions/HelperFunctions.h"
 #include "../TextureLogic/Texture.h"
 
 namespace GUI
@@ -52,9 +52,7 @@ namespace GUI
 
             if(!pixMap.load(textureLocation))
             {
-                // TODO: Handle case if texture cannot be loaded
-
-                Q_ASSERT(false);
+                throw std::runtime_error{"Unable to load the texture: " + textureLocation.toStdString()};
             }
 
             buttonIcon.addPixmap(pixMap);

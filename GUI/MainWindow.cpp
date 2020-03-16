@@ -271,7 +271,14 @@ namespace GUI
         {
             static int index = 0;
 
-            ui->atlasWidget->addAtlasWidget(i.atlasName, i.atlasSize, TextureHelperFunctions::convertToFormat(i.format));
+            try
+            {
+                ui->atlasWidget->addAtlasWidget(i.atlasName, i.atlasSize, TextureHelperFunctions::convertToFormat(i.format));
+            }
+            catch(std::runtime_error &e)
+            {
+                QMessageBox::critical(this, "Fatal Internal Error", e.what(), QMessageBox::Ok);
+            }
 
             ui->atlasWidget->setCurrentIndex(index++);
 
@@ -422,7 +429,17 @@ namespace GUI
 
     void MainWindow::showPercentageUsed(::Atlas::AtlasInformationBundle atlasInformationBundle)
     {
-        ui->atlasFormatLabel->setText("Atlas Format: " + TextureHelperFunctions::convertToString(atlasInformationBundle.textureFormat));
+        try
+        {
+            ui->atlasFormatLabel->setText("Atlas Format: " + TextureHelperFunctions::convertToString(atlasInformationBundle.textureFormat));
+        }
+        catch(std::runtime_error &e)
+        {
+            QMessageBox::critical(this, "Fatal Internal Error", e.what() + QString{"\nThe format of the current atlas will not be shown."}, QMessageBox::Ok);
+
+            ui->atlasFormatLabel->setText("Unknown");
+        }
+
         ui->numberTexturesLabel->setText("Number of Textures in Atlas: " + QString::number(atlasInformationBundle.numberTexturesUsed));
         ui->percentageAtlasUsed->setText("Percentage Atlas Used: " + QString::number(atlasInformationBundle.percentageAtlasUsed));
     }

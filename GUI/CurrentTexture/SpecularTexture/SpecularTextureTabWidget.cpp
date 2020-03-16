@@ -2,6 +2,7 @@
 // Created by binybrion on 3/12/20.
 //
 
+#include "HelperUtilities/Assert.h"
 #include "SpecularTextureTabWidget.h"
 #include "ScrollArea.h"
 #include "../TextureLogic/TextureBank.h"
@@ -50,7 +51,7 @@ namespace GUI
                     // If the texture was not found in the texture bank, that is a fatal error
                     if(index == -1)
                     {
-                        Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
+                        ASSERT(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
                     }
                 }
 

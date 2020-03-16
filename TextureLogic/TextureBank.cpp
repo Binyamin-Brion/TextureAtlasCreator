@@ -9,6 +9,7 @@
 #include "GUI/TextureInformation/TextureInfoScrollArea.h"
 #include "GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.h"
 #include "GUI/LoadResults/LoadedTextures.h"
+#include "HelperUtilities/Assert.h"
 
 // For every type of format, there are two vectors associated with it: the first vector holds the
 // textures of a given format; the other one holds free spots the new textures can be inserted to.
@@ -85,7 +86,8 @@ namespace TextureLogic
         {
             QString errorMessage{"Unable to find requested texture to be deleted: " + textureLocation};
 
-            Q_ASSERT_X(false, __PRETTY_FUNCTION__, errorMessage.toStdString().c_str());
+            // Chose atlasTabWidget to be parent of the message box, but any other widget could have been usd
+            ASSERT_SPECIFY_PARENT(atlasTabWidget, false, __PRETTY_FUNCTION__, errorMessage.toStdString().c_str());
         }
 
         // Make sure that any GUI parts referencing the texture about to be deleted no longer reference them.
@@ -268,7 +270,8 @@ namespace TextureLogic
             QString errorMessage = "Fatal Internal Error: ";
             errorMessage += textureLocation + " has not been loaded into the texture bank first!";
 
-            Q_ASSERT_X(false, __PRETTY_FUNCTION__, errorMessage.toStdString().c_str());
+            // Chose atlasTabWidget to be parent of the message box, but any other widget could have been usd
+            ASSERT_SPECIFY_PARENT(atlasTabWidget, false, __PRETTY_FUNCTION__, errorMessage.toStdString().c_str());
         }
 
         // The format of the texture that is requested is dependent on the format of the texture atlas that is currently

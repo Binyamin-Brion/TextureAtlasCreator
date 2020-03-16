@@ -2,7 +2,9 @@
 // Created by BinyBrion on 10/11/2019.
 //
 
-#include "TextureFormats.h"
+#include <QtWidgets/QMessageBox>
+#include "HelperFunctions.h"
+#include <QApplication>
 
 namespace GUI
 {
@@ -18,7 +20,11 @@ namespace GUI
                 return internalFormatPair.formatStringRepresentation == imageFormat;
             });
 
-            Q_ASSERT_X(requestedFormatLocation != internalFormats.end(), __PRETTY_FUNCTION__, "Failed to find the requested image format!");
+            if(requestedFormatLocation == internalFormats.end())
+            {
+                // If this fail then the GUI won't display some information. User can continue.
+                throw std::runtime_error("Failed to find the requested image format: " + imageFormat.toStdString() + ". Location of error: \n" + __PRETTY_FUNCTION__);
+            }
 
             return requestedFormatLocation->format;
         }
@@ -33,7 +39,11 @@ namespace GUI
                 return internalFormatPair.format == imageFormat;
             });
 
-            Q_ASSERT_X(requestedFormatLocation != internalFormats.end(), __PRETTY_FUNCTION__, "Failed to find the requested image format!");
+            if(requestedFormatLocation == internalFormats.end())
+            {
+                // If this fail then the GUI won't display some information. User can continue (though the project file cannot be saved- user will have to modify manually).
+                throw std::runtime_error{"Failed to find the requested image format: " + QString::number(imageFormat).toStdString() + " (this is the the enum value). Location of error: \n" + __PRETTY_FUNCTION__ };
+            }
 
             return requestedFormatLocation->formatStringRepresentation;
         }
@@ -127,22 +137,18 @@ namespace GUI
                 return internalFormatPair.format == format;
             });
 
-            Q_ASSERT_X(requestedFormatLocation != internalFormats.end(), __PRETTY_FUNCTION__, "Failed to find the requested image format!");
-
-            return std::distance(internalFormats.begin(), requestedFormatLocation) - ignoreInvalidFormat;
-        }
-
-        unsigned int indexFormatString(const QString &formatStringRepresentation, bool ignoreInvalidFormat)
-        {
-            auto internalFormats = internalFormatPairRepresentations();
-
-            auto requestedFormatLocation = std::find_if(internalFormats.begin(), internalFormats.end(), [formatStringRepresentation]
-                    (const InternalFormatPair &internalFormatPair)
+            if(requestedFormatLocation == internalFormats.end())
             {
-                return internalFormatPair.formatStringRepresentation == formatStringRepresentation;
-            });
+                // Considering where this function is used (to index into arrays), this is fatal- if this fails
+                // then the program may not function correctly.
 
-            Q_ASSERT_X(requestedFormatLocation != internalFormats.end(), __PRETTY_FUNCTION__, "Failed to find the requested image format!");
+                QString errorMessage = "Failed to find the requested image format: " + QString::number(format) + "(this is the enum value). Location of error: \n" + __PRETTY_FUNCTION__;
+                errorMessage += "\nThis error is not recoverable. The program will terminate.";
+
+                QMessageBox::critical(nullptr, "Fatal Internal Error", errorMessage, QMessageBox::Ok);
+
+                qApp->quit();
+            }
 
             return std::distance(internalFormats.begin(), requestedFormatLocation) - ignoreInvalidFormat;
         }

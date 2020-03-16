@@ -8,6 +8,7 @@
 #include <QtWidgets/QFileDialog>
 #include "SelectedTextureInformation.h"
 #include "TextureLogic/Texture.h"
+#include "HelperUtilities/Assert.h"
 
 namespace GUI
 {
@@ -87,7 +88,7 @@ namespace GUI
             }
             else
             {
-                Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Invalid if branch taken");
+                ASSERT(false, __PRETTY_FUNCTION__, "SelectedTextureInformation widget does not hold a selected widget!");
             }
         }
 
@@ -138,7 +139,7 @@ namespace GUI
 
             if(texturePixelInternalFormat == internalFormatPairs.end())
             {
-                Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Unknown texture internal format encountered");
+                ASSERT(false, __PRETTY_FUNCTION__, "Unknown texture internal format encountered");
             }
 
             ui->textureInternalFormatLabel->setText("Texture Internal Format: " + texturePixelInternalFormat->formatStringRepresentation);

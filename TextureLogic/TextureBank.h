@@ -7,8 +7,8 @@
 
 #include "TextureLogic/Texture.h"
 
-#include "AccessRestriction/PassKey.h"
-#include "GUI/TextureHelperFunctions/TextureFormats.h"
+#include "HelperUtilities/PassKey.h"
+#include "GUI/TextureHelperFunctions/HelperFunctions.h"
 
 #include <unordered_map>
 

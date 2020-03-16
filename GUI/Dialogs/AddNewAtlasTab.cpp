@@ -5,6 +5,7 @@
 #include "AddNewAtlasTab.h"
 #include "ui_newTextureAtlasDialog.h"
 #include <QPushButton>
+#include "HelperUtilities/Assert.h"
 
 namespace GUI
 {
@@ -62,7 +63,7 @@ namespace GUI
             {
                 QString errorMessage{"Asking how to delete tab that does not exist: " + tabName};
 
-                Q_ASSERT_X(false, __PRETTY_FUNCTION__, errorMessage.toStdString().c_str());
+                ASSERT(false, __PRETTY_FUNCTION__, errorMessage.toStdString().c_str());
             }
 
             existingTabNames.erase(tabNameIndex);

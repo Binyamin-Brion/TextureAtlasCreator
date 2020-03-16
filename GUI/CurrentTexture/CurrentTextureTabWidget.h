@@ -7,7 +7,7 @@
 
 #include <QtWidgets/QTabWidget>
 #include <array>
-#include "AccessRestriction/PassKey.h"
+#include "HelperUtilities/PassKey.h"
 #include "PaintArea.h"
 
 namespace TextureLogic

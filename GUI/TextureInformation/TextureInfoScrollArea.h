@@ -7,7 +7,7 @@
 
 #include <QtWidgets/QScrollArea>
 #include "TextureLogic/Zoom.h"
-#include "AccessRestriction/PassKey.h"
+#include "HelperUtilities/PassKey.h"
 
 namespace TextureLogic
 {

@@ -6,7 +6,7 @@
 #define TEXTUREATLASCREATOR_ADDNEWATLASTAB_H
 
 #include <QtWidgets/QDialog>
-#include "GUI/TextureHelperFunctions/TextureFormats.h"
+#include "GUI/TextureHelperFunctions/HelperFunctions.h"
 
 class QLineEdit;
 

@@ -6,13 +6,15 @@
 
 #include "TextureLogic/TextureBank.h"
 #include "Atlas/SelectedTexture.h"
-#include "GUI/TextureHelperFunctions/TextureFormats.h"
+#include "GUI/TextureHelperFunctions/HelperFunctions.h"
 
 #include <QPainter>
 #include "GUI/Atlas/AtlasWidget.h"
 #include <fstream>
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
+#include <QtWidgets/QMessageBox>
+#include "HelperUtilities/Assert.h"
 
 namespace Atlas
 {
@@ -490,7 +492,7 @@ namespace Atlas
             // was changed, as the option to change the border width is only present if a texture is selected and the check is done immediately.
             if(!foundTexture)
             {
-                Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Unable to find the selected texture passed into this function!");
+                ASSERT_SPECIFY_PARENT(atlasWidget, false, __PRETTY_FUNCTION__, "Unable to find the selected texture passed into this function!");
             }
 
             // The intersection width must not pass the borders of the atlas, as that logically does not make sense.
@@ -572,7 +574,16 @@ namespace Atlas
 
         saveStream << "Atlas Name: " << atlasName << '\n';
         saveStream << "Dimensions: " << atlasSize.width() * zoomFactor << " , " << atlasSize.height() * zoomFactor << '\n';
-        saveStream << "Format: " << ::GUI::TextureHelperFunctions::convertToString(atlasFormat) << "\n\n";
+
+        try
+        {
+            saveStream << "Format: " << ::GUI::TextureHelperFunctions::convertToString(atlasFormat) << "\n\n";
+        }
+        catch(std::runtime_error &e)
+        {
+            QMessageBox::critical(atlasWidget, "Fatal Internal Error", e.what() +
+            QString{"\n\nNote for this error, you must edit the project file to specify the format of the atlas"} + atlasName, QMessageBox::Ok);
+        }
 
         for(const auto &i : textureDrawingPositions)
         {
@@ -875,7 +886,7 @@ namespace Atlas
             // of the program it no longer exists, yet the fact that it was in selected existing texture implies that it does exist
             if(textureDrawingPositions.back().index == -1)
             {
-                Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Selected texture has a location not found in texture bank!");
+                ASSERT_SPECIFY_PARENT(atlasWidget, false, __PRETTY_FUNCTION__, "Selected texture has a location not found in texture bank!");
             }
         }
 

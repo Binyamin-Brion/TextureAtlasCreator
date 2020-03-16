@@ -4,6 +4,7 @@
 
 #include <QtWidgets/QFileDialog>
 #include "ChooseTexture.h"
+#include "HelperUtilities/Assert.h"
 
 namespace GUI
 {
@@ -59,8 +60,7 @@ namespace GUI
         {
             auto tabNameLocation = std::find(tabNames.begin(), tabNames.end(), tabName);
 
-
-            Q_ASSERT_X(tabNameLocation != tabNames.end(), __PRETTY_FUNCTION__, "\n\nUnable to find tab name to remove.\n\n");
+            ASSERT(tabNameLocation != tabNames.end(), __PRETTY_FUNCTION__, "\n\nUnable to find tab name to remove.\n\n");
 
             ui->textureButtonAreaChooser->removeItem(std::distance(tabNames.begin(), tabNameLocation));
 

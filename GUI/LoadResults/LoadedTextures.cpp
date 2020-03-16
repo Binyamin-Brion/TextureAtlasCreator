@@ -11,6 +11,7 @@
 #include "GUI/Dialogs/AddNewTab.h"
 #include <QMouseEvent>
 #include "../TextureLogic/TextureBank.h"
+#include "HelperUtilities/Assert.h"
 
 namespace GUI
 {
@@ -197,7 +198,7 @@ namespace GUI
                 // If the texture was not found in the texture bank, that is a fatal error
                 if(index == -1)
                 {
-                    Q_ASSERT_X(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
+                    ASSERT(false, __PRETTY_FUNCTION__, "Error- invalid texture passed as the Current Selected Texture");
                 }
             }
 
@@ -355,7 +356,7 @@ namespace GUI
                 }
             }
 
-            Q_ASSERT_X(true, __PRETTY_FUNCTION__, "\n Unable to find tab requested in which to place texture button\n");
+            ASSERT(true, __PRETTY_FUNCTION__, "\n Unable to find tab requested in which to place texture button\n");
         }
     }
 }

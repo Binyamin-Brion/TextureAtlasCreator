@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QtTest/qtestcase.h>
 #include <QtCore/QTextStream>
+#include "HelperUtilities/Assert.h"
 
 int main(int argc, char *argv[]) {
 
