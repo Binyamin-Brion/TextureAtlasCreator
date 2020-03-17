@@ -27,7 +27,7 @@ changes to textures used in Minecraft. Serious alterations to textures should be
 
 ## User Guide
 
-A user guide in both PDF and docx form is provided in the 'User Guide' folder, which is itself located in the root folder.
+A user guide in both PDF and docx form is provided in the 'User Guide' folder, which is itself located in the Docs folder.
 
 ## Technologies Used
 
