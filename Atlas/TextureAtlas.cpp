@@ -106,6 +106,13 @@ namespace Atlas
         return atlasSize;
     }
 
+    QSize TextureAtlas::getNormalZoomAtlasSize() const
+    {
+        float zoomFactor = TextureLogic::GetZoomValue(TextureLogic::Zoom::Normal) / TextureLogic::GetZoomValue(currentZoom);
+
+        return atlasSize * zoomFactor;
+    }
+
     unsigned int TextureAtlas::getNumberTextures()
     {
         return textureDrawingPositions.size() + selectedExistingTexture->isOpen();
@@ -177,14 +184,27 @@ namespace Atlas
         {
             float xDrawingPosition = i.drawingPosition.x() * zoomFactor;
 
-            float yDrawPosition = i.drawingPosition.y() * zoomFactor;
+            float yDrawingPosition = i.drawingPosition.y() * zoomFactor;
 
             for(int x = 0; x < i.texture->getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
             {
                 for(int y = 0; y < i.texture->getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
                 {
-                    diffuseTexture.setPixelColor(xDrawingPosition + x, yDrawPosition + y, i.texture->getImage(::TextureLogic::Zoom::Normal).pixelColor(x, y));
-                    specularTexture.setPixelColor(xDrawingPosition + x, yDrawPosition + y, i.texture->getSpecularTexture(::TextureLogic::Zoom::Normal).pixelColor(x, y));
+                    // There is a bug related to Qt where if an atlas is made to be the size of a texture, or more generally
+                    // there is very, very little empty space around textures next to the border of the atlas, an out of bounds
+                    // setPixelColour call is done. It is unclear why this is the case.
+                    // Since the size of the diffuseTexture == SpecularTexture, only one check against one image is done.
+                    if((xDrawingPosition + x) >= diffuseTexture.width() || (yDrawingPosition + y) >= diffuseTexture.height())
+                    {
+                        QMessageBox::critical(atlasWidget, "Error Exporting Image", "There was an error writing the atlas to disk.\n\n"
+                                                                             "It is possible that the atlas dimensions along with the placement\n"
+                                                                             "of the textures within are causing this error.\n\n Try resizing the atlas to a large size.", QMessageBox::Ok);
+
+                        return false;
+                    }
+
+                    diffuseTexture.setPixelColor(xDrawingPosition + x, yDrawingPosition + y, i.texture->getImage(::TextureLogic::Zoom::Normal).pixelColor(x, y));
+                    specularTexture.setPixelColor(xDrawingPosition + x, yDrawingPosition + y, i.texture->getSpecularTexture(::TextureLogic::Zoom::Normal).pixelColor(x, y));
                 }
             }
         }
@@ -202,6 +222,15 @@ namespace Atlas
             {
                 for(int y = 0; y <  selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
                 {
+                    // Same reasoning as the exporting of a non-selected texture.
+                    if((xDrawingPosition + x) >= diffuseTexture.width() || (yDrawingPosition + y) >= diffuseTexture.height())
+                    {
+                        QMessageBox::critical(atlasWidget, "Error Exporting Image", "There was an error writing the atlas to disk.\n\n"
+                                                                                    "It is possible that the atlas dimensions along with the placement\n"
+                                                                                    "of the textures within are causing this error.\n\n Try resizing the atlas to a large size.", QMessageBox::Ok);
+
+                        return false;
+                    }
 
                     diffuseTexture.setPixelColor(xDrawingPosition + x, yDrawingPosition + y,
                             selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).pixelColor(x, y));
@@ -557,6 +586,59 @@ namespace Atlas
         }
 
         unsavedChanges = true;
+    }
+
+    bool TextureAtlas::resizeAtlas(QSize newAtlasSize) const
+    {
+        selectedTexture->getImage();
+
+        // The atlas widget will be resized in this function, which in turn will resize the atlas. However, the atlas will
+        // be resized to the scaled new size to match what the size should be at the current zoom. The checks to see if
+        // any textures will be affected are done at the Normal zoom level, as it is easier to think about. Thus the
+        // size used to resize the atlas and the size used to check if the resize can be done are different, and so a
+        // separate variable is required.
+        QSize originalRequestedSize = newAtlasSize;
+
+        float zoomFactor = TextureLogic::GetZoomValue(TextureLogic::Zoom::Normal) / TextureLogic::GetZoomValue(currentZoom);
+
+        // Adjusted the atlas size to match the scaled size at the current zoom.
+        originalRequestedSize /= zoomFactor;
+
+        // Go through each texture, and check if the new size would result in textures not being shown in the new atlas.
+        // This is a problem if the atlas size is being reduced.
+        for(const auto &i : textureDrawingPositions)
+        {
+            float xDrawingPosition = i.drawingPosition.x() * zoomFactor;
+
+            float yDrawingPosition = i.drawingPosition.y() * zoomFactor;
+
+            QSize textureSize = i.texture->getImage(::TextureLogic::Zoom::Normal).size();
+
+            if( (xDrawingPosition + textureSize.width() > newAtlasSize.width() ) || ( yDrawingPosition + textureSize.height() > newAtlasSize.height() ))
+            {
+                return false;
+            }
+        }
+
+        if(selectedExistingTexture->isOpen())
+        {
+            float xDrawingPosition = selectedExistingTexture->getDrawingCoordinates().x() * zoomFactor;
+
+            float yDrawingPosition = selectedExistingTexture->getDrawingCoordinates().y() * zoomFactor;
+
+            QSize textureSize = selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size();
+
+            if( (xDrawingPosition + textureSize.width() > newAtlasSize.width() ) || ( yDrawingPosition + textureSize.height() > newAtlasSize.height() ))
+            {
+                return false;
+            }
+        }
+
+        // Resizing the atlas widget will in turn call the required texture atlas function to resize this atlas.
+        atlasWidget->setMinimumSize(originalRequestedSize);
+        atlasWidget->setMaximumSize(originalRequestedSize);
+
+        return true;
     }
 
     void TextureAtlas::saveAtlas(const QString &atlasName, const QString &saveLocation) const

@@ -75,6 +75,13 @@ namespace GUI
                 void exportTexture();
 
                 /**
+                 * Forward the resize request to the atlas widget.
+                 *
+                 * @param newAtlasSize the size the texture atlas should have
+                 */
+                void forwardResizeRequest(QSize newAtlasSize);
+
+                /**
                  * Get the format of the atlas held within this scroll area.
                  *
                  * @return format of the atlas currently being displayed

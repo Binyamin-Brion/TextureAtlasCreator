@@ -46,7 +46,7 @@ namespace GUI
             // For the layout of buttons to work, the buttons must be of constant size
             setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
 
-            setFixedSize(150, 150);
+            setFixedSize(BUTTON_SIZE_LENGTH, BUTTON_SIZE_LENGTH);
 
             // Display a scaled down version of the texture as this button icon
 
@@ -60,7 +60,7 @@ namespace GUI
             setIcon(buttonIcon);
 
             // Leave some border of the button visible around the icon so it still looks like a button
-            setIconSize(QSize{140, 140});
+            setIconSize(QSize{BUTTON_SIZE_LENGTH - 10, BUTTON_SIZE_LENGTH - 10});
 
             connect(this, &QPushButton::clicked, [this]()
             {
@@ -103,7 +103,7 @@ namespace GUI
             setIcon(buttonIcon);
 
             // Leave some border of the button visible around the icon so it still looks like a button
-            setIconSize(QSize{140, 140});
+            setIconSize(QSize{BUTTON_SIZE_LENGTH - 10, BUTTON_SIZE_LENGTH - 10});
         }
 
         bool TextureButton::textureNameExists(const QString &textureLocation)

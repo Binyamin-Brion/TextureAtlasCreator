@@ -38,7 +38,7 @@ namespace GUI
                 /**
                  * Initializes this object with the parent passed in.
                  *
-                 * @param parent widget that has ownership over this object.
+                 * @param parent widget that has ownership over this object
                  */
                 explicit ChooseTexture(QWidget *parent = nullptr);
 
@@ -57,6 +57,12 @@ namespace GUI
                  */
                 void closeEvent(QCloseEvent *event) override;
 
+                /**
+                 * Removes the name from the list holding the names of existing tabs. Afterwards, any new texture cannot
+                 * be added to a tab with the removed name until it is added again.
+                 *
+                 * @param tabName name to remove from the list of existing tab names
+                 */
                 void removeTab(const QString &tabName);
 
             private slots:

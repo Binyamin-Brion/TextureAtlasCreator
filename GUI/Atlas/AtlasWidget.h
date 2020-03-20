@@ -141,6 +141,14 @@ namespace GUI
                 void removeTexture(const TextureLogic::Texture *texture);
 
                 /**
+                 * Resizes the texture atlas, and this widget visually, to match the given size. If this operation cannot
+                 * be done then a message is displayed to the user and no action is taken.
+                 *
+                 * @param newAtlasSize the size the texture atlas should have
+                 */
+                void resizeAtlas(QSize newAtlasSize);
+
+                /**
                  * Resizes this widget by the given factor. This effectively changes the dimensions of the atlas that
                  * this object contains. It is used when the user changes the zoom.
                  *

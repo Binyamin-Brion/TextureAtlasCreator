@@ -14,17 +14,21 @@ namespace GUI
         {
             addTab.setText("Add New Tab");
             renameTab.setText("Rename Tab");
+            _resizeAtlas.setText("Resize Atlas");
             _moveTabLeft.setText("Move Current Tab Left");
             _moveTabRight.setText("Move Current Tab Right");
             deleteCurrentTab.setText("Delete Current Tab");
 
             addAction(&addTab);
             addAction(&renameTab);
+            addAction(&_resizeAtlas);
             addAction(&_moveTabLeft);
             addAction(&_moveTabRight);
             addAction(&deleteCurrentTab);
 
             connect(&addTab, &QAction::triggered, [this]() { emit addTabActionTriggered(); });
+
+            connect(&_resizeAtlas, &QAction::triggered, [this]() { emit resizeAtlasTriggered(); });
 
             connect(&_moveTabLeft, &QAction::triggered, [this]() { emit moveTabLeftTriggered(); });
 

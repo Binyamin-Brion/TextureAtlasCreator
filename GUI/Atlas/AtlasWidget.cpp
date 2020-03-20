@@ -64,7 +64,7 @@ namespace GUI
 
         ::Atlas::AtlasInformationBundle AtlasWidget::getAtlasInformation() const
         {
-            return ::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()};
+            return ::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getNormalZoomAtlasSize(), textureAtlas->getPercentageAtlasUsed()};
         }
 
         bool AtlasWidget::getUnsavedChanges()
@@ -132,7 +132,7 @@ namespace GUI
                 QWidget::repaint();
 
                 // Removing texture also changes the statistics of the texture atlas, which should be reflected in the GUI
-                emit currentAtlasInformationChanged(::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()});
+                emit currentAtlasInformationChanged(::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getNormalZoomAtlasSize(), textureAtlas->getPercentageAtlasUsed()});
             }
             else if(event->key() == Qt::Key_Escape)
             {
@@ -244,7 +244,7 @@ namespace GUI
             textureAtlas->mouseReleased(event->x(), event->y(), event->button());
 
             // Remember that a texture is only placed after the mouse button is released, and only at this point is the texture atlas modified
-            emit currentAtlasInformationChanged(::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getPercentageAtlasUsed()});
+            emit currentAtlasInformationChanged(::Atlas::AtlasInformationBundle{textureAtlas->getAtlasFormat(), textureAtlas->getNumberTextures(), textureAtlas->getNormalZoomAtlasSize(), textureAtlas->getPercentageAtlasUsed()});
 
             QWidget::repaint();
         }
@@ -375,6 +375,16 @@ namespace GUI
             textureAtlas->removeTexture(texture);
 
             QWidget::repaint();
+        }
+
+        void AtlasWidget::resizeAtlas(QSize newAtlasSize)
+        {
+            // The texture atlas will resize this widget, which in turn will call the resizeEvent() to visually resize
+            //  this widget, if the new size is valid
+            if(!textureAtlas->resizeAtlas(newAtlasSize))
+            {
+                QMessageBox::critical(this, "Unable To Resize Atlas", "The new atlas size would remove textures from the atlas.", QMessageBox::Ok);
+            }
         }
 
         void AtlasWidget::resizeAtlasFactor(float factor)

@@ -45,6 +45,6 @@ add_executable(TextureAtlasCreator main.cpp TextureLogic/ScaledTexture.cpp Textu
         Atlas/AtlasInformationBundle.cpp ProjectLoader/TextureAtlasLoader.h ProjectLoader/TextureButtonAreaLoader.h ProjectLoader/ProjectParser.cpp ProjectLoader/ProjectParser.h
         Tests/ProjectLoader/TestProjectLoader.cpp Tests/ProjectLoader/TestProjectLoader.h GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.cpp GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.h
         GUI/CurrentTexture/SpecularTexture/ScrollArea.cpp GUI/CurrentTexture/SpecularTexture/ScrollArea.h GUI/CurrentTexture/SpecularTexture/DisplayArea.cpp GUI/CurrentTexture/SpecularTexture/DisplayArea.h
-        GUI/NameForm.cpp GUI/NameForm.h HelperUtilities/Assert.h)
+        GUI/NameForm.cpp GUI/NameForm.h HelperUtilities/Assert.h GUI/Dialogs/ResizeAtlas.cpp GUI/Dialogs/ResizeAtlas.h)
 
 target_link_libraries(TextureAtlasCreator ${Qt5Widgets_LIBRARIES} ${Qt5Test_LIBRARIES})

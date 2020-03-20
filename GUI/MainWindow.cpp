@@ -64,7 +64,7 @@ namespace GUI
 
         initializeAtlasActionsConnections();
 
-        initializeFileConnections();
+        initializeFileActionConnections();
 
         initializeKeyboardShortcutsConnections();
 
@@ -141,7 +141,7 @@ namespace GUI
         connect(ui->actionDelete_Current_Atlas, SIGNAL(triggered()), ui->atlasWidget, SLOT(deleteCurrentTab()));
     }
 
-    void MainWindow::initializeFileConnections()
+    void MainWindow::initializeFileActionConnections()
     {
         connect(ui->actionExport_Current_Atlas, SIGNAL(triggered()), ui->atlasWidget, SLOT(exportTexture()));
 
@@ -152,8 +152,6 @@ namespace GUI
         connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveProject()));
 
         connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsProject()));
-
-        connect(ui->atlasWidget, SIGNAL(currentAtlasInformationChanged(::Atlas::AtlasInformationBundle)), this, SLOT(showPercentageUsed(::Atlas::AtlasInformationBundle)));
 
     }
 
@@ -198,6 +196,10 @@ namespace GUI
         connect(ui->specularTextureDisplay, SIGNAL(zoomChanged(::TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChangedDisplayArea(::TextureLogic::Zoom)));
 
         connect(ui->currentTexture, SIGNAL(zoomChanged(::TextureLogic::Zoom)), ui->brushSettings, SLOT(zoomChangedPaintArea(::TextureLogic::Zoom)));
+
+        connect(ui->atlasWidget, SIGNAL(currentAtlasInformationChanged(::Atlas::AtlasInformationBundle)), this, SLOT(showPercentageUsed(::Atlas::AtlasInformationBundle)));
+
+        connect(ui->atlasWidget, SIGNAL(atlasDimensionChanged(::Atlas::AtlasInformationBundle)), this, SLOT(showPercentageUsed(::Atlas::AtlasInformationBundle)));
     }
 
     void MainWindow::newProject()
@@ -441,7 +443,7 @@ namespace GUI
         }
 
         ui->numberTexturesLabel->setText("Number of Textures in Atlas: " + QString::number(atlasInformationBundle.numberTexturesUsed));
+        ui->atlasDimensionLabel->setText("Atlas Dimensions (100% Zoom): " + QString::number(atlasInformationBundle.atlasDimensions.width()) + " x " + QString::number(atlasInformationBundle.atlasDimensions.height()));
         ui->percentageAtlasUsed->setText("Percentage Atlas Used: " + QString::number(atlasInformationBundle.percentageAtlasUsed));
     }
-
 }

@@ -100,7 +100,7 @@ namespace GUI
 
                 /// Variable to ensure all texture buttons are all of the same size. TextureButtonArea requires access
                 /// to this variable, hence why it is public.
-                static const int BUTTON_SIZE_LENGTH = 150;
+                static const int BUTTON_SIZE_LENGTH = 175;
 
                 // Minimum number of texture representations possible for a texture
                 static const int MINIMUM_TEXTURE_REPRESENTATION_COUNT = 1;

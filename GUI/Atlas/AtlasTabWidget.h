@@ -21,6 +21,7 @@ namespace GUI
     {
         class AddNewTab;
         class AddNewAtlasTab;
+        class ResizeAtlas;
     }
 
     namespace Atlas
@@ -40,6 +41,11 @@ namespace GUI
                 Q_OBJECT
 
             signals:
+
+                /**
+                 *  Emitted when the currently viewed atlas has had its dimensions change.
+                 */
+                void atlasDimensionChanged(::Atlas::AtlasInformationBundle);
 
                 /**
                  * Emitted when a tab holding a different atlas is clicked, showing a new atlas.
@@ -214,6 +220,12 @@ namespace GUI
                  */
                 void showRenameTabDialog();
 
+                /**
+                 * Shows the dialog to specify a new size for the atlas, and then requests the atlas to change its size
+                 * if the user entered valid input.
+                 */
+                void showResizeAtlasDialog();
+
             private:
 
                 // See internal note for the variable currentTabs in AtlasTabWidget.cpp
@@ -227,6 +239,7 @@ namespace GUI
                 AtlasTabOptionsMenu *atlasTabOptionsMenu = nullptr;
                 Dialogs::AddNewTab *renameTab = nullptr;
                 Dialogs::AddNewAtlasTab *addNewAtlasTab = nullptr;
+                Dialogs::ResizeAtlas *resizeAtlas = nullptr;
         };
     }
 }

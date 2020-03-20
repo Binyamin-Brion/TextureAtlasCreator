@@ -39,6 +39,11 @@ namespace GUI
                 void moveTabRightTriggered();
 
                 /**
+                 * Emitted when the user requests to resize the currently viewed atlas.
+                 */
+                void resizeAtlasTriggered();
+
+                /**
                  *  Emitted wen user right clicks and selects option to delete the current tab.
                  */
                 void deleteTabActionTriggered();
@@ -63,6 +68,7 @@ namespace GUI
                 // the respective action as defined by the variable name.
                 QAction addTab;
                 QAction renameTab;
+                QAction _resizeAtlas;
                 QAction _moveTabLeft;
                 QAction _moveTabRight;
                 QAction deleteCurrentTab;

@@ -10,6 +10,7 @@
 #include "AtlasTabOptionsMenu.h"
 #include "GUI/Dialogs/AddNewTab.h"
 #include "GUI/Dialogs/AddNewAtlasTab.h"
+#include "GUI/Dialogs/ResizeAtlas.h"
 
 namespace GUI
 {
@@ -33,7 +34,8 @@ namespace GUI
                             QTabWidget{parent},
                             atlasTabOptionsMenu{new AtlasTabOptionsMenu{this}},
                             renameTab{new Dialogs::AddNewTab{this}},
-                            addNewAtlasTab{new Dialogs::AddNewAtlasTab{this}}
+                            addNewAtlasTab{new Dialogs::AddNewAtlasTab{this}},
+                            resizeAtlas{new Dialogs::ResizeAtlas{this}}
         {
             this->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -46,6 +48,8 @@ namespace GUI
             connect(atlasTabOptionsMenu, SIGNAL(addTabActionTriggered()), this, SLOT(showAddNewAtlasTab()));
 
             connect(atlasTabOptionsMenu, SIGNAL(renameTabActionTriggered()), this, SLOT(showRenameTabDialog()));
+
+            connect(atlasTabOptionsMenu, SIGNAL(resizeAtlasTriggered()), this, SLOT(showResizeAtlasDialog()));
 
             connect(atlasTabOptionsMenu, SIGNAL(moveTabLeftTriggered()), this, SLOT(moveTabLeft()));
 
@@ -368,6 +372,18 @@ namespace GUI
         void AtlasTabWidget::showRenameTabDialog()
         {
             renameTab->open();
+        }
+
+        void AtlasTabWidget::showResizeAtlasDialog()
+        {
+            // Only proceed to resize the atlas if the user clicked the 'Ok' button, which can only be clicked when
+            // valid dimensions were entered into the resize dialog
+            if(resizeAtlas->exec())
+            {
+                currentTabs[currentIndex()].first->forwardResizeRequest(resizeAtlas->getRequestedSize());
+
+                emit atlasDimensionChanged(currentTabs[currentIndex()].first->getCurrentAtlasInformation());
+            }
         }
     }
 }

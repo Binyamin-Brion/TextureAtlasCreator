@@ -6,10 +6,11 @@
 
 namespace Atlas
 {
-    AtlasInformationBundle::AtlasInformationBundle(QImage::Format textureFormat, unsigned int numberTexturesUsed, unsigned int percentageAtlasUsed)
+    AtlasInformationBundle::AtlasInformationBundle(QImage::Format textureFormat, unsigned int numberTexturesUsed, QSize atlasDimensions, unsigned int percentageAtlasUsed)
                             :
                                 textureFormat{textureFormat},
                                 numberTexturesUsed{numberTexturesUsed},
+                                atlasDimensions{atlasDimensions},
                                 percentageAtlasUsed{percentageAtlasUsed}
     {
 

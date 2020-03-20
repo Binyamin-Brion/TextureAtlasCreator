@@ -58,6 +58,11 @@ namespace GUI
             atlasWidget->exportTexture();
         }
 
+        void ScrollArea::forwardResizeRequest(QSize newAtlasSize)
+        {
+            atlasWidget->resizeAtlas(newAtlasSize);
+        }
+
         QImage::Format ScrollArea::getAtlasFormat() const
         {
             return atlasWidget->getAtlasFormat();
@@ -192,6 +197,8 @@ namespace GUI
             // to repress the control key. This is better than unexpected behaviour.
             controlKeyDown = false;
         }
+
+        // Beginning of private slots
 
         void ScrollArea::zoomIn()
         {

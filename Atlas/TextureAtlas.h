@@ -83,6 +83,14 @@ namespace Atlas
             QSize getAtlasSize() const;
 
             /**
+             * Gets the size of the atlas at the 100% zoom level, regardless of the current zoom at which the atlas is
+             * being viewed at.
+             *
+             * @return
+             */
+            QSize getNormalZoomAtlasSize() const;
+
+            /**
              * Get the number of textures currently in the atlas.
              * Note: this includes all of the unselected textures plus the selected texture if there is a selected texture
              *
@@ -181,6 +189,14 @@ namespace Atlas
              * @param texture the texture to remove from the atlas
              */
             void removeTexture(const TextureLogic::Texture *texture);
+
+            /**
+             * Checks if the atlas can be resized to the given size. No modifications to the texture atlas are done.
+             *
+             * @param newAtlasSize the size to requested by the user
+             * @return true if the atlas can be resized; no textures would be cut off
+             */
+            bool resizeAtlas(QSize newAtlasSize) const;
 
             /**
              * Saves the atlas to the specified location.

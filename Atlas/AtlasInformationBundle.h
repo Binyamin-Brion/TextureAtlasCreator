@@ -22,13 +22,15 @@ namespace Atlas
          *
          * @param textureFormat the texture format of the atlas this bundle represents
          * @param numberTexturesUsed the number of textures in the atlas this bundle represents
+         * @param atlasDimensions the dimensions of the currently viewed atlas
          * @param percentageAtlasUsed the percentage of total area used in the atlas
          */
-        AtlasInformationBundle(QImage::Format textureFormat, unsigned int numberTexturesUsed, unsigned int percentageAtlasUsed);
+        AtlasInformationBundle(QImage::Format textureFormat, unsigned int numberTexturesUsed, QSize atlasDimensions, unsigned int percentageAtlasUsed);
 
         // What these variables represent can be seen in the above constructor documentation
         const QImage::Format textureFormat;
         const unsigned int numberTexturesUsed;
+        const QSize atlasDimensions;
         const unsigned int percentageAtlasUsed;
     };
 }

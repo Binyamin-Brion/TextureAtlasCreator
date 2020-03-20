@@ -68,7 +68,7 @@ namespace GUI
             /**
              * Initialize the actions in the File submenu with the appropriate connections.
              */
-            void initializeFileConnections();
+            void initializeFileActionConnections();
 
             /**
              *  Initialize keyboard shortcuts with the appropriate connections.
