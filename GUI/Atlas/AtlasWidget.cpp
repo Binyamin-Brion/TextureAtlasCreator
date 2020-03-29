@@ -75,7 +75,7 @@ namespace GUI
         void AtlasWidget::exportTexture()
         {
             // Tried to have option to save as png in file dialog, but it doesn't show up for some reason. Have to do
-            // this manually in code later in the function
+            // this manually in code later in the function.
             QString newFileLocation = QFileDialog::getSaveFileName(this, tr("Save Image"), QDir::homePath());
 
             // If no location is selected to save to, then do not attempt to export the atlas
@@ -114,9 +114,14 @@ namespace GUI
             // Export as a png image, to make sure no quality is lost from the texture atlas. User can convert to
             // different formats if desired using external tools.
 
-            if(!textureAtlas->exportImage(newFileLocation, newFileLocationSpecular))
+            try
             {
-                QMessageBox::critical(this, "Error Exporting Image", "Failed to save the texture atlas.", QMessageBox::Ok);
+                textureAtlas->exportImage(newFileLocation, newFileLocationSpecular);
+            }
+            catch(std::runtime_error &e)
+            {
+                QMessageBox::critical(this, "Error Exporting Image", e.what(), QMessageBox::Ok);
+
             }
         }
 

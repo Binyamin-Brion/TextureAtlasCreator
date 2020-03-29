@@ -145,7 +145,7 @@ namespace Atlas
              *         ie, the path to the destination folder + the name of the exported file + image extension name
              * @return true if the atlas was successfully saved
              */
-            bool exportImage(const QString &exportLocation, const QString &exportLocationSpecular) const;
+            void exportImage(const QString &exportLocation, const QString &exportLocationSpecular) const;
 
             /**
              * React to certain key presses and take the appropriate action. For example, pressing delete on a selected

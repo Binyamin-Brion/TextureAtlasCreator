@@ -171,8 +171,21 @@ namespace Atlas
         return currentZoom;
     }
 
-    bool TextureAtlas::exportImage(const QString &exportLocation, const QString &exportLocationSpecular) const
+    void TextureAtlas::exportImage(const QString &exportLocation, const QString &exportLocationSpecular) const
     {
+        QString textureCoordinateSaveFileLocation = exportLocation;
+        textureCoordinateSaveFileLocation.chop(textureCoordinateSaveFileLocation.size() - textureCoordinateSaveFileLocation.indexOf('.'));
+        textureCoordinateSaveFileLocation += "_UV_Coordinates.txt";
+
+        QFile textureCoordinateSaveFile{textureCoordinateSaveFileLocation};
+
+        if(!textureCoordinateSaveFile.open(QIODevice::WriteOnly | QIODevice::Append))
+        {
+            throw std::runtime_error{"Failed to open the specified save location for writing."};
+        }
+
+        QTextStream saveStream{&textureCoordinateSaveFile};
+
         // Exporting is done at the Normal zoom level, as that is true representation of the sizes that the user
         // has input into the program. To account for this without having to change the zoom onscreen, the ratio
         // between the current zoom and the normal zoom is calculated so it is known what the exported atlas should be.
@@ -193,6 +206,21 @@ namespace Atlas
 
             float yDrawingPosition = i.drawingPosition.y() * zoomFactor;
 
+            QString localTextureLocation = '/' + i.texture->textureName() + '.' + i.texture->textureFormat();
+
+            float topLeftU_Coord = xDrawingPosition / atlasSize.width();
+            float topLeftV_Cord =  1.f - (yDrawingPosition / atlasSize.height()); // Because in OpenGL, the top of a texture is when V = 1.
+
+            float bottomRightU_Coord = (xDrawingPosition + i.texture->getImage(::TextureLogic::Zoom::Normal).width()) / atlasSize.width();
+            float bottomRightV_Coord = (yDrawingPosition + i.texture->getImage(::TextureLogic::Zoom::Normal).height()) / atlasSize.height();
+
+            saveStream << localTextureLocation << ": "
+                       << topLeftU_Coord << " , " << bottomRightV_Coord << " | " // Bottom Left Corner
+                       << topLeftU_Coord << " , " << topLeftV_Cord << " | "      // Top Left Corner
+                       << bottomRightU_Coord << " , " << topLeftV_Cord << " | " // Top Right Corner
+                       << bottomRightU_Coord << " , " << bottomRightV_Coord << '\n'; // Bottom Right Corner
+
+
             for(int x = 0; x < i.texture->getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
             {
                 for(int y = 0; y < i.texture->getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
@@ -203,16 +231,11 @@ namespace Atlas
                     // Since the size of the diffuseTexture == SpecularTexture, only one check against one image is done.
                     if((xDrawingPosition + x) >= diffuseTexture.width() || (yDrawingPosition + y) >= diffuseTexture.height())
                     {
-                        if(!inTestingMode)
-                        {
-                            QMessageBox::critical(atlasWidget, "Error Exporting Image",
-                                                  "There was an error writing the atlas to disk.\n\n"
-                                                  "It is possible that the atlas dimensions along with the placement\n"
-                                                  "of the textures within are causing this error.\n\n Try resizing the atlas to a large size.",
-                                                  QMessageBox::Ok);
-                        }
+                        throw std::runtime_error{
+                                                 "There was an error writing the atlas to disk.\n"
+                                                 "It is possible that the atlas dimensions along with the placement\n"
+                                                 "of the textures within are causing this error.\n Try resizing the atlas to a larger size."};
 
-                        return false;
                     }
 
                     diffuseTexture.setPixelColor(xDrawingPosition + x, yDrawingPosition + y, i.texture->getImage(::TextureLogic::Zoom::Normal).pixelColor(x, y));
@@ -230,6 +253,20 @@ namespace Atlas
 
             float yDrawingPosition = selectedExistingTexture->getDrawingCoordinates().y() * zoomFactor;
 
+            QString localTextureLocation =  '/' + selectedExistingTexture->getImageForDrawing().textureName() + '.' + selectedExistingTexture->getImageForDrawing().textureFormat();
+
+            float topLeftU_Coord = xDrawingPosition / atlasSize.width();
+            float topLeftV_Cord =  1.f - (yDrawingPosition / atlasSize.height()); // Because in OpenGL, the top of a texture is when V = 1.
+
+            float bottomRightU_Coord = (xDrawingPosition + selectedExistingTexture->getImageForDrawing().getImage(::TextureLogic::Zoom::Normal).width()) / atlasSize.width();
+            float bottomRightV_Coord = (yDrawingPosition + selectedExistingTexture->getImageForDrawing().getImage(::TextureLogic::Zoom::Normal).height()) / atlasSize.height();
+
+            saveStream << localTextureLocation << ": "
+                       << topLeftU_Coord << " , " << bottomRightV_Coord << " | " // Bottom Left Corner
+                       << topLeftU_Coord << " , " << topLeftV_Cord << " | "      // Top Left Corner
+                       << bottomRightU_Coord << " , " << topLeftV_Cord << " | " // Top Right Corner
+                       << bottomRightU_Coord << " , " << bottomRightV_Coord << '\n'; // Bottom Right Corner
+
             for(int x = 0; x < selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size().width(); ++x)
             {
                 for(int y = 0; y <  selectedExistingTexture->getImageForDrawing().getImage(TextureLogic::Zoom::Normal).size().height(); ++y)
@@ -237,16 +274,10 @@ namespace Atlas
                     // Same reasoning as the exporting of a non-selected texture.
                     if((xDrawingPosition + x) >= diffuseTexture.width() || (yDrawingPosition + y) >= diffuseTexture.height())
                     {
-                        if(!inTestingMode)
-                        {
-                            QMessageBox::critical(atlasWidget, "Error Exporting Image",
-                                                  "There was an error writing the atlas to disk.\n\n"
-                                                  "It is possible that the atlas dimensions along with the placement\n"
-                                                  "of the textures within are causing this error.\n\n Try resizing the atlas to a large size.",
-                                                  QMessageBox::Ok);
-                        }
-
-                        return false;
+                        throw std::runtime_error{
+                                "There was an error writing the atlas to disk.\n"
+                                "It is possible that the atlas dimensions along with the placement\n"
+                                "of the textures within are causing this error.\n Try resizing the atlas to a larger size."};
                     }
 
                     diffuseTexture.setPixelColor(xDrawingPosition + x, yDrawingPosition + y,
@@ -258,7 +289,10 @@ namespace Atlas
             }
         }
 
-        return diffuseTexture.save(exportLocation) && specularTexture.save(exportLocationSpecular);
+        if(!(diffuseTexture.save(exportLocation) && specularTexture.save(exportLocationSpecular)))
+        {
+            throw std::runtime_error{"Failed to export the texture atlas.\n The atlases could not be saved!"};
+        }
     }
 
     void TextureAtlas::keyPressed(int keyID)

@@ -76,11 +76,6 @@ namespace TextureLogic
         return _texture[GetZoomIndex(zoom)].getSpecularTexture();
     }
 
-    const QString& Texture::getTextureDescription() const
-    {
-        return textureDescription;
-    }
-
     PaintFunctions::PaintHistoryCommand* Texture::removeRecentPaintHistorySpecular(Zoom zoom, AccessRestriction::PassKey<GUI::CurrentTexture::PaintArea>)
     {
         return _texture[GetZoomIndex(zoom)].removePaintHistorySpecular();
@@ -110,11 +105,6 @@ namespace TextureLogic
         }
     }
 
-    void Texture::setTextureDescription(const QString &description, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)
-    {
-        textureDescription = description;
-    }
-
     void Texture::setTextureLocation(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)
     {
         // Same idea as what is done in constructor
@@ -125,11 +115,6 @@ namespace TextureLogic
         QString tempTextureName = _textureLocation.right(_textureLocation.size() - _textureLocation.lastIndexOf('/') - 1);
 
         _textureFormat = tempTextureName.right(tempTextureName.size() - tempTextureName.lastIndexOf('.') - 1);
-    }
-
-    void Texture::setTextureName(const QString &textureName, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>)
-    {
-        _textureName = textureName;
     }
 
     const QString& Texture::textureFormat() const

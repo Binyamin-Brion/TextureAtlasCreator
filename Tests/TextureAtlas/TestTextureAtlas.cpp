@@ -381,7 +381,14 @@ namespace Tests
             textureAtlas.addTextureWithPosition(texture, QPoint{0, 0});
 
             // Export the atlas.
-            QVERIFY(textureAtlas.exportImage(getTestAssetFolder() + "/ExpectedResults/exportTest.png", getTestAssetFolder() + "/ExpectedResults/exportTestSpecular.png"));
+            try
+            {
+                textureAtlas.exportImage(getTestAssetFolder() + "/ExpectedResults/exportTest.png", getTestAssetFolder() + "/ExpectedResults/exportTestSpecular.png");
+            }
+            catch(std::runtime_error &e)
+            {
+                QVERIFY(false);
+            }
 
             // Open the exported atlas (along with its specular version) as well as the images representing the images
             // that are expected to be exported.

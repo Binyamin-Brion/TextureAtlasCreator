@@ -80,7 +80,7 @@ namespace ProjectLoader
     }
 
     void ProjectParser::parseAtlas(const QString &qString)
-    {std::string fuckyou = qString.toStdString();
+    {
         if(qString.contains("Atlas Name"))
         {
             // Line format: Atlas Name: atlasName

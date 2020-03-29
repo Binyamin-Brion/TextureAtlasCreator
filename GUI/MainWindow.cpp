@@ -54,11 +54,15 @@ namespace GUI
 
         textureBank->setLoadedTextures(ui->loadedTextures);
 
-        // By default the brush has a default size and cannot currently paint on anyting as no texture is selected
+        // By default the brush has a default size and cannot currently paint on anything as no texture is selected
         ui->brushSettings->updateSelectedTextureSize(QSize{-1, 1}, QSize{25, 25});
 
-        // Below this size and things look weird
-        setMinimumSize(1280, 720);
+        // Below maximum horizontal size and things look weird and weird layout issues occur between the loaded texture
+        // and the texture information widget. Best to have vertical size scale with horizontal stretch so that everything
+        // doesn't look weird.
+        showMaximized();
+
+        setMinimumSize(width(), height());
 
         // Initialize all of the connections for the program
 
@@ -309,18 +313,15 @@ namespace GUI
 
     void MainWindow::saveAsProject()
     {
+        nameFormUi->exec();
+
+        projectName = nameFormUi->getChosenName();
+
         if(projectName.isEmpty())
         {
-            nameFormUi->exec();
+            QMessageBox::critical(this, "Invalid Project Name", "A name must be entered for the project.", QMessageBox::Ok);
 
-            projectName = nameFormUi->getChosenName();
-
-            if(projectName.isEmpty())
-            {
-                QMessageBox::critical(this, "Invalid Project Name", "A name must be entered for the project.", QMessageBox::Ok);
-
-                return;
-            }
+            return;
         }
 
         previousSaveLocation = QFileDialog::getExistingDirectory(this, "Save Project As", QDir::homePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);

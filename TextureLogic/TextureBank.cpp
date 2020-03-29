@@ -173,8 +173,6 @@ namespace TextureLogic
     void TextureBank::setSelectionBorderWidth(TextureLogic::Texture *texture, TextureLogic::Zoom zoom, unsigned int newBorderWidth)
     {
         texture->setSelectionBorderWidth(newBorderWidth, zoom, {});
-
-        atlasTabWidget->setIntersectionWidth(texture);
     }
 
     void TextureBank::setTextureInfoScrollAreaReference(GUI::TextureInformation::TextureInfoScrollArea *textureInfoScrollArea)

@@ -123,13 +123,6 @@ namespace TextureLogic
             const QImage& getSpecularTexture(TextureLogic::Zoom zoom) const;
 
             /**
-             * Get the description associated with this texture.
-             *
-             * @return string of the texture description
-             */
-            const QString& getTextureDescription() const;
-
-            /**
              * Returns the most recent paint operation for the specular map at the given zoom.
              *
              * @param zoom at which the paint operation was applied
@@ -166,26 +159,12 @@ namespace TextureLogic
             void setSelectionBorderWidth(unsigned int newWidth, Zoom zoom, AccessRestriction::PassKey<TextureBank>);
 
             /**
-             * Updates the texture description to the description that is passed in.
-             *
-             * @param description the new description the texture should have
-             */
-            void setTextureDescription(const QString &description, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
-
-            /**
              * Updates the location of the texture that this object represents. Called when a modified texture was saved.
              * This does not modify the texture on the file system.
              *
              * @param textureLocation that the texture this object represents now has
              */
             void setTextureLocation(const QString &textureLocation, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
-
-            /**
-             * Updates the texture name. This does not modify the texture on the file system.
-             *
-             * @param textureName that the texture should now have.
-             */
-            void setTextureName(const QString &textureName, AccessRestriction::PassKey<GUI::TextureInformation::SelectedTextureInformation>);
 
             /**
              * Get the string representation of the format this texture has.
@@ -211,7 +190,6 @@ namespace TextureLogic
         private:
             void setIntersectionBorderWidthInternal(unsigned int newWidth, Zoom zoom);
 
-            QString textureDescription;
             QString _textureFormat;
             QString _textureLocation;
             QString _textureName;

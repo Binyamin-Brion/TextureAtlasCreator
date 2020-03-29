@@ -24,7 +24,7 @@ namespace Tests
 
             ::ProjectLoader::ProjectParser projectParser;
 
-            projectParser.parseFile(testAssetDirectory + "/test.tac");
+            projectParser.parseFile(testAssetDirectory + "/SaveTest1/SaveTest1.tac");
 
             // Texture Button Areas
 
@@ -49,7 +49,7 @@ namespace Tests
             QVERIFY(textureAtlasLoader.format == "RGB32");
             QVERIFY(textureAtlasLoader.textures.size() == 1);
             QVERIFY(textureAtlasLoader.textures[0].textureLocation == "/bark.jpg");
-            QVERIFY((textureAtlasLoader.textures[0].position == QPoint{60, 48}));
+            QVERIFY((textureAtlasLoader.textures[0].position == QPoint{84, 44}));
         }
 
         void TestProjectLoader::testParseProjectFile2()
@@ -58,7 +58,7 @@ namespace Tests
 
             ::ProjectLoader::ProjectParser projectParser;
 
-            projectParser.parseFile(testAssetDirectory + "/test2.tac");
+            projectParser.parseFile(testAssetDirectory + "/SaveTest2/SaveTest2.tac");
 
             QVERIFY(projectParser.getTextureButtonAreas().size() == 2);
 
@@ -96,9 +96,9 @@ namespace Tests
             QVERIFY(textureAtlasLoader.format == "RGB32");
             QVERIFY(textureAtlasLoader.textures.size() == 2);
             QVERIFY(textureAtlasLoader.textures[0].textureLocation == "/bark.jpg");
-            QVERIFY((textureAtlasLoader.textures[0].position == QPoint{108, 0}));
+            QVERIFY((textureAtlasLoader.textures[0].position == QPoint{107, 48}));
             QVERIFY(textureAtlasLoader.textures[1].textureLocation == "/dirt.jpg");
-            QVERIFY((textureAtlasLoader.textures[1].position == QPoint{764, 48}));
+            QVERIFY((textureAtlasLoader.textures[1].position == QPoint{691, 49}));
 
             textureAtlasLoader = projectParser.getTextureAtlases()[1];
 
@@ -121,7 +121,7 @@ namespace Tests
                 Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\n\nFailure to get to test asset folder.\n\n");
             }
 
-            if(!executableDirectory.cd("Assets/Test"))
+            if(!executableDirectory.cd("Tests/ProjectLoader/TestAssets"))
             {
                 Q_ASSERT_X(false, __PRETTY_FUNCTION__, "\n\nFailure to get to test asset folder.\n\n");
             }

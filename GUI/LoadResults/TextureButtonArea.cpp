@@ -43,7 +43,7 @@ namespace GUI
                                 inTestingMode{inTestingMode}
         {
             // Minimum width is set so that there is no horizontal scrolling when the window is made full screen
-            setMinimumSize(500, 900);
+            setMinimumSize(800, 400);
 
             // Determine how many buttons can be fit, along with spacing, given the above minimum width
             maxColumnCount = minimumWidth() / TextureButton::BUTTON_SIZE_LENGTH;
