@@ -34,7 +34,9 @@
 
 namespace TextureLogic
 {
-    TextureBank::TextureBank()
+    TextureBank::TextureBank(bool inTestMode)
+                :
+                    inTestMode{inTestMode}
     {
         // The number of internal formats has a subtraction of 1 as the first internal format specified- Format_Invalid -
         // is not format that when a texture has, the texture of that format is stored. In that case, an error message
@@ -90,10 +92,13 @@ namespace TextureLogic
             ASSERT_SPECIFY_PARENT(atlasTabWidget, false, __PRETTY_FUNCTION__, errorMessage.toStdString().c_str());
         }
 
-        // Make sure that any GUI parts referencing the texture about to be deleted no longer reference them.
-        // While in the current version of this program the texture is still in the vector, this may not always
-        // be the case in the future and logically makes no sense to keep referencing that texture.
-        textureSelected(nullptr);
+        if(!inTestMode)
+        {
+            // Make sure that any GUI parts referencing the texture about to be deleted no longer reference them.
+            // While in the current version of this program the texture is still in the vector, this may not always
+            // be the case in the future and logically makes no sense to keep referencing that texture.
+            textureSelected(nullptr);
+        }
 
         // Iterate through all of the textures, including those of different formats, and remove that texture
         // from any of the texture atlases, and mark the texture's place in the vector as free
@@ -103,12 +108,17 @@ namespace TextureLogic
             {
                 if(j->textureLocation() == textureLocation)
                 {
-                    atlasTabWidget->removeTexture(&*j);
+                    if(!inTestMode)
+                    {
+                        atlasTabWidget->removeTexture(&*j);
+                    }
 
                     i->second.push_back(std::distance(i->first.cbegin(), j));
                 }
             }
         }
+
+        originalTextureUploadLocation.erase(textureLocation.toStdString());
     }
 
     void TextureBank::selectedTextureChanged()
@@ -422,6 +432,11 @@ namespace TextureLogic
 
     void TextureBank::resetTextureReference()
     {
+        if(inTestMode)
+        {
+            return;
+        }
+
         // Tell the texture atlas to reset its texture references as its references may now be invalid if the
         // textures vector reallocated memory
 

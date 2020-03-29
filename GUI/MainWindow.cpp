@@ -20,7 +20,7 @@ namespace GUI
                     QMainWindow{parent},
                     ui{new Ui::MainWindow},
                     nameFormUi{new NameForm{this}},
-                    textureBank{std::make_unique<TextureLogic::TextureBank>()}
+                    textureBank{std::make_unique<TextureLogic::TextureBank>(false)}
     {
         ui->setupUi(this);
 

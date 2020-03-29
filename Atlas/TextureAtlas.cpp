@@ -18,9 +18,10 @@
 
 namespace Atlas
 {
-    TextureAtlas::TextureAtlas(QImage::Format atlasFormat)
+    TextureAtlas::TextureAtlas(QImage::Format atlasFormat, bool inTestingMode)
                     :
-                        atlasFormat{atlasFormat}
+                        atlasFormat{atlasFormat},
+                        inTestingMode{inTestingMode}
     {
         selectedTexture = new SelectedTexture;
 
@@ -52,6 +53,12 @@ namespace Atlas
 
         for(auto &i : textureDrawingPositions)
         {
+            // Check needed due to action taken in newIntersectionBorderWidthValid().
+            if((selectedTexture->isOpen() && i.texture == &selectedTexture->getImageForDrawing()))
+            {
+                continue;
+            }
+
             if(selectedTexture->isOpen())
             {
                 intersectionOccured |= i.surroundingBorder[currentZoomIndex].checkIntersection(selectedTexture->getSurroundingBorderForDrawing()[currentZoomIndex]);
@@ -196,9 +203,14 @@ namespace Atlas
                     // Since the size of the diffuseTexture == SpecularTexture, only one check against one image is done.
                     if((xDrawingPosition + x) >= diffuseTexture.width() || (yDrawingPosition + y) >= diffuseTexture.height())
                     {
-                        QMessageBox::critical(atlasWidget, "Error Exporting Image", "There was an error writing the atlas to disk.\n\n"
-                                                                             "It is possible that the atlas dimensions along with the placement\n"
-                                                                             "of the textures within are causing this error.\n\n Try resizing the atlas to a large size.", QMessageBox::Ok);
+                        if(!inTestingMode)
+                        {
+                            QMessageBox::critical(atlasWidget, "Error Exporting Image",
+                                                  "There was an error writing the atlas to disk.\n\n"
+                                                  "It is possible that the atlas dimensions along with the placement\n"
+                                                  "of the textures within are causing this error.\n\n Try resizing the atlas to a large size.",
+                                                  QMessageBox::Ok);
+                        }
 
                         return false;
                     }
@@ -225,9 +237,14 @@ namespace Atlas
                     // Same reasoning as the exporting of a non-selected texture.
                     if((xDrawingPosition + x) >= diffuseTexture.width() || (yDrawingPosition + y) >= diffuseTexture.height())
                     {
-                        QMessageBox::critical(atlasWidget, "Error Exporting Image", "There was an error writing the atlas to disk.\n\n"
-                                                                                    "It is possible that the atlas dimensions along with the placement\n"
-                                                                                    "of the textures within are causing this error.\n\n Try resizing the atlas to a large size.", QMessageBox::Ok);
+                        if(!inTestingMode)
+                        {
+                            QMessageBox::critical(atlasWidget, "Error Exporting Image",
+                                                  "There was an error writing the atlas to disk.\n\n"
+                                                  "It is possible that the atlas dimensions along with the placement\n"
+                                                  "of the textures within are causing this error.\n\n Try resizing the atlas to a large size.",
+                                                  QMessageBox::Ok);
+                        }
 
                         return false;
                     }
@@ -252,7 +269,11 @@ namespace Atlas
         if(keyID == Qt::Key_Delete && selectedExistingTexture->isOpen())
         {
             selectedExistingTexture->getImage();
-            textureBank->textureSelected(nullptr);
+
+            if(!inTestingMode)
+            {
+                textureBank->textureSelected(nullptr);
+            }
         }
         else if(keyID == Qt::Key_Escape && selectedTexture->isOpen())
         {
@@ -307,7 +328,10 @@ namespace Atlas
             addTexture(selectedExistingTexture);
         }
 
-        textureBank->textureSelected(nullptr);
+        if(!inTestingMode)
+        {
+            textureBank->textureSelected(nullptr);
+        }
 
         // Block of code in if-statement refers to selecting an existing texture within the atlas
         if(!selectedTexture->isOpen())
@@ -330,11 +354,14 @@ namespace Atlas
                 {
                     if(mouseY >= i.drawingPosition.y() && mouseY <= i.drawingPosition.y() + currentTextureHeight)
                     {
-                        // Restriction is in-place that only textures that fit entirely within the viewport can be selected.
-                        // This ensures that checks on valid cursor positions with an open new selected texture remain valid.
-                        if(atlasWidget->checkTextureNotWithinViewPort(i.texture->getImage(currentZoom).size()))
+                        if(!inTestingMode)
                         {
-                            return;
+                            // Restriction is in-place that only textures that fit entirely within the viewport can be selected.
+                            // This ensures that checks on valid cursor positions with an open new selected texture remain valid.
+                            if (atlasWidget->checkTextureNotWithinViewPort(i.texture->getImage(currentZoom).size()))
+                            {
+                                return;
+                            }
                         }
 
                         // Put back the existing selected texture, if it exists, so that a new texture can be selected
@@ -369,7 +396,10 @@ namespace Atlas
 
                         deleteTextureDrawingPosition = true;
 
-                        textureBank->textureSelected(i.texture);
+                        if(!inTestingMode)
+                        {
+                            textureBank->textureSelected(i.texture);
+                        }
 
                         previousTexturePositionHistory = selectedExistingTexture->getDrawingCoordinates();
                     }
@@ -423,7 +453,10 @@ namespace Atlas
 
                 newMousePosition = QPoint(drawingCoords.x() + currentImage.width() / 2, drawingCoords.y() + currentImage.height() / 2);
 
-                atlasWidget->moveMouseTo(newMousePosition.x(), newMousePosition.y());
+                if(!inTestingMode)
+                {
+                    atlasWidget->moveMouseTo(newMousePosition.x(), newMousePosition.y());
+                }
 
                 // If the user has dragged the mouse, then don't automatically deselect the texture.
                 // That would be annoying if that happened.
@@ -479,7 +512,10 @@ namespace Atlas
 
                         addTexture(selectedExistingTexture);
 
-                        textureBank->textureSelected(nullptr);
+                        if(!inTestingMode)
+                        {
+                            textureBank->textureSelected(nullptr);
+                        }
                     }
                 }
             }
@@ -521,7 +557,10 @@ namespace Atlas
             // was changed, as the option to change the border width is only present if a texture is selected and the check is done immediately.
             if(!foundTexture)
             {
-                ASSERT_SPECIFY_PARENT(atlasWidget, false, __PRETTY_FUNCTION__, "Unable to find the selected texture passed into this function!");
+                if(!inTestingMode)
+                {
+                    ASSERT_SPECIFY_PARENT(atlasWidget, false, __PRETTY_FUNCTION__,"Unable to find the selected texture passed into this function!");
+                }
             }
 
             // The intersection width must not pass the borders of the atlas, as that logically does not make sense.
@@ -553,8 +592,20 @@ namespace Atlas
             }
         }
 
+        // To ensure that the checking of an intersection is valid, a texture has to be a "selected texture". To avoid
+        // moving the modified texture in the texture drawing position to the "selected texture" which could be hard,
+        // that texture is temporarily also a "selected texture".
+        ignoreCheckingExistingTexture = true;
+        setSelectedTexture(*texture);
+        ignoreCheckingExistingTexture = false;
+
         // Determine if the new intersection border width results in intersections with other textures in the atlas
-        return checkIntersection();
+        bool intersectionOccuered = checkIntersection();
+
+        // "Remove" the temporarily created selected texture.
+        selectedTexture->getImage();
+
+        return !intersectionOccuered;
     }
 
     void TextureAtlas::removeTexture(const TextureLogic::Texture *texture)
@@ -634,9 +685,12 @@ namespace Atlas
             }
         }
 
-        // Resizing the atlas widget will in turn call the required texture atlas function to resize this atlas.
-        atlasWidget->setMinimumSize(originalRequestedSize);
-        atlasWidget->setMaximumSize(originalRequestedSize);
+        if(!inTestingMode)
+        {
+            // Resizing the atlas widget will in turn call the required texture atlas function to resize this atlas.
+            atlasWidget->setMinimumSize(originalRequestedSize);
+            atlasWidget->setMaximumSize(originalRequestedSize);
+        }
 
         return true;
     }
@@ -663,8 +717,16 @@ namespace Atlas
         }
         catch(std::runtime_error &e)
         {
-            QMessageBox::critical(atlasWidget, "Fatal Internal Error", e.what() +
-            QString{"\n\nNote for this error, you must edit the project file to specify the format of the atlas"} + atlasName, QMessageBox::Ok);
+            if(!inTestingMode)
+            {
+                QMessageBox::critical(atlasWidget, "Fatal Internal Error", e.what() +
+                                                                           QString{"\n\nNote for this error, you must edit the project file to specify the format of the atlas"} +
+                                                                           atlasName, QMessageBox::Ok);
+            }
+            else
+            {
+                throw;
+            }
         }
 
         for(const auto &i : textureDrawingPositions)
@@ -777,7 +839,7 @@ namespace Atlas
             textureLoadedAlready = true;
         }
 
-        if(textureLoadedAlready)
+        if(textureLoadedAlready && !ignoreCheckingExistingTexture)
         {
             std::string errorMessage;
 
@@ -810,18 +872,22 @@ namespace Atlas
 
     void TextureAtlas::textureLoaded()
     {
-        // Texture has been added to the texture bank. Note that when adding a texture to the image, the old vector of textures
-        // might be moved in memory due to reallocation of the vector. Therefore references to that vector have to be reset just in case.
-        this->textures = &textureBank->getTextures();
-
-        for(auto &i : textureDrawingPositions)
+        if(!inTestingMode)
         {
-            i.texture = &((*this->textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[i.index]);
-        }
 
-        if(selectedExistingTexture->isOpen())
-        {
-            selectedExistingTexture->setTextureReference(((*this->textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[selectedExistingTexture->getTextureIndex()]));
+            // Texture has been added to the texture bank. Note that when adding a texture to the image, the old vector of textures
+            // might be moved in memory due to reallocation of the vector. Therefore references to that vector have to be reset just in case.
+            this->textures = &textureBank->getTextures();
+
+            for (auto &i : textureDrawingPositions)
+            {
+                i.texture = &((*this->textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat,true)].first[i.index]);
+            }
+
+            if (selectedExistingTexture->isOpen())
+            {
+                selectedExistingTexture->setTextureReference(((*this->textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat,true)].first[selectedExistingTexture->getTextureIndex()]));
+            }
         }
     }
 
@@ -878,11 +944,14 @@ namespace Atlas
         // to no longer be displayed entirely within a viewport.
         if(selectedExistingTexture->isOpen())
         {
-            if(atlasWidget->checkTextureNotWithinViewPort(selectedExistingTexture->getImageForDrawing().getImage(currentZoom).size()))
+            if(!inTestingMode)
             {
-                currentZoom = oldZoom;
+                if (atlasWidget->checkTextureNotWithinViewPort(selectedExistingTexture->getImageForDrawing().getImage(currentZoom).size()))
+                {
+                    currentZoom = oldZoom;
 
-                return;
+                    return;
+                }
             }
         }
 
@@ -899,9 +968,12 @@ namespace Atlas
             // updated separately
             updateSelectedTexturesZoom(currentZoom, 2.0f);
 
-            // Tell the widget holding the atlas to visually resize the atlas to match the new zoom value, which will
-            // also logically resize the atlas in setAtlasSize()
-            atlasWidget->resizeAtlasFactor(2.0f);
+            if(!inTestingMode)
+            {
+                // Tell the widget holding the atlas to visually resize the atlas to match the new zoom value, which will
+                // also logically resize the atlas in setAtlasSize()
+                atlasWidget->resizeAtlasFactor(2.0f);
+            }
         }
     }
 
@@ -924,9 +996,12 @@ namespace Atlas
             // updated separately
             updateSelectedTexturesZoom(currentZoom, 0.5f);
 
-            // Tell the widget holding the atlas to visually resize the atlas to match the new zoom value, which will
-            // also logically resize the atlas in setAtlasSize()
-            atlasWidget->resizeAtlasFactor(0.5f);
+            if(!inTestingMode)
+            {
+                // Tell the widget holding the atlas to visually resize the atlas to match the new zoom value, which will
+                // also logically resize the atlas in setAtlasSize()
+                atlasWidget->resizeAtlasFactor(0.5f);
+            }
         }
     }
 
@@ -954,13 +1029,17 @@ namespace Atlas
 
             textureDrawingPositions.back().surroundingBorder = selectedTexture->getSurroundingBorderForDrawing();
 
-            for(unsigned int i = 0; i < textures->size(); ++i)
+            if(!inTestingMode)
             {
-                if((*textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat, true)].first[i].textureLocation() == selectedTexture->getTextureLocation())
+                for (unsigned int i = 0; i < textures->size(); ++i)
                 {
-                    textureDrawingPositions.back().index = i;
+                    if ((*textures)[GUI::TextureHelperFunctions::indexFormat(atlasFormat,true)].first[i].textureLocation() ==
+                        selectedTexture->getTextureLocation())
+                    {
+                        textureDrawingPositions.back().index = i;
 
-                    break;
+                        break;
+                    }
                 }
             }
 
@@ -968,7 +1047,10 @@ namespace Atlas
             // of the program it no longer exists, yet the fact that it was in selected existing texture implies that it does exist
             if(textureDrawingPositions.back().index == -1)
             {
-                ASSERT_SPECIFY_PARENT(atlasWidget, false, __PRETTY_FUNCTION__, "Selected texture has a location not found in texture bank!");
+                if(!inTestingMode)
+                {
+                    ASSERT_SPECIFY_PARENT(atlasWidget, false, __PRETTY_FUNCTION__, "Selected texture has a location not found in texture bank!");
+                }
             }
         }
 

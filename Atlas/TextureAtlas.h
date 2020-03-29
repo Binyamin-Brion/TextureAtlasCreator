@@ -24,6 +24,14 @@ namespace GUI
     }
 }
 
+namespace Tests
+{
+    namespace TextureAtlas
+    {
+        class TestTextureAtlas;
+    }
+}
+
 namespace Atlas
 {
     class SelectedTexture;
@@ -36,6 +44,8 @@ namespace Atlas
 
     class TextureAtlas
     {
+            friend class ::Tests::TextureAtlas::TestTextureAtlas;
+
         public:
 
             /**
@@ -43,7 +53,7 @@ namespace Atlas
              *
              * @param atlasFormat the internal format the atlas should have, and will export as
              */
-            explicit TextureAtlas(QImage::Format atlasFormat);
+             TextureAtlas(QImage::Format atlasFormat, bool inTestingMode);
 
             /**
              * Called when loading a texture from a project file. When this is done, it is known where a texture
@@ -342,6 +352,9 @@ namespace Atlas
             QPointF previousTexturePositionHistory;
 
             std::stack<TextureMovement> textureMovementHistory;
+
+            bool inTestingMode;
+            bool ignoreCheckingExistingTexture = false;
     };
 }
 

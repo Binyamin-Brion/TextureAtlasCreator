@@ -3,11 +3,14 @@
 #include <QApplication>
 #include <QtTest/qtestcase.h>
 #include <QtCore/QTextStream>
+#include <Tests/TestSuite.h>
 #include "HelperUtilities/Assert.h"
+#include "Tests/EnableTests.h"
 
 int main(int argc, char *argv[]) {
 
 #ifdef ENABLE_TESTS
+    QApplication app{argc, argv};
 
     auto suite = Tests::TestSuite::suite();
 

@@ -17,7 +17,7 @@ namespace GUI
                     :
                         QScrollArea{parent}
         {
-            textureButtonArea = new TextureButtonArea{this};
+            textureButtonArea = new TextureButtonArea{false,this};
 
             setWidget(textureButtonArea);
         }

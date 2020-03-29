@@ -31,6 +31,14 @@ namespace GUI
 
 class QPainter;
 
+namespace Tests
+{
+    namespace TextureAtlas
+    {
+        class TestTextureAtlas;
+    }
+}
+
 namespace TextureLogic
 {
     class TextureBank;
@@ -43,6 +51,8 @@ namespace TextureLogic
 
     class Texture
     {
+        friend class ::Tests::TextureAtlas::TestTextureAtlas;
+
         using TextureImages = std::array<ScaledTexture, NumberZoomElements()>;
 
         public:
@@ -199,6 +209,7 @@ namespace TextureLogic
             const QString& textureName() const;
 
         private:
+            void setIntersectionBorderWidthInternal(unsigned int newWidth, Zoom zoom);
 
             QString textureDescription;
             QString _textureFormat;

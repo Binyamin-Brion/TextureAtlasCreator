@@ -56,7 +56,7 @@ namespace GUI
                  *
                  * @param parent widget that has ownership over this object
                  */
-                explicit TextureButtonArea(QWidget *parent = nullptr);
+                 explicit TextureButtonArea(bool inTestingMode, QWidget *parent = nullptr);
 
                 /**
                  * Add a new texture button to this texture button area. If a button representing the same texture
@@ -194,6 +194,8 @@ namespace GUI
                 int cursorOverButtonIndex = -1;
 
                 mutable bool unsavedChanges = false;
+
+                bool inTestingMode;
         };
     }
 }

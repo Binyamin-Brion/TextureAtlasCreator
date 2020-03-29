@@ -48,10 +48,20 @@ namespace GUI
     }
 }
 
+namespace Tests
+{
+    namespace TextureLogic
+    {
+        class TestTextureBank;
+    }
+}
+
 namespace TextureLogic
 {
     class TextureBank
     {
+            friend class ::Tests::TextureLogic::TestTextureBank;
+
             using FormatIndex = unsigned int;
             using UnusedSpotIndexes = unsigned int;
 
@@ -60,7 +70,7 @@ namespace TextureLogic
             /**
              * Initializes required internal variables.
              */
-            TextureBank();
+            explicit TextureBank(bool inTestMode);
 
             /**
             * Gets the width of the selection border for the texture that the input location represents.
@@ -254,6 +264,8 @@ namespace TextureLogic
             // See TextureBank.cpp for more details of these two variables
             std::vector<std::pair<std::vector<Texture>, std::vector<UnusedSpotIndexes>>> textures;
             std::unordered_map<std::string, FormatIndex> originalTextureUploadLocation;
+
+            bool inTestMode = false;
     };
 }
 

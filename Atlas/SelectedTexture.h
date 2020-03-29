@@ -17,6 +17,15 @@ namespace TextureLogic
     class Texture;
 }
 
+namespace Tests
+{
+    namespace TextureAtlas
+    {
+        class TestTextureAtlas;
+    }
+}
+
+
 namespace Atlas
 {
     /**
@@ -29,6 +38,8 @@ namespace Atlas
 
     class SelectedTexture
     {
+            friend class ::Tests::TextureAtlas::TestTextureAtlas;
+
             // There are as many surrounding border as there are zoom values, as the dimensions of the border changes with zoom.
             // To make it easier to read, an alias is defined here.
             using SurroundingBorder = std::array<TextureBorder::SurroundingBorder, ::TextureLogic::NumberZoomElements()>;

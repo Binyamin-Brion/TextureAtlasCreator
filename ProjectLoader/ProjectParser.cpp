@@ -21,27 +21,7 @@ namespace ProjectLoader
 
     void ProjectParser::parseFile(const QString &projectFileLocation)
     {
-        // Reading and processing of file contents are done using std::strings instead of QStrings as using QStrings
-        // causes this function to fail in tests on certain computers.
-        std::ifstream fileReader{projectFileLocation.toStdString()};
-
-        if(!fileReader.is_open())
-        {
-            throw std::runtime_error{"Unable to open the file: " + projectFileLocation.toStdString()};
-        }
-
-        std::stringstream fileContentsBuffer;
-
-        fileContentsBuffer << fileReader.rdbuf();
-
-        std::vector<std::string> splitContents;
-
-        std::string fileSegment;
-
-        while(std::getline(fileContentsBuffer, fileSegment, '\n'))
-        {
-            splitContents.push_back(fileSegment);
-        }
+        std::vector<std::string> splitContents = readFile(projectFileLocation);
 
         // Ensure that repeated parsing of project files does not include result of previous project loading.
         textureAtlases.clear();
@@ -50,11 +30,6 @@ namespace ProjectLoader
         for(const auto &i : splitContents)
         {
             QString qString = QString::fromStdString(i);
-
-            if(qString.isEmpty())
-            {
-                continue;
-            }
 
             // Signals the end of a section within the project file
             if(qString.contains('='))
@@ -105,7 +80,7 @@ namespace ProjectLoader
     }
 
     void ProjectParser::parseAtlas(const QString &qString)
-    {
+    {std::string fuckyou = qString.toStdString();
         if(qString.contains("Atlas Name"))
         {
             // Line format: Atlas Name: atlasName
@@ -211,5 +186,37 @@ namespace ProjectLoader
 
             textureButtonAreaLoader.textures.push_back(textureData);
         }
+    }
+
+    std::vector<std::string> ProjectParser::readFile(const QString &projectFileLocation) const
+    {
+        // Reading and processing of file contents are done using std::strings instead of QStrings as using QStrings
+        // causes this function to fail in tests on certain computers.
+        std::ifstream fileReader{projectFileLocation.toStdString()};
+
+        if(!fileReader.is_open())
+        {
+            throw std::runtime_error{"Unable to open the file: " + projectFileLocation.toStdString()};
+        }
+
+        std::stringstream fileContentsBuffer;
+
+        fileContentsBuffer << fileReader.rdbuf();
+
+        std::vector<std::string> splitContents;
+
+        std::string fileSegment;
+
+        while(std::getline(fileContentsBuffer, fileSegment, '\n'))
+        {
+            if(fileSegment.empty())
+            {
+                continue;
+            }
+
+            splitContents.push_back(fileSegment);
+        }
+
+        return splitContents;
     }
 }

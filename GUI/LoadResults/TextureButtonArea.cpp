@@ -37,9 +37,10 @@ namespace GUI
 
         // Beginning of public functions
 
-        TextureButtonArea::TextureButtonArea(QWidget *parent)
+        TextureButtonArea::TextureButtonArea(bool inTestingMode, QWidget *parent)
                             :
-                                QWidget{parent}
+                                QWidget{parent},
+                                inTestingMode{inTestingMode}
         {
             // Minimum width is set so that there is no horizontal scrolling when the window is made full screen
             setMinimumSize(500, 900);
@@ -70,7 +71,6 @@ namespace GUI
 
         void TextureButtonArea::addTextureButton(const QString &textureLocation, unsigned int intersectionBorderWidth, unsigned int selectionBorderWidth, bool loadingProject)
         {
-
             if(!loadingProject && TextureButton::textureNameExists(textureLocation))
             {
                 // When saving a project, the names of a texture are used in the saving process. Duplicate textures could mess this up.
@@ -81,8 +81,11 @@ namespace GUI
                 return;
             }
 
-            // Try loading the image first; if the texture is already loaded, then this call has no effect
-            textureBank->storeNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
+            if(!inTestingMode)
+            {
+                // Try loading the image first; if the texture is already loaded, then this call has no effect
+                textureBank->storeNewTexture(textureLocation, intersectionBorderWidth, selectionBorderWidth, {});
+            }
 
             try
             {
@@ -215,8 +218,15 @@ namespace GUI
                 // Save textures relative to the folder they are in so that the project folder can be moved around
                 QString localTextureLocation = '/' + TextureHelperFunctions::getImageName(i->getTextureLocation()) + '.' + TextureHelperFunctions::getImageFormat(i->getTextureLocation());
 
-                saveStream << localTextureLocation << " -> " << textureBank->getIntersectionWidth(i->getTextureLocation()) << " , "
-                           << textureBank->getSelectionWidth(i->getTextureLocation()) << '\n';
+                if(!inTestingMode)
+                {
+                    saveStream << localTextureLocation << " -> " << textureBank->getIntersectionWidth(i->getTextureLocation()) << " , "
+                               << textureBank->getSelectionWidth(i->getTextureLocation()) << '\n';
+                }
+                else
+                {
+                    saveStream << localTextureLocation << " -> " << 6 << " , " << 5 << '\n';
+                }
             }
 
             saveStream << "\n=======================================\n\n";

@@ -8,6 +8,19 @@
 #include "TextureAtlasLoader.h"
 #include "TextureButtonAreaLoader.h"
 
+namespace Tests
+{
+    namespace GUI
+    {
+        class TestTextureButtonArea;
+    }
+
+    namespace TextureAtlas
+    {
+        class TestTextureAtlas;
+    }
+}
+
 namespace ProjectLoader
 {
     /**
@@ -16,6 +29,9 @@ namespace ProjectLoader
 
     class ProjectParser
     {
+            friend class ::Tests::GUI::TestTextureButtonArea;
+            friend class ::Tests::TextureAtlas::TestTextureAtlas;
+
         public:
 
             /**
@@ -65,6 +81,8 @@ namespace ProjectLoader
            * @param qString the current line of the project file being parsed
            */
             void parseButtonArea(const QString &qString);
+
+            std::vector<std::string> readFile(const QString &projectFileLocation) const;
 
             std::vector<TextureAtlasLoader> textureAtlases;
             std::vector<TextureButtonAreaLoader> textureButtonAreas;

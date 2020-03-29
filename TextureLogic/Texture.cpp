@@ -93,16 +93,7 @@ namespace TextureLogic
 
     void Texture::setIntersectionBorderWidth(unsigned int newWidth, TextureLogic::Zoom zoom, AccessRestriction::PassKey<TextureBank>)
     {
-        // The scaled textures representing different zooms that what was passed in have to be updated so that they remain relative
-        // to one another.
-        for(auto &i : AllZoomValues)
-        {
-            float zoomFactor = TextureLogic::GetZoomValue(i) / TextureLogic::GetZoomValue(zoom);
-
-            unsigned int adjustedWidth = newWidth * zoomFactor;
-
-            _texture[GetZoomIndex(i)].setIntersectionWidth(adjustedWidth);
-        }
+        setIntersectionBorderWidthInternal(newWidth, zoom);
     }
 
     void Texture::setSelectionBorderWidth(unsigned int newWidth, TextureLogic::Zoom zoom, AccessRestriction::PassKey<TextureBank>)
@@ -154,5 +145,21 @@ namespace TextureLogic
     const QString &Texture::textureName() const
     {
         return _textureName;
+    }
+
+    // Beginning of private functions
+
+    void Texture::setIntersectionBorderWidthInternal(unsigned int newWidth, Zoom zoom)
+    {
+        // The scaled textures representing different zooms that what was passed in have to be updated so that they remain relative
+        // to one another.
+        for(auto &i : AllZoomValues)
+        {
+            float zoomFactor = TextureLogic::GetZoomValue(i) / TextureLogic::GetZoomValue(zoom);
+
+            unsigned int adjustedWidth = newWidth * zoomFactor;
+
+            _texture[GetZoomIndex(i)].setIntersectionWidth(adjustedWidth);
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace GUI
         AtlasWidget::AtlasWidget(QSize atlasSize, QImage::Format atlasFormat, QWidget *parent)
                         :
                             QWidget{parent},
-                            textureAtlas{std::make_unique<::Atlas::TextureAtlas>(atlasFormat)}
+                            textureAtlas{std::make_unique<::Atlas::TextureAtlas>(atlasFormat, false)}
         {
             // The size of this widget is the size of the atlas. By setting the restrictions on the widget,
             // the resizeEvent() function will be called, resizing the texture atlas to the size of this widget

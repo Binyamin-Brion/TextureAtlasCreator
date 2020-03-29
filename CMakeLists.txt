@@ -17,7 +17,7 @@ if(WIN32)
 endif(WIN32)
 
 if(UNIX)
-    set(CMAKE_PREFIX_PATH /home/binybrion/Qt5.9.8/5.9.8/gcc_64)
+    set(CMAKE_PREFIX_PATH /home/binybrion/Qt5.9.9/5.9.9/gcc_64)
 endif(UNIX)
 
 find_package(Qt5Widgets REQUIRED)
@@ -45,6 +45,6 @@ add_executable(TextureAtlasCreator main.cpp TextureLogic/ScaledTexture.cpp Textu
         Atlas/AtlasInformationBundle.cpp ProjectLoader/TextureAtlasLoader.h ProjectLoader/TextureButtonAreaLoader.h ProjectLoader/ProjectParser.cpp ProjectLoader/ProjectParser.h
         Tests/ProjectLoader/TestProjectLoader.cpp Tests/ProjectLoader/TestProjectLoader.h GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.cpp GUI/CurrentTexture/SpecularTexture/SpecularTextureTabWidget.h
         GUI/CurrentTexture/SpecularTexture/ScrollArea.cpp GUI/CurrentTexture/SpecularTexture/ScrollArea.h GUI/CurrentTexture/SpecularTexture/DisplayArea.cpp GUI/CurrentTexture/SpecularTexture/DisplayArea.h
-        GUI/NameForm.cpp GUI/NameForm.h HelperUtilities/Assert.h GUI/Dialogs/ResizeAtlas.cpp GUI/Dialogs/ResizeAtlas.h)
+        GUI/NameForm.cpp GUI/NameForm.h HelperUtilities/Assert.h GUI/Dialogs/ResizeAtlas.cpp GUI/Dialogs/ResizeAtlas.h Tests/TextureAtlas/TestTextureAtlas.cpp Tests/TextureAtlas/TestTextureAtlas.h Tests/TextureLogic/TestTextureBank.cpp Tests/TextureLogic/TestTextureBank.h Tests/TextureAtlas/TestSelectedTexture.cpp Tests/TextureAtlas/TestSelectedTexture.h Tests/GUI/TestTextureButtonArea.cpp Tests/GUI/TestTextureButtonArea.h)
 
 target_link_libraries(TextureAtlasCreator ${Qt5Widgets_LIBRARIES} ${Qt5Test_LIBRARIES})
