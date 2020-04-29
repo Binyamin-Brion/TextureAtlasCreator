@@ -32,11 +32,10 @@
 #else
     #include <QMessageBox>
 
-    #define ASSERT(parent, condition, location, message)                                        \
+    #define ASSERT_SPECIFY_PARENT(parent, condition, location, message)                         \
     QMessageBox::critical(parent, "Fatal Internal Error",                                       \
     "Error: " + QString{message} + "\n Error Location at: " + QString{location},                \
-    QMessageBox::Ok);                                                                           \
-    return;
+    QMessageBox::Ok);
 #endif
 
 #endif //TEXTUREATLASCREATOR_ASSERT_H

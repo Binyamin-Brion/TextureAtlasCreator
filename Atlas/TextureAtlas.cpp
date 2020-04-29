@@ -594,6 +594,8 @@ namespace Atlas
                 if(!inTestingMode)
                 {
                     ASSERT_SPECIFY_PARENT(atlasWidget, false, __PRETTY_FUNCTION__,"Unable to find the selected texture passed into this function!");
+
+                    return false;
                 }
             }
 
