@@ -63,6 +63,20 @@ namespace ProjectLoader
             parseAtlas(qString);
 
         }
+
+        // For some reason there are some types of invalid input that manage to make it here (such as opening a jpg file
+        // on the developer machine). What will happen though is that no atlases or texture button areas will be loaded,
+        // meaning there was an error (as even the save of an empty project has at least one atlas and button area).
+
+        if(textureAtlases.empty())
+        {
+            throw std::runtime_error{"Error reading the file: No texture atlases found."};
+        }
+
+        if(textureButtonAreas.empty())
+        {
+            throw std::runtime_error{"Error reading the file: No button areas found."};
+        }
     }
 
     int ProjectParser::checkConversionSuccess(const QString &source, const QString &baseErrorMessage)
