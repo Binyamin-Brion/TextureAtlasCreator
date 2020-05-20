@@ -3,18 +3,15 @@ Texture Atlas Creator
 
 ## Overview
 
-This is a project to create a texture atlas for used in 3D programs. It was made as a personal project
-to do three things:
+A texture atlas is a texture that is itself made of several textures. This provides benefits in terms of rendering efficiency in a 3D enivornment, depending on how the rendering is done. Alternatively, it can be used when using separate textures results in too many texture buffers for a given platform, by allowing to effectively use several textures with one texture buffer.
 
-* Have an alternative program to create texture atlases
-* Gain experience with C++ and Qt
-* Learn how to deal with codebase that is constantly being modified and growing
+This project provides a way of creating texture atlases, along with the associated specular texture atlases. It does this while providing the means to help avoid issues that can appear while using texture atlases, chiefly sub-textures bleeding into each other during mipmapping.
 
 ## Features
 
 * Create atlases of arbitrary sizes and many different image formats
 * Ability to move textures around once placed to optimize available space
-* Specify borders around images within the atlases to deal with issues
+* Specify borders around images within the atlases to help deal with issues
   that pop up when mipmapping texture atlases
 * Apply simple edits (and undo them) to a texture within an atlas, 
   along with the texture's associated specular texture
